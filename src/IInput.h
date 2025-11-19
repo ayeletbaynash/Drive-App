@@ -8,7 +8,6 @@
 class IInput {
 public:
     virtual ~IInput() = default; //for destructor
-
     virtual std::string Get_input() = 0; // Receives input from input source and returns it as a string.
 };
 
