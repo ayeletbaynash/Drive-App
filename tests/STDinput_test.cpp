@@ -5,7 +5,7 @@
 
 using namespace std;
 
-//helper func- moc cin to read from string instead 
+//helper func- mock cin to read from string instead 
 int mockCin(string mock_input) {
     //streambuf* orig = cin.rdbuf(); 
     istringstream input(mock_input);
@@ -42,12 +42,18 @@ TEST(InputTests, HandlesSpecialCharsAndNumbers) {
 TEST(InputTests, HandlesInputErrorsGracefully) {
     STDinput inputProvider;
 
-    std::cin.setstate(std::ios::failbit); // simulate error
+    cin.setstate(failbit); // simulate error
 
     EXPECT_THROW({
         inputProvider.Get_input();
-    }, std::runtime_error);
+    }, runtime_error);
 
-    std::cin.clear(); // reset for other tests
+    cin.clear(); // reset for other tests
 }
+
+int main(int argc, char **argv){
+    ::testing::InitGoogleTest(&argc, argv);
+    return RUN_ALL_TESTS();
+}
+
 
