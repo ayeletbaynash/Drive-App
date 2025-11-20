@@ -1,13 +1,16 @@
 #ifndef ICOMMAND_H
 #define ICOMMAND_H
-
+#include <string>
+// Forward declarations  ot the interfaces
+class ICompress;
+class IOutput;
 //The purpose of the ICommand interface is to serve as the base class
 //for all commands that will be executed in the app.
 
 class ICommand {
 public:
     virtual ~ICommand() = default; // virtual destructor - prevents memory leaks
-    virtual void execute() = 0;
+    virtual void execute(std::string& args, ICompress* compressor, IOutput* output) = 0;
 };
 
 #endif
