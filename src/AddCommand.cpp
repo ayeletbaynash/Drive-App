@@ -2,6 +2,9 @@
 #include "ICompress.h"
 #include <sstream>
 using namespace std;
+#include <string>
+#include "ICompress.h"
+#include "IOutput.h"
 
 //The class AddCommand inherits from the ICommand interface.
 //It is responsible for adding new files with compress content to the system.
