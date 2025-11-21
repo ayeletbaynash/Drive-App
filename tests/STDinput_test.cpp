@@ -16,7 +16,7 @@ int mockCin(string mock_input) {
 
 //1. should return user input correctly
 TEST(InputTests, ReturnsUserInputCorrectly) {
-    STDinput inputProvider; //create instance
+    STDInput inputProvider; //create instance
     setStdin("hello world\n"); //input
 
     EXPECT_EQ(inputProvider.Get_input(), "hello world");
@@ -24,7 +24,7 @@ TEST(InputTests, ReturnsUserInputCorrectly) {
 
 //2. should preserve whitespace in the input
 TEST(InputTests, PreservesWhitespace) {
-    STDinput inputProvider;
+    STDInput inputProvider;
     setStdin("   spaced   input   \n");
 
     EXPECT_EQ(inputProvider.Get_input(), "   spaced   input   ");
@@ -32,7 +32,7 @@ TEST(InputTests, PreservesWhitespace) {
 
 //3. should handle special characters and numbers correctly
 TEST(InputTests, HandlesSpecialCharsAndNumbers) {
-    STDinput inputProvider;
+    STDInput inputProvider;
     setStdin("!@#$%^&*()_+12345\n");
 
     EXPECT_EQ(inputProvider.Get_input(), "!@#$%^&*()_+12345");
@@ -40,7 +40,7 @@ TEST(InputTests, HandlesSpecialCharsAndNumbers) {
 
 //4. should handle input errors or exceptions gracefully
 TEST(InputTests, HandlesInputErrorsGracefully) {
-    STDinput inputProvider;
+    STDInput inputProvider;
 
     cin.setstate(failbit); // simulate error
 
