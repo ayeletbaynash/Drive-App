@@ -13,7 +13,7 @@ class AddCommand : public ICommand {
 public:
     AddCommand() = default; //constructor
     ~AddCommand() override = default; //destructor - prevents memory leaks
-    void execute(std::string& args, ICompress* compressor, IOutput* output) override;
+    void execute(std::string& file_info, ICompress* compressor, IOutput* output) override;
 
     };
     #endif
