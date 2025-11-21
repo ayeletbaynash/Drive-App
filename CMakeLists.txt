@@ -14,5 +14,12 @@ FetchContent_Declare(
 set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(googletest)
 
-add_executable(runTests tests/STDinput_test.cpp src/STDInput.cpp)
+add_executable(
+            runTests
+            src/STDInput.cpp
+            src/AddCommand.cpp
+            tests/STDInput_test.cpp
+            tests/STDinput_test.cpp
+            tests/add_tests.cpp 
+            tests/RLEcompress_test.cpp)
 target_link_libraries(runTests gtest_main)

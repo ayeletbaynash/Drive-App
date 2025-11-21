@@ -1,6 +1,6 @@
 #include <gtest/gtest.h> 
 #include "../src/IInput.h"
-#include "STDinput.h"
+#include "STDInput.h"
 #include <iostream>
 
 using namespace std;
