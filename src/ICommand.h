@@ -10,7 +10,7 @@ class IOutput;
 class ICommand {
 public:
     virtual ~ICommand() = default; // virtual destructor - prevents memory leaks
-    virtual void execute(std::string& file_info, ICompress* compressor, IOutput* output) = 0;
+    virtual void execute(const std::string& file_info, ICompress* compressor, IOutput* output) = 0;
 };
 
 #endif

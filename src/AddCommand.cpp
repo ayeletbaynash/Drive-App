@@ -1,17 +1,16 @@
 #include "ICommand.h"
 #include "ICompress.h"
+#include "AddCommand.h"
 #include <sstream>
+#include <filesystem>
+#include <fstream>
 using namespace std;
-#include <string>
-#include "ICompress.h"
-#include "IOutput.h"
+namespace fs = std::filesystem;
 
-//The class AddCommand inherits from the ICommand interface.
-//It is responsible for adding new files with compress content to the system.
-class AddCommand : public ICommand {
-public:
-    AddCommand();
-    void execute(std::string& file_info, ICompress* compressor, IOutput* output) {
+
+//the functuin responsible for adding new files with compress content to the system.
+
+    void AddCommand::execute(const std::string& file_info, ICompress* compressor, IOutput* output) {
         //check if ENV VAR exist, if not- return
         const char* dir = std::getenv("PROJECT_DIR");
         if (!dir) return;
@@ -35,6 +34,16 @@ public:
         //compress the content
         string content_compress = compressor->compress(content);
 
-    }
+        //build path with ENV VAR
+         fs::path full_path = fs::path(dir) / filename;
+
+         //check if the file is exist, if yes- return
+         if (fs::exists(full_path)) {
+            return;
+        }
+        //add the content
+        ofstream file(full_path);
+        file << content_compress;
+        file.close();
 
     };

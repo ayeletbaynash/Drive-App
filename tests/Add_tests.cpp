@@ -1,17 +1,35 @@
 #include <gtest/gtest.h>
 #include "AddCommand.h"
-#include "RLECompress.h"
-#include "STDOutput.h"
+#include "ICompress.h"
+#include "IOutput.h"
 #include <filesystem>
 
 namespace fs = std::filesystem;
 
-//function that sets the TEST_PROJECT_DIR environment variable to the given path.
+//creating mock objects in order to produce objects that implement the interfaces 
+//without depending on their real implementations.
+class MockCompress : public ICompress {
+public:
+    std::string compress(const std::string& file) override {
+        return file; 
+    }
+    std::string decompress(const std::string& file) override {
+        return file; 
+    }
+};
+class MockOutput : public IOutput {
+public:
+    void Print(const std::string& result) override {
+    }
+};
+
+
+//function that sets the PROJECT_DIR environment variable to the given path.
 static void setProjectDir(const fs::path& path) {
 #ifdef _WIN32
-    _putenv_s("TEST_PROJECT_DIR", path.string().c_str());
+    _putenv_s("PROJECT_DIR", path.string().c_str());
 #else
-    setenv("TEST_PROJECT_DIR", path.c_str(), 1);
+    setenv("PROJECT_DIR", path.c_str(), 1);
 #endif
 }
 
@@ -19,8 +37,8 @@ static void setProjectDir(const fs::path& path) {
 //this is also a tst for- Test file creation in the directory specified by ENV VAR
 TEST(AddCommandTest, FileIsCreated) {
     //create the arguments of the function
-    RLECompress rleCompress;  // ICompress
-    STDOutput outputdest;     // Ioutput
+    MockCompress compressor; // ICompress
+    MockOutput outputdest;     // Ioutput
 
     //create temporary directory and set environment variable
     fs::path tempDir = fs::temp_directory_path() / "test_add";
@@ -28,7 +46,7 @@ TEST(AddCommandTest, FileIsCreated) {
     setProjectDir(tempDir);
 
     AddCommand add;
-    add.execute("file AAA", &rleCompress, &outputdest);
+    add.execute("file AAA", &compressor, &outputdest);
 
     //check if the file was created successfully
     EXPECT_TRUE(fs::exists(tempDir / "file"));
@@ -40,8 +58,8 @@ TEST(AddCommandTest, FileIsCreated) {
 //should add a file withot a content
 TEST(AddCommandTest, FileWithoutContent) {
     //create the arguments of the function
-    RLECompress rleCompress;
-    STDOutput outputdest;
+    MockCompress compressor; // ICompress
+    MockOutput outputdest;     // Ioutput
 
     //create temporary directory and set environment variable
     fs::path tempDir = fs::temp_directory_path() / "test_add_2";
@@ -50,7 +68,7 @@ TEST(AddCommandTest, FileWithoutContent) {
 
     AddCommand add;
     //chek for add a a file without a content
-    add.execute("fileB", &rleCompress, &outputdest);
+    add.execute("fileB", &compressor, &outputdest);
 
     //check if the file was created successfully
     EXPECT_TRUE(fs::exists(tempDir / "fileB"));
@@ -62,8 +80,8 @@ TEST(AddCommandTest, FileWithoutContent) {
 //should handle adding multiple files
 TEST(AddCommandTest, AddingMultipleFiles) {
     //create the arguments of the function
-    RLECompress rleCompress;   // ICompress
-    STDOutput outputdest;      // IOutput
+    MockCompress compressor; // ICompress
+    MockOutput outputdest;     // Ioutput
 
     //create temporary directory and set environment variable
     fs::path tempDir = fs::temp_directory_path() / "test_add_multiple";
@@ -73,10 +91,10 @@ TEST(AddCommandTest, AddingMultipleFiles) {
     AddCommand add;
 
     //create multiple files
-    add.execute("file1 AAAA", &rleCompress, &outputdest);
-    add.execute("file2 BBB", &rleCompress, &outputdest);
-    add.execute("file3 CCC", &rleCompress, &outputdest);
-    add.execute("file4 DDDDD", &rleCompress, &outputdest);
+    add.execute("file1 AAAA", &compressor, &outputdest);
+    add.execute("file2 BBB", &compressor, &outputdest);
+    add.execute("file3 CCC", &compressor, &outputdest);
+    add.execute("file4 DDDDD", &compressor, &outputdest);
 
     //check all files exist
     EXPECT_TRUE(fs::exists(tempDir / "file1"));
@@ -91,8 +109,8 @@ TEST(AddCommandTest, AddingMultipleFiles) {
 //should not add file if threre has missing arguments
 TEST(AddCommandTest, MissingArguments) {
     //create the arguments of the function
-    RLECompress rleCompress;
-    STDOutput outputdest;
+    MockCompress compressor; // ICompress
+    MockOutput outputdest;     // Ioutput
 
     //create temporary directory and set environment variable
     fs::path tempDir = fs::temp_directory_path() / "test_add_missing_args";
@@ -102,7 +120,7 @@ TEST(AddCommandTest, MissingArguments) {
     AddCommand add;
 
     //the command with missing argument
-    add.execute("", &rleCompress, &outputdest);
+    add.execute("", &compressor, &outputdest);
     //check that nothing is add
     EXPECT_EQ(std::distance(fs::directory_iterator(tempDir), fs::directory_iterator{}), 0);
 
@@ -112,14 +130,14 @@ TEST(AddCommandTest, MissingArguments) {
 //should not add file  if ENV VAR is missing
 TEST(AddCommandTest, FailIfEnvVarMissing) {
     //create the arguments of the function
-    RLECompress rleCompress;   // ICompress
-    STDOutput outputdest;      // IOutput
+    MockCompress compressor; // ICompress
+    MockOutput outputdest;     // Ioutput
 
-    // Remove or unset TEST_PROJECT_DIR
+    // Remove or unset PROJECT_DIR
 #ifdef _WIN32
-    _putenv_s("TEST_PROJECT_DIR", "");  
+    _putenv_s("PROJECT_DIR", "");
 #else
-    unsetenv("TEST_PROJECT_DIR");      
+    unsetenv("PROJECT_DIR");
 #endif
 
     AddCommand add;
@@ -128,11 +146,11 @@ TEST(AddCommandTest, FailIfEnvVarMissing) {
     SUCCEED();
 
 }
-//should throw an error if a file with the same name already exists
+//should not add file with the same name already exists
 TEST(AddCommandTest, FileAlreadyExists) {
     //create the arguments of the function
-    RLECompress rleCompress;   // ICompress
-    STDOutput outputdest;      // IOutput
+    MockCompress compressor; // ICompress
+    MockOutput outputdest;     // Ioutput
 
     //create temporary directory and set environment variable
     fs::path tempDir = fs::temp_directory_path() / "test_add_existing";
@@ -142,7 +160,7 @@ TEST(AddCommandTest, FileAlreadyExists) {
     AddCommand add;
 
     //create the first file normally
-    add.execute("file AAA", &rleCompress, &outputdest);
+    add.execute("file AAA", &compressor, &outputdest);
     EXPECT_TRUE(fs::exists(tempDir / "file")); //check it exists
 
     //try to create the same file again - should not do it
@@ -151,4 +169,6 @@ TEST(AddCommandTest, FileAlreadyExists) {
     //delete in the end
     fs::remove_all(tempDir);
 }
+
+
 

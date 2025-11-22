@@ -2,13 +2,18 @@ FROM gcc:latest
 
 RUN apt-get update && apt-get install -y cmake
 
-WORKDIR /
+COPY . /usr/src/mytest
 
-COPY . /
 
-#to compile
-RUN cmake .. && make 
+WORKDIR /usr/src/mytest
 
-#Run tests
+ENV PROJECT_DIR=/usr/src/mytest/app
+RUN mkdir -p /usr/src/mytest/app
+
+RUN mkdir build
+WORKDIR /usr/src/mytest/build
+
+RUN cmake .. && make
+
+# Run tests
 CMD ["./runTests"]
-
