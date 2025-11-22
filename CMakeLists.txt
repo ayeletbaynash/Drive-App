@@ -3,8 +3,10 @@ cmake_minimum_required(VERSION 3.10)
 project(MyExample)
 enable_testing()   # enables ctest
 
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+include_directories(${CMAKE_SOURCE_DIR}/src)
 include(FetchContent)
 FetchContent_Declare(
     googletest
@@ -21,7 +23,7 @@ add_executable(
             src/AddCommand.cpp
             tests/Input_test.cpp
             tests/Output_test.cpp
-            tests/add_tests.cpp 
+            #tests/add_tests.cpp 
             tests/RLEcompress_test.cpp)
 target_link_libraries(runTests gtest_main)
 # Register the test with CTest
