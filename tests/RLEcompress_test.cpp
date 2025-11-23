@@ -1,5 +1,5 @@
 #include "gtest/gtest.h"
-#include "RLECompress.h" 
+#include "RLEcompress.h" 
 #include <string>
 
 // Defining the Escape Delimiter as a constant for the tests
@@ -68,9 +68,10 @@ TEST_F(RLECompressionTest, ShouldHandleAllMultiDigitCounts) {
     // Test 3: Upper boundary (999)
     std::string raw_data_max(999, '9'); 
     raw_data_max += "Z";
+    std::string expected_compressed = "\\999%9\\1Z";
     // Note: The '9' is treated as a data character being counted 999 times.
-    EXPECT_EQ("\\9999\\1Z", rle_compressor.compress(raw_data_max)); 
-    EXPECT_EQ(raw_data_max, rle_compressor.decompress("99991Z"));
+    EXPECT_EQ(expected_compressed, rle_compressor.compress(raw_data_max)); 
+    EXPECT_EQ(raw_data_max, rle_compressor.decompress(expected_compressed));
 }
 
 // Test edge Case - No Repetition
@@ -138,12 +139,25 @@ TEST_F(RLECompressionTest, ShouldConsumeOnlyOneCharacterAfterCount) {
 // Test for Non-Alpha/Numeric Characters
 TEST_F(RLECompressionTest, ShouldHandleAllValidCharacterTypes) {
     // Input contains letters, spaces, digits as data, and symbols.
-    std::string raw_data = "AA B##33C$$!!@"; 
-    std::string expected_compressed = "\\2A\\1 \\1B\\2#\\23\\2$\\2!\\1@"; 
+    std::string raw_data = "AA B##C$$!!@888"; 
+    std::string expected_compressed = "\\2A\\1 \\1B\\2#\\1C\\2$\\2!\\1@\\3%8"; 
 
     std::string compressed = rle_compressor.compress(raw_data);
     EXPECT_EQ(expected_compressed, compressed) << "Compression failed on mixed special characters.";
 
     std::string decompressed = rle_compressor.decompress(compressed);
     EXPECT_EQ(raw_data, decompressed) << "Decompression failed on restoring mixed characters.";
+}
+
+// Test for Numeric Characters
+TEST_F(RLECompressionTest, ShouldHandleAllNumericCharacterTypes) {
+    // Input contains letters, spaces, digits as data, and symbols.
+    std::string raw_data = "AA888999914"; 
+    std::string expected_compressed = "\\2A\\3%8\\4%9\\1%1\\1%4"; 
+
+    std::string compressed = rle_compressor.compress(raw_data);
+    EXPECT_EQ(expected_compressed, compressed) << "Compression failed on mixed numeric characters.";
+
+    std::string decompressed = rle_compressor.decompress(compressed);
+    EXPECT_EQ(raw_data, decompressed) << "Decompression failed on restoring numeric characters.";
 }

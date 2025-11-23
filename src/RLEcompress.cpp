@@ -1,4 +1,4 @@
-#include "RLECompress.h" 
+#include "RLEcompress.h" 
 #include <sstream>      
 #include <algorithm>
 #include <string>
@@ -9,6 +9,7 @@ using namespace std;
 
 // Defining the Delimiter Character placed at the START of a count sequence.
 const char ESCAPE_DELIMITER = '\\'; 
+const char ESCAPE_CHAR = '%'; // New escape character for data
 
 // Implementation of the COMPRESS function 
 std::string RLECompression::compress(const std::string& raw_data) {
@@ -17,9 +18,9 @@ std::string RLECompression::compress(const std::string& raw_data) {
     }
 
     stringstream ss;
-    int n = raw_data.length();
+    size_t n = raw_data.size();
     
-    for (int i = 0; i < n; ++i) {
+    for (size_t i = 0; i < n; ++i) {
         int count = 1;
         
         // Count sequences: Counts consecutive identical characters
@@ -28,8 +29,18 @@ std::string RLECompression::compress(const std::string& raw_data) {
             i++;
         }
         
-        // The compressed data 
-        ss << ESCAPE_DELIMITER << count << raw_data[i];
+        char character_to_encode = raw_data[i];
+        
+        ss << ESCAPE_DELIMITER;
+        ss << count;
+
+        // Double Escape Check: If the character is a digit or the delimiter itself
+        // (This ensures the Decompress function knows the next character is literal data, not a control element).
+        if (std::isdigit(character_to_encode) || character_to_encode == ESCAPE_DELIMITER) {
+            ss << ESCAPE_CHAR;
+        }
+
+        ss << character_to_encode;
     }
     
     return ss.str();
@@ -73,17 +84,22 @@ std::string RLECompression::decompress(const std::string& compressed_data) {
             return decompressed.str(); 
         }
         
-        // Read the Character (Must be at index j)
-        if (j >= n){
-            return decompressed.str(); // return partial result
-            // throw std::invalid_argument("Malformed RLE input: missing character after count");
-        }
+        // 5. Read Character or Escape Sequence
+        if (j >= n) return decompressed.str();
 
+        // Check if the next character is the data escape character ('%')
+        if (compressed_data[j] == ESCAPE_CHAR) {
+            j++; // Advance past the Data Escape Character ('%')
+        }
+        
+        // Read the Data Character: 'j' is now pointing at the actual character
+        if (j >= n) return decompressed.str(); 
         char character = compressed_data[j];
         
         // Build Output: Append the character 'count' times
         if (count > 0) {
-            decompressed.append(count, character);
+            std::string repeated_chars(count, character); 
+            decompressed << repeated_chars;
         }
 
         i = j + 1; 
