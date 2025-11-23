@@ -80,12 +80,12 @@ TEST_F(RLECompressionTest, ShouldHandleInputWithNoRepetition) {
     std::string expected_compressed = "\\1A\\1B\\1C\\1D\\1E\\1F\\1G";
     std::string compressed = rle_compressor.compress(raw_data);
     
-//     // Verify the algorithm returns the 1X1Y1Z... sequence.
-//     EXPECT_EQ(expected_compressed, compressed) << "Compression failed on non-repeating sequence.";
+    // Verify the algorithm returns the 1X1Y1Z... sequence.
+    EXPECT_EQ(expected_compressed, compressed) << "Compression failed on non-repeating sequence.";
 
-//     // Verify decompression restores the original.
-//     EXPECT_EQ(raw_data, rle_compressor.decompress(compressed)) << "Decompression failed on non-repeating sequence.";
-// }
+    // Verify decompression restores the original.
+    EXPECT_EQ(raw_data, rle_compressor.decompress(compressed)) << "Decompression failed on non-repeating sequence.";
+}
 
 // Test Edge Case - Newline Characters
 TEST_F(RLECompressionTest, ShouldHandleInputWithNewlineCharacters) {
@@ -120,7 +120,7 @@ TEST_F(RLECompressionTest, ShouldHandleMalformedRLEInputGracefully) {
         << "Decompression failed to read contiguous digits as one count.";
 
     // Input that does not start with a delimiter (Initial Format Violation)
-    // The code should return empty, because the format is required to start with '\'.
+    // The code should return empty, because the format is required to start with '\\'.
     std::string malformed_input_4 = "3A\\2B"; 
     EXPECT_EQ("", rle_compressor.decompress(malformed_input_4)) 
     << "Decompression must stop and return empty when input does not start with delimiter.";
@@ -130,11 +130,11 @@ TEST_F(RLECompressionTest, ShouldHandleMalformedRLEInputGracefully) {
 TEST_F(RLECompressionTest, ShouldConsumeOnlyOneCharacterAfterCount) {
     std::string compressed_data = "\\3A\\2B";
     
-//     std::string expected_decompressed = "AAABB"; 
+     std::string expected_decompressed = "AAABB"; 
 
-//     std::string decompressed = rle_compressor.decompress(compressed_data);
-//     EXPECT_EQ(expected_decompressed, decompressed) << "Decompression failed to parse multiple sequences correctly.";
-// }
+     std::string decompressed = rle_compressor.decompress(compressed_data);
+     EXPECT_EQ(expected_decompressed, decompressed) << "Decompression failed to parse multiple sequences correctly.";
+}
 
 // Test for Non-Alpha/Numeric Characters
 TEST_F(RLECompressionTest, ShouldHandleAllValidCharacterTypes) {
@@ -142,8 +142,8 @@ TEST_F(RLECompressionTest, ShouldHandleAllValidCharacterTypes) {
     std::string raw_data = "AA B##C$$!!@888"; 
     std::string expected_compressed = "\\2A\\1 \\1B\\2#\\1C\\2$\\2!\\1@\\3%8"; 
 
-//     std::string compressed = rle_compressor.compress(raw_data);
-//     EXPECT_EQ(expected_compressed, compressed) << "Compression failed on mixed special characters.";
+    std::string compressed = rle_compressor.compress(raw_data);
+    EXPECT_EQ(expected_compressed, compressed) << "Compression failed on mixed special characters.";
 
     std::string decompressed = rle_compressor.decompress(compressed);
     EXPECT_EQ(raw_data, decompressed) << "Decompression failed on restoring mixed characters.";
