@@ -9,15 +9,15 @@ using namespace std;
 namespace fs = std::filesystem;
 
 
-//the functuin responsible for adding new files with compress content to the system.
+//the function responsible for adding new files with compress content to the system.
 
     void AddCommand::execute(const std::string& file_info, ICompress* compressor, Output* output) {
         //check if ENV VAR exist, if not- return
         const char* dir = std::getenv("PROJECT_DIR");
         if (!dir) return;
         
-        //check if file_info is not empty. if yes- return
-        if (file_info.empty()) {
+        //check if file_info is not empty or start with " " . if yes- return
+        if (file_info.empty() ||file_info[0] == ' ') {
         return;
         }
         //split between file name and

@@ -23,11 +23,13 @@ add_executable(
             src/AddCommand.cpp
             src/Output.cpp
             src/SearchCommand.cpp
+            src/GetCommand.cpp
             tests/Input_test.cpp
             tests/Output_test.cpp
             tests/Add_tests.cpp 
-            #tests/RLEcompress_test.cpp
+            tests/RLEcompress_test.cpp
             tests/Search_test.cpp
+            tests/GetCommand_tests.cpp 
             )
 target_link_libraries(runTests gtest_main)
 # Register the test with CTest
