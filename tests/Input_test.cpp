@@ -1,5 +1,5 @@
 #include <gtest/gtest.h> 
-#include "../src/Input.h"
+#include "Input.h"
 #include <iostream>
 
 //1. should return user input correctly
