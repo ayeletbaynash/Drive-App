@@ -1,4 +1,7 @@
 #include <gtest/gtest.h>
+#include "ICompress.h"
+#include "Output.h"
+#include "GetCommand.h"
 #include <filesystem>
 #include <fstream>
 #include <string>
@@ -130,7 +133,7 @@ TEST(GetCommandTest, MissingArguments) {
      fs::remove_all(tempDir);
 }
 
-//should not get file if the file name start with space
+//should not get content if the file name start with space
 TEST(GetCommandTest, FileNameStartWithSpace) {
      //create temporary directory and set environment variable
     fs::path tempDir = fs::temp_directory_path() / "test_get_file_name_start_with_space";
@@ -149,6 +152,27 @@ TEST(GetCommandTest, FileNameStartWithSpace) {
      //delete in the end
      fs::remove_all(tempDir);
 }
+
+//should not get content if the file name end with space
+TEST(GetCommandTest, FileNameEndWithSpace) {
+     //create temporary directory and set environment variable
+    fs::path tempDir = fs::temp_directory_path() / "test_get_file_name_end_with_space";
+    PrepareTestEnv(tempDir);
+    GetCommand get; 
+
+    //create the arguments of the function
+    std::stringstream ss;       // Create an output string stream to mock a stream
+    Output test_output(ss);     // Initialize an output with the mock stream
+    MockCompress compressor;    // ICompress
+
+//check if the there is no result
+    get.execute("file1 ", &compressor, &test_output);
+    EXPECT_EQ(ss.str(), "");
+
+     //delete in the end
+     fs::remove_all(tempDir);
+}
+
 
 
 //Test file reading in the directory specified by ENV VAR

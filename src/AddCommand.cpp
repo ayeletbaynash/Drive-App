@@ -9,7 +9,7 @@ using namespace std;
 namespace fs = std::filesystem;
 
 
-//the functuin responsible for adding new files with compress content to the system.
+//the function responsible for adding new files with compress content to the system.
 
     void AddCommand::execute(const std::string& file_info, ICompress* compressor, Output* output) {
         //check if ENV VAR exist, if not- return
