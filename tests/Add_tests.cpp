@@ -37,7 +37,7 @@ static void setProjectDir(const fs::path& path) {
 TEST(AddCommandTest, FileIsCreated) {
     //create the arguments of the function
     MockCompress compressor; // ICompress
-    MockOutput outputdest;     // Ioutput
+    MockOutput outputdest;     // output
 
     //create temporary directory and set environment variable
     fs::path tempDir = fs::temp_directory_path() / "test_add";
@@ -58,7 +58,7 @@ TEST(AddCommandTest, FileIsCreated) {
 TEST(AddCommandTest, FileWithoutContent) {
     //create the arguments of the function
     MockCompress compressor; // ICompress
-    MockOutput outputdest;     // Ioutput
+    MockOutput outputdest;     // Output
 
     //create temporary directory and set environment variable
     fs::path tempDir = fs::temp_directory_path() / "test_add_2";
@@ -80,7 +80,7 @@ TEST(AddCommandTest, FileWithoutContent) {
 TEST(AddCommandTest, AddingMultipleFiles) {
     //create the arguments of the function
     MockCompress compressor; // ICompress
-    MockOutput outputdest;     // Ioutput
+    MockOutput outputdest;     // Output
 
     //create temporary directory and set environment variable
     fs::path tempDir = fs::temp_directory_path() / "test_add_multiple";
@@ -109,7 +109,7 @@ TEST(AddCommandTest, AddingMultipleFiles) {
 TEST(AddCommandTest, MissingArguments) {
     //create the arguments of the function
     MockCompress compressor; // ICompress
-    MockOutput outputdest;     // Ioutput
+    MockOutput outputdest;     // Output
 
     //create temporary directory and set environment variable
     fs::path tempDir = fs::temp_directory_path() / "test_add_missing_args";
@@ -126,11 +126,32 @@ TEST(AddCommandTest, MissingArguments) {
     //delete in the end
     fs::remove_all(tempDir);
 }
+//should not add file if the file name start with " "
+TEST(AddCommandTest, NotAddSpace) {
+    //create the arguments of the function
+    MockCompress compressor; // ICompress
+    MockOutput outputdest;     // Output
+
+    //create temporary directory and set environment variable
+    fs::path tempDir = fs::temp_directory_path() / "test_add_file_name_start_space";
+    fs::create_directories(tempDir);
+    setProjectDir(tempDir);
+
+    AddCommand add;
+
+    //the command with missing argument
+    add.execute(" file abcd", &compressor, &outputdest);
+    //check that nothing is add
+    EXPECT_EQ(std::distance(fs::directory_iterator(tempDir), fs::directory_iterator{}), 0);
+
+    //delete in the end
+    fs::remove_all(tempDir);
+}
 //should not add file  if ENV VAR is missing
 TEST(AddCommandTest, FailIfEnvVarMissing) {
     //create the arguments of the function
     MockCompress compressor; // ICompress
-    MockOutput outputdest;     // Ioutput
+    MockOutput outputdest;     // Output
 
     // Remove or unset PROJECT_DIR
 #ifdef _WIN32
@@ -149,7 +170,7 @@ TEST(AddCommandTest, FailIfEnvVarMissing) {
 TEST(AddCommandTest, FileAlreadyExists) {
     //create the arguments of the function
     MockCompress compressor; // ICompress
-    MockOutput outputdest;     // Ioutput
+    MockOutput outputdest;     // Output
 
     //create temporary directory and set environment variable
     fs::path tempDir = fs::temp_directory_path() / "test_add_existing";
