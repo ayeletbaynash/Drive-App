@@ -19,7 +19,7 @@ FetchContent_MakeAvailable(googletest)
 
 add_executable(
             runTests
-            #src/Input.cpp
+            src/Input.cpp
             src/AddCommand.cpp
             src/Output.cpp
             src/RLEcompress.cpp
