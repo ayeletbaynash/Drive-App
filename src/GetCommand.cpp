@@ -1,0 +1,56 @@
+#include "ICommand.h"
+#include "ICompress.h"
+#include "Output.h"
+#include "GetCommand.h"
+#include <sstream>
+#include <filesystem>
+#include <fstream>
+using namespace std;
+namespace fs = std::filesystem;
+
+// the function is responsible for returning the decompress content acoording to file name
+void GetCommand::execute(const std::string& file_info, ICompress* compressor, Output* output) {
+        //check if ENV VAR exist, if not- return
+        const char* dir = std::getenv("PROJECT_DIR");
+        if (!dir) return;
+        
+        //check if file_info is not empty or start with " " . if yes- return
+        if (file_info.empty() ||file_info[0] == ' ') {
+        return;
+        }
+        //split between file name and
+        //take file name
+        stringstream ss(file_info);
+        string filename;
+        ss >> filename;
+        //take content
+        string content;
+        getline(ss, content);
+        //check if there is a space after the file name- if yes- return 
+        if (!content.empty() && content[0] == ' ')
+        return;
+
+        //build path with ENV VAR
+        fs::path full_path = fs::path(dir) / filename;
+
+        //check if the file is exist, if no- return
+         if (!fs::exists(full_path)) {
+            return;
+        }
+        //open the file for reading
+        std::ifstream file(full_path);
+        if (!file) return; //if i cant read the file- return without 
+        //read content from the file
+        std::stringstream buffer;
+        buffer << file.rdbuf();
+        string content_compress = buffer.str();//convert all to string
+        file.close();
+        //decompress the content
+        string full_content = compressor->decompress(content_compress);
+        //print the content by using Output
+        output->write(full_content);
+        return;
+    }
+
+
+
