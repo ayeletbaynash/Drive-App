@@ -1,5 +1,6 @@
 #include "ICommand.h"
 #include "ICompress.h"
+#include "Output.h"
 #include "AddCommand.h"
 #include <sstream>
 #include <filesystem>
@@ -10,7 +11,7 @@ namespace fs = std::filesystem;
 
 //the functuin responsible for adding new files with compress content to the system.
 
-    void AddCommand::execute(const std::string& file_info, ICompress* compressor, IOutput* output) {
+    void AddCommand::execute(const std::string& file_info, ICompress* compressor, Output* output) {
         //check if ENV VAR exist, if not- return
         const char* dir = std::getenv("PROJECT_DIR");
         if (!dir) return;

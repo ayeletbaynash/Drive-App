@@ -1,13 +1,12 @@
 #include <gtest/gtest.h>
 #include "AddCommand.h"
 #include "ICompress.h"
-#include "IOutput.h"
+#include "Output.h"
 #include <filesystem>
 
 namespace fs = std::filesystem;
 
-//creating mock objects in order to produce objects that implement the interfaces 
-//without depending on their real implementations.
+//creating mock objects without depending on the real implementations.
 class MockCompress : public ICompress {
 public:
     std::string compress(const std::string& file) override {
@@ -17,10 +16,10 @@ public:
         return file; 
     }
 };
-class MockOutput : public IOutput {
+class MockOutput : public Output {
 public:
-    void Print(const std::string& result) override {
-    }
+    MockOutput(std::ostream& out = std::cout) : Output(out) {}
+    void write(std::string) { }  
 };
 
 
