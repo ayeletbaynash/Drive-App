@@ -1,7 +1,7 @@
 #include "AddCommand.h"
 #include "GetCommand.h"
 #include "SearchCommand.h"
-#include "RLEcompress.h" 
+#include "RLECompress.h"
 #include "App.h"
 #include "Input.h"
 #include "Output.h"

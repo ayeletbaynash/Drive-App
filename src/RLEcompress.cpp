@@ -1,4 +1,4 @@
-#include "RLEcompress.h" 
+#include "RLECompress.h" 
 #include <sstream>      
 #include <algorithm>
 #include <string>
@@ -12,7 +12,7 @@ const char ESCAPE_DELIMITER = '\\';
 const char ESCAPE_CHAR = '%'; // New escape character for data
 
 // Implementation of the COMPRESS function 
-std::string RLECompression::compress(const std::string& raw_data) {
+std::string RLECompress::compress(const std::string& raw_data) {
     if (raw_data.empty()) {
         return "";
     }
@@ -34,9 +34,12 @@ std::string RLECompression::compress(const std::string& raw_data) {
         ss << ESCAPE_DELIMITER;
         ss << count;
 
-        // Double Escape Check: If the character is a digit or the delimiter itself
-        // (This ensures the Decompress function knows the next character is literal data, not a control element).
-        if (std::isdigit(character_to_encode) || character_to_encode == ESCAPE_DELIMITER) {
+        // Double Escape Check: If the character is a digit, the delimiter itself,
+        // or the escape marker itself (ESCAPE_CHAR) — escape it so decompressor
+        // won't confuse data with control markers.
+        if (std::isdigit(static_cast<unsigned char>(character_to_encode)) ||
+            character_to_encode == ESCAPE_DELIMITER ||
+            character_to_encode == ESCAPE_CHAR) {
             ss << ESCAPE_CHAR;
         }
 
@@ -47,13 +50,13 @@ std::string RLECompression::compress(const std::string& raw_data) {
 }
 
 // Implementation of the DECOMPRESS function 
-std::string RLECompression::decompress(const std::string& compressed_data) {
+std::string RLECompress::decompress(const std::string& compressed_data) {
     if (compressed_data.empty()) {
         return "";
     }
 
     stringstream decompressed;
-    int n = compressed_data.length();
+    int n = static_cast<int>(compressed_data.length());
     
     for (int i = 0; i < n; ) { 
         
@@ -66,7 +69,7 @@ std::string RLECompression::decompress(const std::string& compressed_data) {
         // Read the Count (Greedy): Extracts all contiguous digits as one integer count
         std::string count_str = "";
         int j = i;
-        while (j < n && isdigit(compressed_data[j])) {
+        while (j < n && isdigit(static_cast<unsigned char>(compressed_data[j]))) {
             count_str += compressed_data[j];
             j++;
         }
@@ -84,7 +87,7 @@ std::string RLECompression::decompress(const std::string& compressed_data) {
             return decompressed.str(); 
         }
         
-        // 5. Read Character or Escape Sequence
+        // Read Character or Escape Sequence
         if (j >= n) return decompressed.str();
 
         // Check if the next character is the data escape character ('%')
