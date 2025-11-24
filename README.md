@@ -1,10 +1,12 @@
 # Drive-App
-Drive App is a simple file management simulation. It allows you to:
+Drive App is a simple file management simulation. It allows you to:  
 Add files with content, get files and search for text across files
 
 **Command	Description**
-add [file name] [text]	Adds a file with the given name and content.\n
+add [file name] [text]	Adds a file with the given name and content.
+
 get [file name]	Retrieves the content of the specified file.
+
 search [text]	Searches all files for the given text. 
 
 **Example Usage**
