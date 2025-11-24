@@ -2,9 +2,6 @@
 #include "RLEcompress.h" 
 #include <string>
 
-// Defining the Escape Delimiter as a constant for the tests
-const char ESCAPE_DELIMITER = '\\';
-
 // Test Fixture Setup
 class RLECompressionTest : public ::testing::Test {
 protected:
@@ -160,4 +157,28 @@ TEST_F(RLECompressionTest, ShouldHandleAllNumericCharacterTypes) {
 
     std::string decompressed = rle_compressor.decompress(compressed);
     EXPECT_EQ(raw_data, decompressed) << "Decompression failed on restoring numeric characters.";
+}
+
+// Test that mixed characters including digits, %, and backslash are compressed and decompressed correctly
+TEST_F(RLECompressionTest, ShouldHandleMixedEscapeSensitiveCharacters) {
+    std::string raw_data = "5%\\55%%\\\\";
+    std::string compressed = rle_compressor.compress(raw_data);
+    std::string decompressed = rle_compressor.decompress(compressed);
+
+    EXPECT_EQ(raw_data, decompressed);
+}
+
+// Test that all ASCII characters (0-127) are handled correctly
+TEST(RLETest, AllAsciiCharacters) {
+    RLECompression rle;
+
+    std::string all_ascii;
+    for (int i = 0; i < 128; i++) {
+        all_ascii.push_back(static_cast<char>(i));
+    }
+
+    std::string compressed = rle.compress(all_ascii);
+    std::string decompressed = rle.decompress(compressed);
+
+    EXPECT_EQ(decompressed, all_ascii);
 }
