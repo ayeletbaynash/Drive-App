@@ -26,7 +26,6 @@ add_executable(
             src/App.cpp
             src/SearchCommand.cpp
             src/GetCommand.cpp
-            src/main.cpp
             #tests/Input_test.cpp
             #tests/Output_test.cpp
             #tests/Add_tests.cpp 
