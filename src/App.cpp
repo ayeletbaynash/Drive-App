@@ -19,10 +19,10 @@ void App::run() {
             break; 
         }
         if (line.empty()) {
-            break; 
+            continue; 
         }
 
-        if (isspace(line[0])) return; // Stop current run if line starts with space
+        if (isspace(line[0])) continue; // Skip current run if line starts with space
         
         // split the string to command and file info
         std::stringstream ss(line);
