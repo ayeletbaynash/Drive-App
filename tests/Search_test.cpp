@@ -145,3 +145,38 @@ TEST(SearchCommandTests, HandlesSearchOfPrefixAndSuffix) {
     fs::remove_all(tempDir);   // Delete in the end
 }
 
+// 6. should return nothing if dir is empty, not throw exception
+TEST(SearchCommandTests, HandlesEmptyDir) {
+    fs::path tempDir = fs::temp_directory_path() / "search_test_6";     // Create temp dir
+    fs::create_directories(tempDir); // Create empty test files
+    setProjectDir(tempDir);  // Setting the environment variable - where SEARCH will look for files
+    SearchCommand search; 
+
+    //create the arguments of the function
+    std::stringstream ss;       // Create an output string stream to mock a stream
+    Output test_output(ss);     // Initialize an output with the mock stream
+    MockCompress compressor;    // ICompress
+
+    search.execute("", &compressor, &test_output); // search for content
+    EXPECT_EQ(ss.str(), "\n");  // Return empty 
+    fs::remove_all(tempDir);   // Delete in the end
+}
+
+// 7. should find all content in prefixes and suffixes correctly including spaces
+TEST(SearchCommandTests, HandlesSearchContainigSpace) {
+    fs::path tempDir = fs::temp_directory_path() / "search_test_7";     // Create temp dir
+    PrepareTestEnv(tempDir); // Create test files
+
+    SearchCommand search; 
+
+    //create the arguments of the function
+    std::stringstream ss;       // Create an output string stream to mock a stream
+    Output test_output(ss);     // Initialize an output with the mock stream
+    MockCompress compressor;    // ICompress
+
+    search.execute(" or", &compressor, &test_output); // search for content
+    // Return files that include or: hello w(or)ld, Cats (or) Dogs witout order sensitivity
+    std::string result = ss.str();
+    EXPECT_TRUE(result == "notes2\n");
+    fs::remove_all(tempDir);   // Delete in the end
+}
