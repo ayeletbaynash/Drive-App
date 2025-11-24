@@ -2,12 +2,12 @@
 #include "Input.h"
 #include "ICompress.h"
 #include "Output.h"
-#include "RLEcompress.h"
+#include "RLECompress.h"
 #include "App.h"
 #include "GetCommand.h"
 #include "SearchCommand.h"
-
 #include "AddCommand.h"
+#include <filesystem>
 
 
 namespace fs = std::filesystem;
@@ -55,7 +55,7 @@ std::map<std::string, ICommand*> commands = {
 
     //create app
     App app(&input, &output, &compressor, commands);
-    app.Run();
+    app.run();
 
     //check if the file was created successfully
     EXPECT_TRUE(fs::exists(tempDir / "file1"));
@@ -98,7 +98,7 @@ TEST(MainIntegration, ShouldExecuteGetCommandCorrectly) {
 
     //create app
     App app(&input, &output, &compressor, commands);
-    app.Run();
+    app.run();
 //check if the content return successfully
     EXPECT_EQ(fakeOutput.str(), "XYZ123\n");
 
@@ -146,7 +146,7 @@ TEST(MainIntegration, ShouldExecuteSearchCommandCorrectly) {
 
     //create app
     App app(&input, &output, &compressor, commands);
-    app.Run();
+    app.run();
 //check if the file return successfully
     EXPECT_EQ(fakeOutput.str(), "file1\n");
 
@@ -186,7 +186,7 @@ std::map<std::string, ICommand*> commands = {
 
     //create app
     App app(&input, &output, &compressor, commands);
-    app.Run();
+    app.run();
 
     //check if the output is correct
     EXPECT_EQ(fakeOutput.str(), "file1\nhello hello\n");
@@ -227,7 +227,7 @@ std::map<std::string, ICommand*> commands = {
 
     //create app
     App app(&input, &output, &compressor, commands);
-    app.Run();
+    app.run();
 
     //check if the output is correct
     EXPECT_EQ(fakeOutput.str(), "");
