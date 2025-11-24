@@ -48,7 +48,7 @@ static void PrepareTestEnv(fs::path tempDir){
 }
 
 //1. should return a file name when content is found in this file.
-TEST(SearchCommandTest, ReturnFileNameCorrectly) { 
+TEST(SearchCommandTests, ReturnFileNameCorrectly) { 
 
     fs::path tempDir = fs::temp_directory_path() / "search_test_1";     // Create temp dir
     PrepareTestEnv(tempDir); // Create test files
