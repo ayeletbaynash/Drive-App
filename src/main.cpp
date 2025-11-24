@@ -1,18 +1,17 @@
 #include "AddCommand.h"
-#include "App.h"
 #include "GetCommand.h"
-#include "ICommand.h"
-#include "ICompress.h"
+#include "SearchCommand.h"
+#include "RLEcompress.h"
+#include "App.h"
 #include "Input.h"
 #include "Output.h"
-#include "RLEcompress.h"
-#include "SearchCommand.h"
 
 #include <map>
 #include <string>
-using namespace std;
+
 
 int main() {
+    // Create command objects
     AddCommand addCmd;
     GetCommand getCmd;
     SearchCommand searchCmd;
@@ -23,9 +22,17 @@ int main() {
         {"search", &searchCmd}
     };
 
+    // Create compressor, input, and output
     RLEcompress compressor;
+    Input inputStd;
+    Output outputStd;
 
-    App app(commands);
-    app.run;
+    // Create app
+    App app(&inputStd, &outputStd, &compressor, commands);
 
-    }
+    // Run program
+    app.run();
+
+    return 0;
+
+}
