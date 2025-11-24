@@ -26,13 +26,13 @@ add_executable(
             src/App.cpp
             src/SearchCommand.cpp
             src/GetCommand.cpp
-            #tests/Input_test.cpp
-            #tests/Output_test.cpp
-            #tests/Add_tests.cpp 
-            #tests/RLECompress_test.cpp
-            #tests/App_tests.cpp
-            #tests/GetCommand_tests.cpp
-            #tests/Search_test.cpp
+            tests/Input_test.cpp
+            tests/Output_test.cpp
+            tests/Add_tests.cpp 
+            tests/RLECompress_test.cpp
+            tests/App_tests.cpp
+            tests/GetCommand_tests.cpp
+            tests/Search_test.cpp
             tests/main_tests.cpp
             )
 target_link_libraries(runTests gtest_main)
