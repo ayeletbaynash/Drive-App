@@ -14,7 +14,7 @@ public:
     App(Input* input, Output* output, ICompress* compressor, std::map<std::string, ICommand*> commands);
 
     // Main execution loop
-    void Run();
+    void run();
 
 private:
     Input* input;                    // pointer to input interface
