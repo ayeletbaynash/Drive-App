@@ -24,7 +24,7 @@ int main() {
     };
 
     // Create compressor, input, and output
-    RLEcompress compressor;
+    RLECompress compressor;
     Input inputStd(std::cin);
     Output outputStd(std::cout);
 

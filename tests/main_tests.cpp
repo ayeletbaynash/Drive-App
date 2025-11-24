@@ -8,6 +8,8 @@
 #include "SearchCommand.h"
 #include "AddCommand.h"
 #include <filesystem>
+#include <fstream> 
+#include <string>
 
 
 namespace fs = std::filesystem;
@@ -22,7 +24,7 @@ static void setProjectDir(const fs::path& path) {
 }
 
 //The function creates files in the path that are sent to simulate files added in the application.
-static void createTestFile(const fs::path& path, const string& content) {
+static void createTestFile(const fs::path& path, const std::string& content) {
     std::ofstream out(path);
     out << content;
 }
@@ -42,7 +44,7 @@ TEST(MainIntegration, ShouldExecuteAddCommandCorrectly) {
     std::stringstream fakeOutput;
     Output output(fakeOutput);
 
-    RLEcompress compressor;
+    RLECompress compressor;
     
     AddCommand addCmd;
     GetCommand getCmd;
@@ -79,7 +81,7 @@ TEST(MainIntegration, ShouldExecuteGetCommandCorrectly) {
         std::stringstream fakeOutput;
         Output output(fakeOutput);
 
-        RLEcompress compressor;
+        RLECompress compressor;
 
     //create file in the diractory with compress content
     std::string content = "XYZ123";
@@ -121,7 +123,7 @@ TEST(MainIntegration, ShouldExecuteSearchCommandCorrectly) {
         std::stringstream fakeOutput;
         Output output(fakeOutput);
 
-    RLEcompress compressor;
+    RLECompress compressor;
 
     //create file in the diractory with compress content
     std::string content = "hello world";
@@ -173,7 +175,7 @@ TEST(MainIntegration, MultipleSequentialCommands) {
     std::stringstream fakeOutput;
     Output output(fakeOutput);
 
-    RLEcompress compressor;
+    RLECompress compressor;
     
     AddCommand addCmd;
     GetCommand getCmd;
@@ -214,7 +216,7 @@ TEST(MainIntegration, InvalidInput) {
     std::stringstream fakeOutput;
     Output output(fakeOutput);
 
-    RLEcompress compressor;
+    RLECompress compressor;
     
     AddCommand addCmd;
     GetCommand getCmd;
