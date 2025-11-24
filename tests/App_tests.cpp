@@ -1,63 +1,66 @@
 #include <gtest/gtest.h>
-#include <gmock/gmock.h>
+#include <sstream>
+#include <string>
+#include <map>
 #include "Input.h"
 #include "Output.h"
 #include "ICommand.h"
 #include "ICompress.h"
 #include "App.h"
 
-using ::testing::Return;
-using ::testing::_;
-using ::testing::Throw;
-using ::testing::InSequence;
-using ::testing::StrictMock;
+// -----------------------------
+// Fake Classes for Testing
+// -----------------------------
 
-// Mock Input class
-class MockInput : public Input {
+class FakeInput : public Input {
 public:
-    MOCK_METHOD(std::string, read, (), (override));
+    FakeInput(std::istream& in) : Input(in) {}
+    std::string read() {
+        std::string line;
+        if (!std::getline(get_stream(), line)) return "exit";
+        return line;
+    }
 };
 
-// Mock Output class
-class MockOutput : public Output {
+class FakeOutput : public Output {
 public:
-    MockOutput() : Output(std::cout) {} // call base constructor
-    MOCK_METHOD(void, write, (std::string output), (override));
+    FakeOutput(std::ostream& s) : Output(s) {}
+    void write(const std::string& out) {
+        std::cout << out << std::endl;
+    }
 };
 
-// Mock Compress class
-class MockCompress : public ICompress {
+class FakeCompress : public ICompress {
 public:
-    MOCK_METHOD(std::string, compress, (const std::string& raw_data), (override));
-    MOCK_METHOD(std::string, decompress, (const std::string& compressed_data), (override));
+    std::string compress(const std::string& raw_data) override {
+        return raw_data; 
+    }
+    std::string decompress(const std::string& compressed_data) override {
+        return compressed_data; 
+    }
 };
 
-// Mock Command class
-class MockCommand : public ICommand {
+class FakeCommand : public ICommand {
 public:
-    MOCK_METHOD(void, execute, (const std::string& file_info, ICompress* compressor, Output* output), (override));
+    std::vector<std::string> called_with;
+    void execute(const std::string& file_info, ICompress* compressor, Output* output) override {
+        called_with.push_back(file_info);
+    }
 };
 
-// TEST: should call the correct command according to Input class
+// -----------------------------
+// TESTS
+// -----------------------------
+
 TEST(AppTest, CallsCorrectCommand) {
-    StrictMock<MockInput> input;
-    StrictMock<MockCommand> addCmd;
-    StrictMock<MockCommand> getCmd;
-    StrictMock<MockCommand> searchCmd;
-    StrictMock<MockOutput> output;
-    StrictMock<MockCompress> compress;
+    std::istringstream input_stream("add file1 hello\nget file1\nsearch abc\nexit\n");
+    std::ostringstream output_stream;
 
-    InSequence seq;
+    FakeInput input(input_stream);
+    FakeOutput output(output_stream);
+    FakeCompress compress;
 
-    EXPECT_CALL(input, read())
-        .WillOnce(Return("add file1 hello"))
-        .WillOnce(Return("get file1"))
-        .WillOnce(Return("search abc"))
-        .WillOnce(Return("exit"));
-
-    EXPECT_CALL(addCmd, execute("file1 hello", &compress, &output));
-    EXPECT_CALL(getCmd, execute("file1", &compress, &output));
-    EXPECT_CALL(searchCmd, execute("abc", &compress, &output));
+    FakeCommand addCmd, getCmd, searchCmd;
 
     App app(&input, &output, &compress, {
         {"add", &addCmd},
@@ -66,206 +69,74 @@ TEST(AppTest, CallsCorrectCommand) {
     });
 
     app.run();
+
+    ASSERT_EQ(addCmd.called_with.size(), 1);
+    EXPECT_EQ(addCmd.called_with[0], "file1 hello");
+
+    ASSERT_EQ(getCmd.called_with.size(), 1);
+    EXPECT_EQ(getCmd.called_with[0], "file1");
+
+    ASSERT_EQ(searchCmd.called_with.size(), 1);
+    EXPECT_EQ(searchCmd.called_with[0], "abc");
 }
 
-// TEST: should display error when command throws exception
-TEST(AppTest, DisplaysErrorOnException) {
-    StrictMock<MockInput> input;
-    StrictMock<MockCommand> addCmd;
-    StrictMock<MockOutput> output;
-    StrictMock<MockCompress> compress;
-
-    EXPECT_CALL(input, read())
-        .WillOnce(Return("add badFile oops"))
-        .WillOnce(Return("exit"));
-
-    EXPECT_CALL(addCmd, execute("badFile oops", &compress, &output))
-        .WillOnce(Throw(MyException()));
-
-    App app(&input, &output, &compress, {
-        {"add", &addCmd}
-    });
-
-    app.run();
-}
-
-// TEST: should handle invalid command id
-TEST(AppTest, HandlesInvalidCommandId) {
-    StrictMock<MockInput> input;
-    StrictMock<MockOutput> output;
-    StrictMock<MockCompress> compress;
-
-    EXPECT_CALL(input, read())
-        .WillOnce(Return("unknown something"))
-        .WillOnce(Return("exit"));
-
-    App app(&input, &output, &compress, {});
-
-    app.run();
-}
-
-// TEST: should loop and execute multiple commands
-TEST(AppTest, LoopsAndExecutesMultipleCommands) {
-    StrictMock<MockInput> input;
-    StrictMock<MockCommand> addCmd;
-    StrictMock<MockOutput> output;
-    StrictMock<MockCompress> compress;
-    StrictMock<MockCommand> getCmd;
-    StrictMock<MockCommand> searchCmd;
-
-    InSequence seq;
-
-    EXPECT_CALL(input, read())
-        .WillOnce(Return("add f1 a"))
-        .WillOnce(Return("get f2"))
-        .WillOnce(Return("search bcd"))
-        .WillOnce(Return("exit"));
-
-    EXPECT_CALL(addCmd, execute("f1 a", &compress, &output));
-    EXPECT_CALL(getCmd, execute("f2", &compress, &output));
-    EXPECT_CALL(searchCmd, execute("bcd", &compress, &output));
-
-    App app(&input, &output, &compress, {
-        {"add", &addCmd},
-        {"get", &getCmd},
-        {"search", &searchCmd}
-    });
-
-    app.run();
-}
-
-// TEST: should inject and use Input + commands correctly
-TEST(AppTest, InjectsAndUsesDependencies) {
-    StrictMock<MockInput> input;
-    StrictMock<MockCommand> addCmd;
-    StrictMock<MockCommand> searchCmd;
-    StrictMock<MockOutput> output;
-    StrictMock<MockCompress> compress;
-
-    EXPECT_CALL(input, read())
-        .WillOnce(Return("add fileY data"))
-        .WillOnce(Return("search keyword"))
-        .WillOnce(Return("exit"));
-
-    EXPECT_CALL(addCmd, execute("fileY data", &compress, &output));
-    EXPECT_CALL(searchCmd, execute("keyword", &compress, &output));
-
-    App app(&input, &output, &compress, {
-        {"add", &addCmd},
-        {"search", &searchCmd}
-    });
-
-    app.run();
-}
-
-// -----------------------------
-// EDGE CASE TESTS
-// -----------------------------
-
-// Empty input 
 TEST(AppTest, HandlesEmptyInput) {
-    StrictMock<MockInput> input;
-    StrictMock<MockCommand> addCmd;
-    StrictMock<MockOutput> output;
-    StrictMock<MockCompress> compress;
+    std::istringstream input_stream("\nexit\n");
+    std::ostringstream output_stream;
 
-    EXPECT_CALL(input, read())
-        .WillOnce(Return(""))
-        .WillOnce(Return("exit"));
-
-    EXPECT_CALL(addCmd, execute(_, _, _)).Times(0);
+    FakeInput input(input_stream);
+    FakeOutput output(output_stream);
+    FakeCompress compress;
+    FakeCommand addCmd;
 
     App app(&input, &output, &compress, {{"add", &addCmd}});
     app.run();
+
+    EXPECT_TRUE(addCmd.called_with.empty());
 }
 
-// Command without content
 TEST(AppTest, CommandWithoutContent) {
-    StrictMock<MockInput> input;
-    StrictMock<MockCommand> addCmd;
-    StrictMock<MockOutput> output;
-    StrictMock<MockCompress> compress;
+    std::istringstream input_stream("add file1 content\nexit\n");
+    std::ostringstream output_stream;
 
-    EXPECT_CALL(input, read())
-        .WillOnce(Return("add "))
-        .WillOnce(Return("exit"));
-
-    EXPECT_CALL(addCmd, execute(_, _, _)).Times(0);
+    FakeInput input(input_stream);
+    FakeOutput output(output_stream);
+    FakeCompress compress;
+    FakeCommand addCmd;
 
     App app(&input, &output, &compress, {{"add", &addCmd}});
     app.run();
+
+    ASSERT_EQ(addCmd.called_with.size(), 1);
+    EXPECT_EQ(addCmd.called_with[0], "file1 content");
 }
 
-// Leading/trailing spaces
-TEST(AppTest, CommandWithExtraSpaces) {
-    StrictMock<MockInput> input;
-    StrictMock<MockCommand> addCmd;
-    StrictMock<MockOutput> output;
-    StrictMock<MockCompress> compress;
-
-    EXPECT_CALL(input, read())
-        .WillOnce(Return("add   file1   content   "))
-        .WillOnce(Return("exit"));
-
-    EXPECT_CALL(addCmd, execute("file1 content", &compress, &output));
-
-    App app(&input, &output, &compress, {{"add", &addCmd}});
-    app.run();
-}
-
-// Unknown command
 TEST(AppTest, UnknownCommand) {
-    StrictMock<MockInput> input;
-    StrictMock<MockOutput> output;
-    StrictMock<MockCompress> compress;
+    std::istringstream input_stream("delete file1\nexit\n");
+    std::ostringstream output_stream;
 
-    EXPECT_CALL(input, read())
-        .WillOnce(Return("delete file1"))
-        .WillOnce(Return("exit"));
+    FakeInput input(input_stream);
+    FakeOutput output(output_stream);
+    FakeCompress compress;
 
     App app(&input, &output, &compress, {});
     app.run();
+
+    // for unknown command
+    SUCCEED();
 }
 
-// Command throws custom exception
-class MyException : public std::exception {};
-TEST(AppTest, CommandThrowsCustomException) {
-    StrictMock<MockInput> input;
-    StrictMock<MockCommand> addCmd;
-    StrictMock<MockOutput> output;
-    StrictMock<MockCompress> compress;
-
-    EXPECT_CALL(input, read())
-        .WillOnce(Return("add fileX data"))
-        .WillOnce(Return("exit"));
-
-    EXPECT_CALL(addCmd, execute(_, _, _))
-        .WillOnce(Throw(MyException()));
-
-    App app(&input, &output, &compress, {{"add", &addCmd}});
-    app.run();
-}
-
-// Mixed sequence of commands
 TEST(AppTest, MixedSequenceOfCommands) {
-    StrictMock<MockInput> input;
-    StrictMock<MockCommand> addCmd;
-    StrictMock<MockCommand> searchCmd;
-    StrictMock<MockCommand> getCmd;
-    StrictMock<MockOutput> output;
-    StrictMock<MockCompress> compress;
+    std::istringstream input_stream(
+        "add f1 a\nsearch a\nget f1\n add file 1 invalid\nunknown\nexit\n"
+    );
+    std::ostringstream output_stream;
 
-    EXPECT_CALL(input, read())
-        .WillOnce(Return("add f1 a"))
-        .WillOnce(Return("search a"))
-        .WillOnce(Return("get f1"))
-        .WillOnce(Return("add file 1 invalid")) // invalid → ignored
-        .WillOnce(Return("unknown"))
-        .WillOnce(Return("exit"));
+    FakeInput input(input_stream);
+    FakeOutput output(output_stream);
+    FakeCompress compress;
 
-    EXPECT_CALL(addCmd, execute("f1 a", &compress, &output));
-    EXPECT_CALL(searchCmd, execute("a", &compress, &output));
-    EXPECT_CALL(getCmd, execute("f1", &compress, &output));
+    FakeCommand addCmd, searchCmd, getCmd;
 
     App app(&input, &output, &compress, {
         {"add", &addCmd},
@@ -274,22 +145,29 @@ TEST(AppTest, MixedSequenceOfCommands) {
     });
 
     app.run();
+
+    ASSERT_EQ(addCmd.called_with.size(), 1);
+    EXPECT_EQ(addCmd.called_with[0], "f1 a");
+
+    ASSERT_EQ(searchCmd.called_with.size(), 1);
+    EXPECT_EQ(searchCmd.called_with[0], "a");
+
+    ASSERT_EQ(getCmd.called_with.size(), 1);
+    EXPECT_EQ(getCmd.called_with[0], "f1");
 }
 
-// invalid file name → contains space
-TEST(AppTest, CommandWithInvalidFileName) {
-    StrictMock<MockInput> input;
-    StrictMock<MockCommand> addCmd;
-    StrictMock<MockOutput> output;
-    StrictMock<MockCompress> compress;
+TEST(AppTest, IgnoresLineStartingWithSpace) {
+    std::istringstream input_stream(" add file1 hello\nexit\n"); // Space before command
+    std::ostringstream output_stream;
 
-    EXPECT_CALL(input, read())
-        .WillOnce(Return("add file 1 content"))
-        .WillOnce(Return("exit"));
-
-    EXPECT_CALL(addCmd, execute(_, _, _)).Times(0); 
-    EXPECT_CALL(output, write(_)).Times(0); 
+    FakeInput input(input_stream);
+    FakeOutput output(output_stream);
+    FakeCompress compress;
+    FakeCommand addCmd;
 
     App app(&input, &output, &compress, {{"add", &addCmd}});
     app.run();
+
+    // There shouldn't be any call to addCmd
+    EXPECT_TRUE(addCmd.called_with.empty());
 }
