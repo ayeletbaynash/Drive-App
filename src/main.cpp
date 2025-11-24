@@ -1,7 +1,7 @@
 #include "AddCommand.h"
 #include "GetCommand.h"
 #include "SearchCommand.h"
-#include "RLEcompress.h"
+#include "RLECompress.h"
 #include "App.h"
 #include "Input.h"
 #include "Output.h"
@@ -23,7 +23,7 @@ int main() {
     };
 
     // Create compressor, input, and output
-    RLEcompress compressor;
+    RLECompress compressor;
     Input inputStd;
     Output outputStd;
 

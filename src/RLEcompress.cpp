@@ -1,4 +1,4 @@
-#include "RLEcompress.h" 
+#include "RLECompress.h" 
 #include <sstream>      
 #include <algorithm>
 #include <string>
@@ -12,7 +12,7 @@ const char ESCAPE_DELIMITER = '\\';
 const char ESCAPE_CHAR = '%'; // New escape character for data
 
 // Implementation of the COMPRESS function 
-std::string RLECompression::compress(const std::string& raw_data) {
+std::string RLECompress::compress(const std::string& raw_data) {
     if (raw_data.empty()) {
         return "";
     }
@@ -50,7 +50,7 @@ std::string RLECompression::compress(const std::string& raw_data) {
 }
 
 // Implementation of the DECOMPRESS function 
-std::string RLECompression::decompress(const std::string& compressed_data) {
+std::string RLECompress::decompress(const std::string& compressed_data) {
     if (compressed_data.empty()) {
         return "";
     }

@@ -22,14 +22,14 @@ add_executable(
             src/Input.cpp
             src/AddCommand.cpp
             src/Output.cpp
-            src/RLEcompress.cpp
+            src/RLECompress.cpp
             src/App.cpp
             src/SearchCommand.cpp
             src/GetCommand.cpp
             #tests/Input_test.cpp
             #tests/Output_test.cpp
             #tests/Add_tests.cpp 
-            tests/RLEcompress_test.cpp
+            tests/RLECompress_test.cpp
             #tests/App_tests.cpp
             #tests/GetCommand_tests.cpp
             #tests/Search_test.cpp
