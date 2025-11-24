@@ -39,3 +39,15 @@ target_link_libraries(runTests gtest_main)
 # Register the test with CTest
 include(GoogleTest)
 gtest_discover_tests(runTests)
+
+add_executable(
+    appExec
+    src/Input.cpp
+    src/AddCommand.cpp
+    src/Output.cpp
+    src/RLECompress.cpp
+    src/App.cpp
+    src/SearchCommand.cpp
+    src/GetCommand.cpp
+    src/main.cpp
+)
