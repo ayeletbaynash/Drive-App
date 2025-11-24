@@ -1,16 +1,16 @@
 #include "gtest/gtest.h"
-#include "RLEcompress.h" 
+#include "RLECompress.h" 
 #include <string>
 
 // Test Fixture Setup
-class RLECompressionTest : public ::testing::Test {
+class RLECompressTest : public ::testing::Test {
 protected:
     // Instance of the class under test (RLECompression)
-    RLECompression rle_compressor; 
+    RLECompress rle_compressor; 
 };
 
 // Test Core Functionality (Letters-Only and Integration Check)
-TEST_F(RLECompressionTest, ShouldCompressAndDecompressLettersOnly) {
+TEST_F(RLECompressTest, ShouldCompressAndDecompressLettersOnly) {
     // The raw input string
     std::string raw_data = "AAAABBCDDDD"; 
     // The expected compressed output: \4A\2B\1C\4D
@@ -27,7 +27,7 @@ TEST_F(RLECompressionTest, ShouldCompressAndDecompressLettersOnly) {
 }
 
 // Test edge Case - Empty Input
-TEST_F(RLECompressionTest, ShouldHandleEmptyString) {
+TEST_F(RLECompressTest, ShouldHandleEmptyString) {
     // Compressing an empty string should return an empty string
     EXPECT_EQ("", rle_compressor.compress("")) << "Compression of empty string failed.";
 
@@ -36,7 +36,7 @@ TEST_F(RLECompressionTest, ShouldHandleEmptyString) {
 }
 
 // Test edge Case - Single Character
-TEST_F(RLECompressionTest, ShouldHandleSingleCharacterInput) {
+TEST_F(RLECompressTest, ShouldHandleSingleCharacterInput) {
     std::string raw_data = "X";
     std::string expected_compressed = "\\1X";
     std::string compressed = rle_compressor.compress(raw_data);
@@ -49,7 +49,7 @@ TEST_F(RLECompressionTest, ShouldHandleSingleCharacterInput) {
 }
 
 // Test for Multi-Digit Count Parsing
-TEST_F(RLECompressionTest, ShouldHandleAllMultiDigitCounts) {
+TEST_F(RLECompressTest, ShouldHandleAllMultiDigitCounts) {
     // Test 1: Double-digit count (10+)
     std::string raw_data_double(10, 'A'); 
     raw_data_double += "B";
@@ -72,7 +72,7 @@ TEST_F(RLECompressionTest, ShouldHandleAllMultiDigitCounts) {
 }
 
 // Test edge Case - No Repetition
-TEST_F(RLECompressionTest, ShouldHandleInputWithNoRepetition) {
+TEST_F(RLECompressTest, ShouldHandleInputWithNoRepetition) {
     std::string raw_data = "ABCDEFG"; 
     std::string expected_compressed = "\\1A\\1B\\1C\\1D\\1E\\1F\\1G";
     std::string compressed = rle_compressor.compress(raw_data);
@@ -85,7 +85,7 @@ TEST_F(RLECompressionTest, ShouldHandleInputWithNoRepetition) {
 }
 
 // Test Edge Case - Newline Characters
-TEST_F(RLECompressionTest, ShouldHandleInputWithNewlineCharacters) {
+TEST_F(RLECompressTest, ShouldHandleInputWithNewlineCharacters) {
     std::string raw_data = "A\n\nB"; 
     std::string expected_compressed = "\\1A\\2\n\\1B";
     
@@ -98,7 +98,7 @@ TEST_F(RLECompressionTest, ShouldHandleInputWithNewlineCharacters) {
 }
 
 // Test Error Handling - Malformed RLE Input
-TEST_F(RLECompressionTest, ShouldHandleMalformedRLEInputGracefully) {
+TEST_F(RLECompressTest, ShouldHandleMalformedRLEInputGracefully) {
     // Input missing character after count (leads to unexpected termination)
     std::string malformed_input_1 = "\\3A\\2"; 
     // Expect partial success (AAA) and stop, as the trailing '2' has no char following.
@@ -124,7 +124,7 @@ TEST_F(RLECompressionTest, ShouldHandleMalformedRLEInputGracefully) {
 }
 
 // Test Correct Count/Character Consumption
-TEST_F(RLECompressionTest, ShouldConsumeOnlyOneCharacterAfterCount) {
+TEST_F(RLECompressTest, ShouldConsumeOnlyOneCharacterAfterCount) {
     std::string compressed_data = "\\3A\\2B";
     
      std::string expected_decompressed = "AAABB"; 
@@ -134,7 +134,7 @@ TEST_F(RLECompressionTest, ShouldConsumeOnlyOneCharacterAfterCount) {
 }
 
 // Test for Non-Alpha/Numeric Characters
-TEST_F(RLECompressionTest, ShouldHandleAllValidCharacterTypes) {
+TEST_F(RLECompressTest, ShouldHandleAllValidCharacterTypes) {
     // Input contains letters, spaces, digits as data, and symbols.
     std::string raw_data = "AA B##C$$!!@888"; 
     std::string expected_compressed = "\\2A\\1 \\1B\\2#\\1C\\2$\\2!\\1@\\3%8"; 
@@ -147,7 +147,7 @@ TEST_F(RLECompressionTest, ShouldHandleAllValidCharacterTypes) {
 }
 
 // Test for Numeric Characters
-TEST_F(RLECompressionTest, ShouldHandleAllNumericCharacterTypes) {
+TEST_F(RLECompressTest, ShouldHandleAllNumericCharacterTypes) {
     // Input contains letters, spaces, digits as data, and symbols.
     std::string raw_data = "AA888999914"; 
     std::string expected_compressed = "\\2A\\3%8\\4%9\\1%1\\1%4"; 
@@ -160,7 +160,7 @@ TEST_F(RLECompressionTest, ShouldHandleAllNumericCharacterTypes) {
 }
 
 // Test that mixed characters including digits, %, and backslash are compressed and decompressed correctly
-TEST_F(RLECompressionTest, ShouldHandleMixedEscapeSensitiveCharacters) {
+TEST_F(RLECompressTest, ShouldHandleMixedEscapeSensitiveCharacters) {
     std::string raw_data = "5%\\55%%\\\\";
     std::string compressed = rle_compressor.compress(raw_data);
     std::string decompressed = rle_compressor.decompress(compressed);
@@ -170,7 +170,7 @@ TEST_F(RLECompressionTest, ShouldHandleMixedEscapeSensitiveCharacters) {
 
 // Test that all ASCII characters (0-127) are handled correctly
 TEST(RLETest, AllAsciiCharacters) {
-    RLECompression rle;
+    RLECompress rle;
 
     std::string all_ascii;
     for (int i = 0; i < 128; i++) {
