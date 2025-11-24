@@ -8,9 +8,7 @@
 #include "ICompress.h"
 #include "App.h"
 
-// -----------------------------
-// Fake Classes for Testing
-// -----------------------------
+// Fake Classes for Testing:
 
 class FakeInput : public Input {
 public:
@@ -48,10 +46,10 @@ public:
     }
 };
 
-// -----------------------------
-// TESTS
-// -----------------------------
 
+// Tests:
+
+// Test that valid commands are correctly parsed and executed with the right arguments
 TEST(AppTest, CallsCorrectCommand) {
     std::istringstream input_stream("add file1 hello\nget file1\nsearch abc\nexit\n");
     std::ostringstream output_stream;
@@ -80,6 +78,7 @@ TEST(AppTest, CallsCorrectCommand) {
     EXPECT_EQ(searchCmd.called_with[0], "abc");
 }
 
+// Test that empty input lines are ignored and no commands are executed
 TEST(AppTest, HandlesEmptyInput) {
     std::istringstream input_stream("\nexit\n");
     std::ostringstream output_stream;
@@ -95,6 +94,7 @@ TEST(AppTest, HandlesEmptyInput) {
     EXPECT_TRUE(addCmd.called_with.empty());
 }
 
+// Test that a command with proper file info is executed correctly
 TEST(AppTest, CommandWithoutContent) {
     std::istringstream input_stream("add file1 content\nexit\n");
     std::ostringstream output_stream;
@@ -111,6 +111,7 @@ TEST(AppTest, CommandWithoutContent) {
     EXPECT_EQ(addCmd.called_with[0], "file1 content");
 }
 
+// Test that an unknown command does not cause a crash
 TEST(AppTest, UnknownCommand) {
     std::istringstream input_stream("delete file1\nexit\n");
     std::ostringstream output_stream;
@@ -126,6 +127,7 @@ TEST(AppTest, UnknownCommand) {
     SUCCEED();
 }
 
+// Test a mixed sequence of valid, invalid, and unknown commands
 TEST(AppTest, MixedSequenceOfCommands) {
     std::istringstream input_stream(
         "add f1 a\nsearch a\nget f1\n add file 1 invalid\nunknown\nexit\n"
@@ -156,6 +158,7 @@ TEST(AppTest, MixedSequenceOfCommands) {
     EXPECT_EQ(getCmd.called_with[0], "f1");
 }
 
+// Test that lines starting with a space are ignored
 TEST(AppTest, IgnoresLineStartingWithSpace) {
     std::istringstream input_stream(" add file1 hello\nexit\n"); // Space before command
     std::ostringstream output_stream;
