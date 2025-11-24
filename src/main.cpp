@@ -5,6 +5,7 @@
 #include "App.h"
 #include "Input.h"
 #include "Output.h"
+#include "ICompress.h"
 
 #include <map>
 #include <string>
@@ -24,8 +25,8 @@ int main() {
 
     // Create compressor, input, and output
     RLECompress compressor;
-    Input inputStd;
-    Output outputStd;
+    Input inputStd(std::cin);
+    Output outputStd(std::cout);
 
     // Create app
     App app(&inputStd, &outputStd, &compressor, commands);
