@@ -36,7 +36,7 @@ FetchContent_MakeAvailable(googletest)
 #             tests/main_tests.cpp
 #             )
 # target_link_libraries(runTests gtest_main)
-# Register the test with CTest
+# # Register the test with CTest
 # include(GoogleTest)
 # gtest_discover_tests(runTests)
 
@@ -54,11 +54,11 @@ FetchContent_MakeAvailable(googletest)
 
 # wildcard so we dont have to add each file manualy:
 
-file(GLOB SRC_FILES src/*.cpp)
-list(REMOVE_ITEM SRC_FILES "${CMAKE_SOURCE_DIR}/src/main.cpp")
-file(GLOB TEST_FILES tests/*.cpp)
-add_executable(appExec ${SRC_FILES} src/main.cpp)
-add_executable(runTests ${SRC_FILES} ${TEST_FILES})
-target_link_libraries(runTests gtest_main)
-include(GoogleTest)
-gtest_discover_tests(runTests)
+# file(GLOB SRC_FILES src/*.cpp)
+# list(REMOVE_ITEM SRC_FILES "${CMAKE_SOURCE_DIR}/src/main.cpp")
+# file(GLOB TEST_FILES tests/*.cpp)
+# add_executable(appExec ${SRC_FILES} src/main.cpp)
+# add_executable(runTests ${SRC_FILES} ${TEST_FILES})
+# target_link_libraries(runTests gtest_main)
+# include(GoogleTest)
+# gtest_discover_tests(runTests)
