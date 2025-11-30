@@ -1,12 +1,19 @@
 # Base image with gcc and cmake
 FROM gcc:latest
 
-# Install CMake
-RUN apt-get update && apt-get install -y cmake
+# Install CMake + Python in one contaner 
+RUN apt-get update && apt-get install -y cmake python3 python3-pip
 
-# Copy all source code into the container
-COPY . /usr/src/mytest
+# Set working directory
 WORKDIR /usr/src/mytest
+
+# Copy C++ source and test files
+COPY src/ ./src
+COPY tests/ ./tests
+COPY CMakeLists.txt ./CMakeLists.txt
+
+# Copy Python scripts
+#COPY python_scripts/ ./python_scripts    ->     when created- dont forget to take off # and change name
 
 # Set environment variable
 ENV PROJECT_DIR=/usr/src/mytest/app
