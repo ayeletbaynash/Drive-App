@@ -15,13 +15,13 @@ void DeleteCommand::execute(const std::string& file_info, ICompress* compressor,
     //check if ENV VAR exist, if not- return
     const char* dir = std::getenv("PROJECT_DIR");
     if (!dir){
-        output->write(status_codes[500]);
+        output->write(status_codes.at(500));
         return;
     } 
     
     // Check if file_info is empty or starts with a whitespace character (space, tab, etc.). if yes- return code 400
-    if (file_info.empty() ||std::isspace(content[0])) {
-        output->write(status_codes[400]);
+    if (file_info.empty() ||std::isspace(file_info[0])) {
+        output->write(status_codes.at(400));
         return;
     }
     //split between file name and
@@ -34,7 +34,7 @@ void DeleteCommand::execute(const std::string& file_info, ICompress* compressor,
     getline(ss, content);
     //check if there is a whitespace character after the file name- if yes- return code 400
     if (!content.empty() && std::isspace(content[0])){
-        output->write(status_codes[400]);
+        output->write(status_codes.at(400));
         return;
     }
     //build path with ENV VAR
@@ -42,15 +42,15 @@ void DeleteCommand::execute(const std::string& file_info, ICompress* compressor,
 
     //check if the file is exist, if no- return code 404
         if (!fs::exists(full_path)) {
-        output->write(status_codes[404]);
+        output->write(status_codes.at(404));
         return;
     }
 
     // delete the file
     if (fs::remove(full_path)) {
-        output->write(status_codes[204]);  // file deleted successfully
+        output->write(status_codes.at(204));  // file deleted successfully
     } 
     else {
-        output->write(status_codes[500]);  // failed to delete
+        output->write(status_codes.at(500));  // failed to delete
     }
     }
