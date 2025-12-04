@@ -32,7 +32,7 @@ FetchContent_MakeAvailable(googletest)
              tests/Add_tests.cpp 
 #             tests/RLECompress_test.cpp
 #             tests/App_tests.cpp
-#             tests/GetCommand_tests.cpp
+             tests/GetCommand_tests.cpp
 #             tests/Search_test.cpp
 #             tests/main_tests.cpp
             tests/Delete_tests.cpp
