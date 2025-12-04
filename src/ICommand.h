@@ -1,6 +1,7 @@
 #ifndef ICOMMAND_H
 #define ICOMMAND_H
 #include <string>
+#include <map>
 // Forward declarations  ot the interfaces
 class ICompress;
 class Output;
