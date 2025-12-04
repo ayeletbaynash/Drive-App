@@ -5,6 +5,7 @@
 #include <sstream>
 #include <string>
 #include <cstdlib>
+#include <cctype>
 namespace fs = std::filesystem;
 using std::string;
 using std::stringstream;
@@ -12,7 +13,7 @@ using std::stringstream;
 
 // the function is responsible for delete file according to file name
 void DeleteCommand::execute(const std::string& file_info, ICompress* compressor, Output* output) {
-    //check if ENV VAR exist, if not- return
+    //check if ENV VAR exist, if not- return 
     const char* dir = std::getenv("PROJECT_DIR");
     if (!dir){
         output->write(status_codes.at(500));

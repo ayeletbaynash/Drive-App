@@ -29,7 +29,7 @@ FetchContent_MakeAvailable(googletest)
                 src/DeleteCommand.cpp
 #             tests/Input_test.cpp
 #             tests/Output_test.cpp
-#             tests/Add_tests.cpp 
+             tests/Add_tests.cpp 
 #             tests/RLECompress_test.cpp
 #             tests/App_tests.cpp
 #             tests/GetCommand_tests.cpp
