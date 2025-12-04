@@ -66,7 +66,7 @@ TEST(GetCommandTest, RetrieveAFileSuccessfully) {
 
     //check if the file retrieve successfully
     get.execute("file2", &compressor, &test_output);
-    EXPECT_EQ(ss.str(), "XYZ123\n");
+    EXPECT_EQ(ss.str(), "200 Ok\n\nXYZ123\n");
 
     //delete in the end
      fs::remove_all(tempDir);
@@ -87,9 +87,15 @@ TEST(GetCommandTest, RetrievingMultipleFiles) {
 
     //check if the files retrieve successfully
     get.execute("file1", &compressor, &test_output);
+    EXPECT_EQ(ss.str(), "200 Ok\n\nAAABBBCCC\n");
+    ss.str("");//clean the output print
+    ss.clear();
     get.execute("file2", &compressor, &test_output);
+    EXPECT_EQ(ss.str(), "200 Ok\n\nXYZ123\n");
+    ss.str("");//clean the output print
+    ss.clear();
     get.execute("file3", &compressor, &test_output);
-    EXPECT_EQ(ss.str(), "AAABBBCCC\nXYZ123\nHello World!\n");
+    EXPECT_EQ(ss.str(), "200 Ok\n\nHello World!\n");
 
     //delete in the end
      fs::remove_all(tempDir);
@@ -108,12 +114,12 @@ TEST(GetCommandTest, ReturnEmptyWhenFileNotFound) {
 
     //check if the file not found
     get.execute("file", &compressor, &test_output);
-    EXPECT_EQ(ss.str(), "");
+    EXPECT_EQ(ss.str(), "404 Not Found\n");
 
      //delete in the end
      fs::remove_all(tempDir);
 }
-//Test command with missing arguments -will do nothing 
+//Test command with missing arguments -will send code 400
 TEST(GetCommandTest, MissingArguments) {
      //create temporary directory and set environment variable
     fs::path tempDir = fs::temp_directory_path() / "test_get_missing_argument";
@@ -127,7 +133,7 @@ TEST(GetCommandTest, MissingArguments) {
 
 //check if the there is no result
     get.execute("", &compressor, &test_output);
-    EXPECT_EQ(ss.str(), "");
+    EXPECT_EQ(ss.str(), "400 Bad Request\n");
 
      //delete in the end
      fs::remove_all(tempDir);
@@ -147,7 +153,7 @@ TEST(GetCommandTest, FileNameStartWithSpace) {
 
 //check if the there is no result
     get.execute(" file1", &compressor, &test_output);
-    EXPECT_EQ(ss.str(), "");
+    EXPECT_EQ(ss.str(), "400 Bad Request\n");
 
      //delete in the end
      fs::remove_all(tempDir);
@@ -167,7 +173,7 @@ TEST(GetCommandTest, FileNameEndWithSpace) {
 
 //check if the there is no result
     get.execute("file1 ", &compressor, &test_output);
-    EXPECT_EQ(ss.str(), "");
+    EXPECT_EQ(ss.str(), "400 Bad Request\n");
 
      //delete in the end
      fs::remove_all(tempDir);
@@ -194,7 +200,7 @@ TEST(GetCommandTest, SpecificDirectory) {
 
     //check if the command read only from the right directory
     get.execute("file1", &compressor, &test_output);
-     EXPECT_EQ(ss.str(), "AAABBBCCC\n");
+     EXPECT_EQ(ss.str(), "200 Ok\n\nAAABBBCCC\n");
 
     //delete in the end
     fs::remove_all(tempDir);
@@ -220,7 +226,7 @@ TEST(GetCommandTest, MissingENVVAR) {
 
 //check if the there is no result
     get.execute("file3", &compressor, &test_output);
-    EXPECT_EQ(ss.str(), "");
+    EXPECT_EQ(ss.str(), "500 Internal Server Error\n");
 
      //delete in the end
      fs::remove_all(tempDir);

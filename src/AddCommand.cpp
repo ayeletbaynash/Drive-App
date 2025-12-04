@@ -16,7 +16,7 @@ namespace fs = std::filesystem;
         const char* dir = std::getenv("PROJECT_DIR");
         if (!dir) return;
         
-        //check if file_info is not empty or start with " " . if yes- return
+        //check if file_info is not empty or starts with a whitespace character (space, tab, etc.). if yes- return
         if (file_info.empty() ||file_info[0] == ' ') {
         return;
         }
