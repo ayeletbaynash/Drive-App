@@ -10,7 +10,7 @@
 
 class Multithreading : public IThreads {
 private:
-std::vector[std::thread](std::thread) threads; // Vector to store running threads
+std::vector<std::thread> threads;  // Vector to store running threads
 std::mutex mtx;                    // Protect threads vector
 public:
 Multithreading();

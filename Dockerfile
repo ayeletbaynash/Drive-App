@@ -27,4 +27,4 @@ WORKDIR /usr/src/mytest/build
 RUN cmake .. && make
 
 # Default command: run the main application
-CMD ["./appExec"]
+CMD ["./runTests"]
