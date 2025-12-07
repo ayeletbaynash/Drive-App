@@ -15,10 +15,13 @@ void SearchCommand::execute(const std::string& content_to_search,
                             Output* output) 
 {
     const char* dir = std::getenv("PROJECT_DIR");    // Check if env var exists - saving the env var
-    if (!dir) return;
+    if (!dir) {
+         output->write(status_codes.at(500));       // If not exists- return code 500
+         return;
+    }
 
-    if (content_to_search.empty()) {     // Check if search string is empty
-        output->write("");               // prints only '\n'
+    if (content_to_search.empty()) {            // Check if search string is empty
+        output->write(status_codes.at(400));    // return code 400
         return;
     }
 
@@ -26,6 +29,7 @@ void SearchCommand::execute(const std::string& content_to_search,
 
     // Check directory exists
     if (!fs::exists(project_path) || !fs::is_directory(project_path)) {
+        output->write(status_codes.at(500));    // return code 500
         return; // silent fail
     }
 
@@ -46,15 +50,16 @@ void SearchCommand::execute(const std::string& content_to_search,
         buffer << file.rdbuf();
         std::string file_content = buffer.str();
 
+        std::string filename = entry.path().filename().string();           // Save file name as string to look through
         file_content = compressor->decompress(file_content);               // Decompress the content to search inside
-        if (file_content.find(content_to_search) != std::string::npos) {   // Check if the content appears in file
-            matched_files.push_back(entry.path().filename().string());     // push only filename, not full path
-
+        if (file_content.find(content_to_search) != std::string::npos      // Check if the content appears in file
+            || filename.find(content_to_search) != std::string::npos) {    // or in the file name
+            matched_files.push_back(filename);                             // push only filename, not full path
         }
     }
 
-    if (matched_files.empty()) {     // If nothing found 
-        output->write("");           // Print empty line
+    if (matched_files.empty()) {                // If nothing found 
+        output->write(status_codes.at(404));    // Return not found
         return;
     }
 
