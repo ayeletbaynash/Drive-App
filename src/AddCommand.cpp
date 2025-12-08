@@ -15,11 +15,14 @@ namespace fs = std::filesystem;
     void AddCommand::execute(const std::string& file_info, ICompress* compressor, Output* output) {
         //check if ENV VAR exist, if not- return a code 500
         const char* dir = std::getenv("PROJECT_DIR");
-        if (!dir) return;
-        
-        //check if file_info is not empty or starts with a whitespace character (space, tab, etc.). if yes- return
-        if (file_info.empty() ||file_info[0] == ' ') {
-        return;
+        if (!dir) {
+            output->write(status_codes.at(500));
+            return;
+        }
+        //check if file_info is not empty or starts with a whitespace character (space, tab, etc.). if yes- return code 400
+        if (file_info.empty() ||std::isspace(file_info[0])) {
+            output->write(status_codes.at(400));
+            return;
         }
         //split between file name and
         //take file name
