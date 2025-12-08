@@ -65,7 +65,7 @@ void GetCommand::execute(const std::string& file_info, ICompress* compressor, Ou
         string full_content = compressor->decompress(content_compress);
         //print the content by using Output
         std::stringstream output_ss;
-        output_ss << status_codes.at(200) << "$$" << full_content;
+        output_ss << status_codes.at(200) << "\x04\x04" << full_content;
         output->write(output_ss.str());
         return;
     }
