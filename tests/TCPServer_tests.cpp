@@ -39,6 +39,8 @@ TEST(ServerTest, StandardFlow_PostAndGet) {
     int serverSock = sv[0];
     int clientSock = sv[1];
 
+    setenv("PROJECT_DIR", ".", 1);
+
     std::thread serverThread(handleClient, serverSock);
 
     sendToSocket(clientSock, "post testfile.txt my_content\n");
@@ -67,6 +69,9 @@ TEST(ServerTest, StandardFlow_PostAndGet) {
     shutdown(clientSock, SHUT_WR);
     close(clientSock);
     serverThread.join();
+
+    unsetenv("PROJECT_DIR");
+    std::remove("testfile.txt");
 }
 
 // 2. Error Handling: Invalid Command
@@ -93,6 +98,8 @@ TEST(ServerTest, ErrorHandling_FileNotFound) {
     int sv[2];
     ASSERT_EQ(socketpair(AF_UNIX, SOCK_STREAM, 0, sv), 0);
 
+    setenv("PROJECT_DIR", ".", 1);
+
     std::thread serverThread(handleClient, sv[0]);
 
     // Try to delete a file that was never created
@@ -103,6 +110,8 @@ TEST(ServerTest, ErrorHandling_FileNotFound) {
 
     close(sv[1]);
     serverThread.join();
+
+    unsetenv("PROJECT_DIR");
 }
 
 // 4. Concurrency: Two Clients
@@ -111,6 +120,13 @@ TEST(ServerTest, Concurrency_TwoClients) {
     int sv1[2], sv2[2];
     ASSERT_EQ(socketpair(AF_UNIX, SOCK_STREAM, 0, sv1), 0);
     ASSERT_EQ(socketpair(AF_UNIX, SOCK_STREAM, 0, sv2), 0);
+
+    setenv("PROJECT_DIR", ".", 1);
+
+    struct timeval tv;
+    tv.tv_sec = 2; tv.tv_usec = 0;
+    setsockopt(sv1[1], SOL_SOCKET, SO_RCVTIMEO, (const char*)&tv, sizeof tv);
+    setsockopt(sv2[1], SOL_SOCKET, SO_RCVTIMEO, (const char*)&tv, sizeof tv);
 
     // Launch TWO server threads
     std::thread t1(handleClient, sv1[0]);
@@ -129,15 +145,17 @@ TEST(ServerTest, Concurrency_TwoClients) {
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
 
     // Verify data separation - client 1
-    sendToSocket(sv1[1], "get file1.txt");
+    sendToSocket(sv1[1], "get file1.txt\n");
 
     // Robust reading loop: Read until "data1" appears or timeout
     std::string resp1 = "";
-    int retries = 10;
+    int retries = 5;
     while (resp1.find("data1") == std::string::npos && retries > 0) {
-        resp1 += readFromSocket(sv1[1]);
-        if (resp1.find("data1") != std::string::npos) break;
-        std::this_thread::sleep_for(std::chrono::milliseconds(10));
+        std::string chunk = readFromSocket(sv1[1]);
+        if (chunk.empty()) {
+             std::this_thread::sleep_for(std::chrono::milliseconds(50));
+        }
+        resp1 += chunk;
         retries--;
     }
     EXPECT_TRUE(resp1.find("data1") != std::string::npos) << "Client 1 got wrong data: " << resp1;
@@ -146,11 +164,13 @@ TEST(ServerTest, Concurrency_TwoClients) {
     sendToSocket(sv2[1], "get file2.txt\n");
     
     std::string resp2 = "";
-    retries = 10;
+    retries = 5;
     while (resp2.find("data2") == std::string::npos && retries > 0) {
-        resp2 += readFromSocket(sv2[1]);
-        if (resp2.find("data2") != std::string::npos) break;
-        std::this_thread::sleep_for(std::chrono::milliseconds(10));
+        std::string chunk = readFromSocket(sv2[1]);
+        if (chunk.empty()) {
+             std::this_thread::sleep_for(std::chrono::milliseconds(50));
+        }
+        resp2 += chunk;
         retries--;
     }
     EXPECT_TRUE(resp2.find("data2") != std::string::npos) << "Client 2 got wrong data: " << resp2;
@@ -246,13 +266,12 @@ TEST(ServerTest, Logic_SearchCommand) {
 
     std::thread serverThread(handleClient, sv[0]);
 
-    // Setup: Create a file to search for
+    // Create a file to search for
     sendToSocket(sv[1], "post visible.txt some_content\n");
     //readFromSocket(sv[1]); // Read 201
     std::string postResp = readFromSocket(sv[1]);
 
-    // Action: Search
-    // Note: Adjust the search logic expectation based on your specific implementation
+    // Search
     sendToSocket(sv[1], "search visible\n"); 
     std::string response = readFromSocket(sv[1]);
     

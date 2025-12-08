@@ -26,14 +26,10 @@ void handleClient(int clientSocket)
 {
     try {
         // Input
-        //InputStreamBuf inBuf(clientSocket); //delete
-        //InputStream    inStream(&inBuf);
         InputStream inStream(clientSocket);
         Input          input(inStream);
 
         // Output
-        //OutputStreamBuf outBuf(clientSocket); //delete
-        //OutputStream    outStream(&outBuf);
         OutputStream outStream(clientSocket);
         Output          output(outStream);
 
@@ -69,13 +65,8 @@ void handleClient(int clientSocket)
 #ifndef TEST_MODE
 // Main function: sets up the server socket, listens for incoming client connections,
 // and launches a new thread to handle each client.
-int main(int argc, char* argv[])
-{
-    // //adition- for tests
-    // if (argc == 1 && std::string(argv[0]).find("runTests") != std::string::npos) {
-    //     return 0;
-    // }
-
+int main(int argc, char* argv[]) {
+    
     if (argc < 2) {
         std::cerr << "Usage: ./server <port>\n";
         return 1;
