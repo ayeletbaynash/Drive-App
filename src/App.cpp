@@ -15,10 +15,11 @@ void App::run() {
         std::string line = input->read();
 
         // Stop the loop when the input stream reaches EOF to prevent tests from hanging in an infinite loop
-        if (!input->get_stream().good()) {
+        if (!input->get_stream().good() || input->get_stream().eof()) {
             break; 
         }
         if (line.empty()) {
+            if (!input->get_stream().good() || input->get_stream().eof()) break;
             continue; 
         }
 
@@ -43,7 +44,8 @@ void App::run() {
             } catch (...) {
                 // ignore exceptions
             }
-        // else: invalid command -> ignore
+        } else {
+            output->write("400 Bad Request");
         }
     }  
 }

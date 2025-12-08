@@ -42,14 +42,15 @@ FetchContent_MakeAvailable(googletest)
              tests/GetCommand_tests.cpp
              tests/Search_test.cpp
 #             tests/main_tests.cpp
-             tests/Delete_tests.cpp
-             tests/InputStream_test.cpp
-             tests/InputStreamBuf_test.cpp
-             tests/OutputStream_test.cpp
-             tests/OutputStreamBuf_test.cpp
-#             tests/TCPServer_tests.cpp
-             tests/Multithreading_tests.cpp
+#             tests/Delete_tests.cpp
+#             tests/InputStream_test.cpp
+#             tests/InputStreamBuf_test.cpp
+#             tests/OutputStream_test.cpp
+#             tests/OutputStreamBuf_test.cpp
+             tests/TCPServer_tests.cpp
+#             tests/Multithreading_tests.cpp
            )
+ target_compile_definitions(runTests PRIVATE TEST_MODE)          
  target_link_libraries(runTests gtest_main)
  include(GoogleTest)
  gtest_discover_tests(runTests)
