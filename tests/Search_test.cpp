@@ -67,7 +67,7 @@ TEST(SearchCommandTests, ReturnFileNameCorrectly) {
      fs::remove_all(tempDir);   // Delete in the end
 }
 
-// 2. should return an empty list when the content is not found in any file.
+// 2. should return 404 when the content is not found in any file.
 TEST(SearchCommandTests, ReturnsEmptyWhenNoMatches) {
 
     fs::path tempDir = fs::temp_directory_path() / "search_test_2";     // Create temp dir
@@ -81,7 +81,7 @@ TEST(SearchCommandTests, ReturnsEmptyWhenNoMatches) {
     MockCompress compressor;    // ICompress
 
     search.execute("not there", &compressor, &test_output); // search for content
-    EXPECT_EQ(ss.str(), "\n");  // Return empty 
+    EXPECT_EQ(ss.str(), "404 Not Found\n");  // Return empty 
     fs::remove_all(tempDir);   // Delete in the end
 
 }
@@ -100,7 +100,7 @@ TEST(SearchCommandTests, HandlesEmptySearchString) {
     MockCompress compressor;    // ICompress
 
     search.execute("", &compressor, &test_output); // search for content
-    EXPECT_EQ(ss.str(), "\n");  // Return empty 
+    EXPECT_EQ(ss.str(), "400 Bad Request\n");  // Return 400 
     fs::remove_all(tempDir);   // Delete in the end
 
 }
@@ -145,7 +145,7 @@ TEST(SearchCommandTests, HandlesSearchOfPrefixAndSuffix) {
     fs::remove_all(tempDir);   // Delete in the end
 }
 
-// 6. should return nothing if dir is empty, not throw exception
+// 6. should return ? if dir is empty, not throw exception
 TEST(SearchCommandTests, HandlesEmptyDir) {
     fs::path tempDir = fs::temp_directory_path() / "search_test_6";     // Create temp dir
     fs::create_directories(tempDir); // Create empty test files
@@ -157,8 +157,8 @@ TEST(SearchCommandTests, HandlesEmptyDir) {
     Output test_output(ss);     // Initialize an output with the mock stream
     MockCompress compressor;    // ICompress
 
-    search.execute("", &compressor, &test_output); // search for content
-    EXPECT_EQ(ss.str(), "\n");  // Return empty 
+    search.execute("file1", &compressor, &test_output); // search for content
+    EXPECT_EQ(ss.str(), "404 Not Found\n");  // Return empty 
     fs::remove_all(tempDir);   // Delete in the end
 }
 
@@ -179,4 +179,25 @@ TEST(SearchCommandTests, HandlesSearchContainigSpace) {
     std::string result = ss.str();
     EXPECT_TRUE(result == "notes2\n");
     fs::remove_all(tempDir);   // Delete in the end
+}
+
+//8. should return the file name when search finds in file name
+TEST(SearchCommandTests, ReturnFindFromFileNameCorrectly) { 
+
+    fs::path tempDir = fs::temp_directory_path() / "search_test_8";     // Create temp dir
+    PrepareTestEnv(tempDir); // Create test files
+
+    SearchCommand search; 
+
+    //create the arguments of the function
+    std::stringstream ss;       // Create an output string stream to mock a stream
+    Output test_output(ss);     // Initialize an output with the mock stream
+    MockCompress compressor;    // ICompress
+
+    search.execute("file", &compressor, &test_output); // search for content
+    
+    std::string result = ss.str();
+    EXPECT_TRUE(result == "file1 file2\n" || result == "file2 file1\n");
+
+     fs::remove_all(tempDir);   // Delete in the end
 }

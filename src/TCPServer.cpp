@@ -53,7 +53,7 @@ void handleClient(int clientSocket)
         RLECompress compressor;
 
         // App
-        App app(&input, &output, &compressor, commands);
+        App app(&input, &output, &compressor, commands); // gets pointers not instances
         app.run(); // running until client closes the connection 
 
         // clean everything
@@ -71,6 +71,11 @@ void handleClient(int clientSocket)
 // and launches a new thread to handle each client.
 int main(int argc, char* argv[])
 {
+    // //adition- for tests
+    // if (argc == 1 && std::string(argv[0]).find("runTests") != std::string::npos) {
+    //     return 0;
+    // }
+
     if (argc < 2) {
         std::cerr << "Usage: ./server <port>\n";
         return 1;

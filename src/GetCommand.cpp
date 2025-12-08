@@ -6,6 +6,7 @@
 #include <filesystem>
 #include <fstream>
 #include <cctype>
+#include "FileLocks.h"
 using namespace std;
 namespace fs = std::filesystem;
 
@@ -30,6 +31,10 @@ void GetCommand::execute(const std::string& file_info, ICompress* compressor, Ou
         //take content
         string content;
         getline(ss, content);
+
+        //lock specific to this file to prevent race conditions
+        std::mutex& fileMutex = getFileMutex(filename);
+        std::lock_guard<std::mutex> lock(fileMutex);
         //check if there is a space after the file name- if yes- return code 400
         if (!content.empty() && std::isspace(content[0])){
             output->write(status_codes.at(400));
@@ -59,8 +64,9 @@ void GetCommand::execute(const std::string& file_info, ICompress* compressor, Ou
         //decompress the content
         string full_content = compressor->decompress(content_compress);
         //print the content by using Output
-        output->write(status_codes.at(200));
-        output->write(full_content);
+        std::stringstream output_ss;
+        output_ss << status_codes.at(200) << "\x04\x04" << full_content;
+        output->write(output_ss.str());
         return;
     }
 

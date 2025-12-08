@@ -32,15 +32,15 @@ FetchContent_MakeAvailable(googletest)
              src/InputStreamBuf.cpp
              src/OutputStream.cpp
              src/OutputStreamBuf.cpp
-             src/TCPServer.cpp
+#             src/TCPServer.cpp
              src/Multithreading.cpp
-#             tests/Input_test.cpp
-#             tests/Output_test.cpp
-#             tests/Add_tests.cpp 
-#             tests/RLECompress_test.cpp
-#             tests/App_tests.cpp
-#             tests/GetCommand_tests.cpp
-#             tests/Search_test.cpp
+             tests/Input_test.cpp
+             tests/Output_test.cpp
+             tests/Add_tests.cpp 
+             tests/RLECompress_test.cpp
+             tests/App_tests.cpp
+             tests/GetCommand_tests.cpp
+             tests/Search_test.cpp
 #             tests/main_tests.cpp
 #             tests/Delete_tests.cpp
 #             tests/InputStream_test.cpp
@@ -56,9 +56,15 @@ FetchContent_MakeAvailable(googletest)
  gtest_discover_tests(runTests)
 
  # App executables
-# add_executable(clientCpp
-#    src/Client_cpp.cpp
-#)
+ add_executable(clientCpp
+    src/Client_cpp.cpp
+    src/Input.cpp
+    src/Output.cpp
+    src/InputStream.cpp
+    src/InputStreamBuf.cpp
+    src/OutputStream.cpp
+    src/OutputStreamBuf.cpp
+)
 
 add_executable(serverExec
     src/TCPServer.cpp

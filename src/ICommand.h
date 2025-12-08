@@ -12,7 +12,7 @@ class ICommand {
 
 protected:             
     inline static const std::map<int, std::string> status_codes{
-        {200, "200 Ok\n"},
+        {200, "200 Ok"},
         {201, "201 Created"},
         {204, "204 No Content"},
         {400, "400 Bad Request"},
