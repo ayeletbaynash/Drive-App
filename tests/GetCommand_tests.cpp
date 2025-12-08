@@ -66,7 +66,7 @@ TEST(GetCommandTest, RetrieveAFileSuccessfully) {
 
     //check if the file retrieve successfully
     get.execute("file2", &compressor, &test_output);
-    EXPECT_EQ(ss.str(), "200 Ok\n\nXYZ123\n");
+    EXPECT_EQ(ss.str(), "200 Ok\x04\x04XYZ123\n");
 
     //delete in the end
      fs::remove_all(tempDir);
@@ -87,15 +87,15 @@ TEST(GetCommandTest, RetrievingMultipleFiles) {
 
     //check if the files retrieve successfully
     get.execute("file1", &compressor, &test_output);
-    EXPECT_EQ(ss.str(), "200 Ok\n\nAAABBBCCC\n");
+    EXPECT_EQ(ss.str(), std::string("200 Ok\x04\x04") + "AAABBBCCC\n");
     ss.str("");//clean the output print
     ss.clear();
     get.execute("file2", &compressor, &test_output);
-    EXPECT_EQ(ss.str(), "200 Ok\n\nXYZ123\n");
+    EXPECT_EQ(ss.str(), "200 Ok\x04\x04XYZ123\n");
     ss.str("");//clean the output print
     ss.clear();
     get.execute("file3", &compressor, &test_output);
-    EXPECT_EQ(ss.str(), "200 Ok\n\nHello World!\n");
+    EXPECT_EQ(ss.str(), "200 Ok\x04\x04Hello World!\n");
 
     //delete in the end
      fs::remove_all(tempDir);
@@ -200,7 +200,7 @@ TEST(GetCommandTest, SpecificDirectory) {
 
     //check if the command read only from the right directory
     get.execute("file1", &compressor, &test_output);
-     EXPECT_EQ(ss.str(), "200 Ok\n\nAAABBBCCC\n");
+     EXPECT_EQ(ss.str(), std::string("200 Ok\x04\x04") + "AAABBBCCC\n");
 
     //delete in the end
     fs::remove_all(tempDir);
