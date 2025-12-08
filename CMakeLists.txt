@@ -17,50 +17,62 @@ FetchContent_Declare(
 set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(googletest)
 
+# Test executable
  add_executable(
              runTests
              src/Input.cpp
              src/AddCommand.cpp
              src/Output.cpp
              src/RLECompress.cpp
-#             src/App.cpp
-#             src/SearchCommand.cpp
-#             src/GetCommand.cpp
-                src/DeleteCommand.cpp
+             src/App.cpp
+             src/SearchCommand.cpp
+             src/GetCommand.cpp
+             src/DeleteCommand.cpp
+             src/InputStream.cpp
+             src/InputStreamBuf.cpp
+             src/OutputStream.cpp
+             src/OutputStreamBuf.cpp
+             src/TCPServer.cpp
+             src/Multithreading.cpp
 #             tests/Input_test.cpp
 #             tests/Output_test.cpp
-             tests/Add_tests.cpp 
+#             tests/Add_tests.cpp 
 #             tests/RLECompress_test.cpp
 #             tests/App_tests.cpp
-             tests/GetCommand_tests.cpp
+#             tests/GetCommand_tests.cpp
 #             tests/Search_test.cpp
 #             tests/main_tests.cpp
-            tests/Delete_tests.cpp
+#             tests/Delete_tests.cpp
+#             tests/InputStream_test.cpp
+#             tests/InputStreamBuf_test.cpp
+#             tests/OutputStream_test.cpp
+#             tests/OutputStreamBuf_test.cpp
+             tests/TCPServer_tests.cpp
+#             tests/Multithreading_tests.cpp
            )
+ target_compile_definitions(runTests PRIVATE TEST_MODE)          
  target_link_libraries(runTests gtest_main)
-# # Register the test with CTest
- #include(GoogleTest)
- #gtest_discover_tests(runTests)
+ include(GoogleTest)
+ gtest_discover_tests(runTests)
 
-# add_executable(
-#     appExec
-#     src/Input.cpp
-#     src/AddCommand.cpp
-#     src/Output.cpp
-#     src/RLECompress.cpp
-#     src/App.cpp
-#     src/SearchCommand.cpp
-#     src/GetCommand.cpp
-#     src/main.cpp
-# )
+ # App executables
+# add_executable(clientCpp
+#    src/Client_cpp.cpp
+#)
 
-# wildcard so we dont have to add each file manualy:
-
-#file(GLOB SRC_FILES src/*.cpp)
-#list(REMOVE_ITEM SRC_FILES "${CMAKE_SOURCE_DIR}/src/main.cpp")
-#file(GLOB TEST_FILES tests/*.cpp)
-#add_executable(appExec ${SRC_FILES} src/main.cpp)
-#add_executable(runTests ${SRC_FILES} ${TEST_FILES})
-#target_link_libraries(runTests gtest_main)
-#include(GoogleTest)
-#gtest_discover_tests(runTests)
+add_executable(serverExec
+    src/TCPServer.cpp
+    src/Input.cpp
+    src/AddCommand.cpp
+    src/Output.cpp
+    src/RLECompress.cpp
+    src/App.cpp
+    src/SearchCommand.cpp
+    src/GetCommand.cpp
+    src/DeleteCommand.cpp
+    src/InputStream.cpp
+    src/InputStreamBuf.cpp
+    src/OutputStream.cpp
+    src/OutputStreamBuf.cpp
+    src/Multithreading.cpp
+)
