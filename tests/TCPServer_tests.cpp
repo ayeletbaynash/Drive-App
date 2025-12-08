@@ -80,7 +80,7 @@ TEST(ServerTest, ErrorHandling_InvalidCommand) {
     sendToSocket(sv[1], "INVALID_COMMAND something");
     std::string response = readFromSocket(sv[1]);
     
-    EXPECT_EQ(response, "400 Bad Request");
+    EXPECT_EQ(response, "400 Bad Request\n");
 
     shutdown(sv[1], SHUT_WR);
     close(sv[1]);
@@ -99,7 +99,7 @@ TEST(ServerTest, ErrorHandling_FileNotFound) {
     sendToSocket(sv[1], "delete non_existent_file.txt");
     std::string response = readFromSocket(sv[1]);
     
-    EXPECT_EQ(response, "404 Not Found");
+    EXPECT_EQ(response, "404 Not Found\n");
 
     close(sv[1]);
     serverThread.join();
@@ -226,50 +226,47 @@ TEST(ServerTest, Logic_DeleteSuccess) {
     // Delete it
     sendToSocket(sv[1], "delete to_delete.txt");
     std::string response = readFromSocket(sv[1]);
-    EXPECT_EQ(response, "204 No Content");
+    EXPECT_EQ(response, "204 No Content\n");
 
     close(sv[1]);
     serverThread.join();
 }
 
-// // 8. Logic: Search Command
-// // The explicit requirement for SEARCH command
-// TEST(ServerTest, Logic_SearchCommand) {
-//     int sv[2];
-//     ASSERT_EQ(socketpair(AF_UNIX, SOCK_STREAM, 0, sv), 0);
+// 8. Logic: Search Command
+// The explicit requirement for SEARCH command
+TEST(ServerTest, Logic_SearchCommand) {
+    int sv[2];
+    ASSERT_EQ(socketpair(AF_UNIX, SOCK_STREAM, 0, sv), 0);
 
-//     // --- תיקון קריטי: הגדרת משתנה הסביבה ---
-//     setenv("PROJECT_DIR", ".", 1);
-//     // --- הגדרת Timeout לסוקט (מונע תקיעה אינסופית) ---
-//     struct timeval tv;
-//     tv.tv_sec = 2;  // מחכים מקסימום 2 שניות לתשובה
-//     tv.tv_usec = 0;
-//     setsockopt(sv[1], SOL_SOCKET, SO_RCVTIMEO, (const char*)&tv, sizeof tv);
-//     // --------------------------------------------------
+    setenv("PROJECT_DIR", ".", 1);
+    struct timeval tv;
+    tv.tv_sec = 2;  
+    tv.tv_usec = 0;
+    setsockopt(sv[1], SOL_SOCKET, SO_RCVTIMEO, (const char*)&tv, sizeof tv);
 
-//     std::thread serverThread(handleClient, sv[0]);
+    std::thread serverThread(handleClient, sv[0]);
 
-//     // Setup: Create a file to search for
-//     sendToSocket(sv[1], "post visible.txt some_content\n");
-//     //readFromSocket(sv[1]); // Read 201
-//     std::string postResp = readFromSocket(sv[1]);
+    // Setup: Create a file to search for
+    sendToSocket(sv[1], "post visible.txt some_content\n");
+    //readFromSocket(sv[1]); // Read 201
+    std::string postResp = readFromSocket(sv[1]);
 
-//     // Action: Search
-//     // Note: Adjust the search logic expectation based on your specific implementation
-//     sendToSocket(sv[1], "search visible\n"); 
-//     std::string response = readFromSocket(sv[1]);
+    // Action: Search
+    // Note: Adjust the search logic expectation based on your specific implementation
+    sendToSocket(sv[1], "search visible\n"); 
+    std::string response = readFromSocket(sv[1]);
     
-//     EXPECT_FALSE(response.empty()) << "Server returned NOTHING for search command!";
-//     EXPECT_TRUE(response.find("200 Ok") != std::string::npos);
-//     // Assuming search returns file names found:
-//     EXPECT_TRUE(response.find("visible.txt") != std::string::npos);
+    EXPECT_FALSE(response.empty()) << "Server returned NOTHING for search command!";
+    EXPECT_TRUE(response.find("200 Ok") != std::string::npos);
+    // Assuming search returns file names found:
+    EXPECT_TRUE(response.find("visible.txt") != std::string::npos);
 
-//     shutdown(sv[1], SHUT_WR);
-//     close(sv[1]);
-//     serverThread.join();
+    shutdown(sv[1], SHUT_WR);
+    close(sv[1]);
+    serverThread.join();
 
-//     unsetenv("PROJECT_DIR");
-// }
+    unsetenv("PROJECT_DIR");
+}
 
 // 9. Edge Case: Empty Line / Just Newline
 // Robustness against empty inputs
@@ -300,42 +297,3 @@ TEST(ServerTest, EdgeCase_EmptyInput) {
     close(sv[1]);
     serverThread.join();
 }
-
-// // 10. Concurrency: Shared Resource (Same File)
-// // Thread safety on file access
-// TEST(ServerTest, Concurrency_SameFileAccess) {
-//     int sv1[2], sv2[2];
-//     ASSERT_EQ(socketpair(AF_UNIX, SOCK_STREAM, 0, sv1), 0);
-//     ASSERT_EQ(socketpair(AF_UNIX, SOCK_STREAM, 0, sv2), 0);
-
-//     struct timeval tv;
-//     tv.tv_sec = 2; tv.tv_usec = 0;
-//     setsockopt(sv1[1], SOL_SOCKET, SO_RCVTIMEO, (const char*)&tv, sizeof tv);
-//     setsockopt(sv2[1], SOL_SOCKET, SO_RCVTIMEO, (const char*)&tv, sizeof tv);
-
-//     // Launch both threads - proving concurrency capability
-//     std::thread t1(handleClient, sv1[0]);
-//     std::thread t2(handleClient, sv2[0]);
-
-//     // Give threads time to initialize properly
-//     std::this_thread::sleep_for(std::chrono::milliseconds(50));
-
-//     // 1. Client 1 works alone
-//     sendToSocket(sv1[1], "post shared.txt client1_data\n");
-//     std::string r1 = readFromSocket(sv1[1]);
-//     EXPECT_TRUE(r1.find("201 Created") != std::string::npos) << "Client 1 failed: " << r1;
-
-//     // 2. Client 1 disconnects completely
-//     shutdown(sv1[1], SHUT_WR);
-//     close(sv1[1]);
-//     t1.join(); // Ensure Thread 1 is gone
-
-//     // 3. Client 2 works alone (Safe from memory corruption)
-//     sendToSocket(sv2[1], "post shared.txt client2_data\n");
-//     std::string r2 = readFromSocket(sv2[1]);
-//     EXPECT_TRUE(r2.find("201 Created") != std::string::npos) << "Client 2 failed: " << r2;
-
-//     shutdown(sv2[1], SHUT_WR);
-//     close(sv2[1]);
-//     t2.join();
-// }
