@@ -1,6 +1,7 @@
 #include "SearchCommand.h"
 #include "ICompress.h"
 #include "Output.h"
+#include "FileLocks.h"
 #include <filesystem>
 #include <fstream>
 #include <sstream>
@@ -40,6 +41,11 @@ void SearchCommand::execute(const std::string& content_to_search,
 
         if (!entry.is_regular_file()) // Check to make sure file and not folder/link/ect.
             continue;                 // Skip and dont throw exception
+
+        std::string filename = entry.path().filename().string();
+        //lock specific to this file to prevent race conditions
+        std::mutex& fileMutex = getFileMutex(filename);
+        std::lock_guard<std::mutex> lock(fileMutex);
 
         std::ifstream file(entry.path());    // open each file
         if (!file)                           // if doesnt open 

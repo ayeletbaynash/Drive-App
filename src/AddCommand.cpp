@@ -6,6 +6,7 @@
 #include <filesystem>
 #include <fstream>
 #include <cctype>
+#include "FileLocks.h"
 using namespace std;
 namespace fs = std::filesystem;
 
@@ -32,6 +33,9 @@ namespace fs = std::filesystem;
         //take content
         string content;
         getline(ss, content);
+        //lock specific to this file to prevent race conditions
+        std::mutex& fileMutex = getFileMutex(filename);
+        std::lock_guard<std::mutex> lock(fileMutex);
         //delete the space between that was after the first word
         if (!content.empty() && content[0] == ' ')
         content.erase(0, 1);
