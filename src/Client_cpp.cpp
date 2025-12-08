@@ -62,7 +62,7 @@ int main(int argc, char *argv[])
             std::string res = input.read();
             // We defined that $ is a placeholder for \n
             size_t pos = 0;
-            while ((pos = res.find('$', pos)) != std::string::npos) {
+            while ((pos = res.find('\x04', pos)) != std::string::npos) {
                 res.replace(pos, 1, "\n");  // replace '$' with newline
                 pos += 1; // move past the replacement
             }
