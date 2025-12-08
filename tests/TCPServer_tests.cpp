@@ -1,222 +1,189 @@
 #include <gtest/gtest.h>
-#include <vector>
-#include <map>
-#include <algorithm>
-#include <string>
 #include <thread>
-#include <functional>
+#include <sys/socket.h>
+#include <arpa/inet.h>
+#include <unistd.h>
+#include <string>
+#include <cstring>
+#include <cstdlib>
+#include <future>
+#include <filesystem>
+#include <fstream>
 
-// FakeSocket class
-class FakeSocket {
-public:
-bool socketCalled = false;
-bool bindCalled = false;
-bool listenCalled = false;
+namespace fs = std::filesystem;
 
-int bindPort = -1;         
-int listenBacklog = -1;      
+// Helper function
 
-std::vector<int> clientFds;          // Fake file descriptors for clients
-std::map<int, std::string> recvData; // Simulated received data from clients
-std::map<int, std::string> sentData; // Data sent to clients
-
-int nextClientFd = 100; // Next fake client FD
-
-// Basic socket operations
-int socket(int domain, int type, int protocol) { socketCalled = true; return 1; }
-int bind(int fd, int port) { bindCalled = true; bindPort = port; return 0; }
-int listen(int fd, int backlog) { listenCalled = true; listenBacklog = backlog; return 0; }
-
-int accept() {
-    int fd = nextClientFd++;
-    clientFds.push_back(fd);
-    return fd;
+// Function to set the environment variable
+static void setProjectDir(const fs::path& path) {
+#ifdef _WIN32
+    _putenv_s("PROJECT_DIR", path.string().c_str());
+#else
+    setenv("PROJECT_DIR", path.c_str(), 1);
+#endif
 }
 
-int send(int fd, const std::string& data) {
-    sentData[fd] += data;
-    return data.size();
-}
+// function to communicate with the real server
+std::string sendToRealServer(int port, const std::string& message) {
+    // Create socket
+    int sock = socket(AF_INET, SOCK_STREAM, 0);
+    if (sock < 0) return "ERROR_SOCKET";
 
-std::string recv(int fd) {
-    if(recvData.find(fd) != recvData.end()) {
-        std::string data = recvData[fd];
-        recvData[fd] = ""; // Clear after reading
-        return data;
+    struct sockaddr_in serv_addr;
+    serv_addr.sin_family = AF_INET;
+    serv_addr.sin_port = htons(port);
+    inet_pton(AF_INET, "127.0.0.1", &serv_addr.sin_addr);
+
+    // Try to connect (small delay to ensure server is ready)
+    std::this_thread::sleep_for(std::chrono::milliseconds(50));
+    
+    if (connect(sock, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0) {
+        close(sock);
+        return "ERROR_CONNECT";
+    }
+
+    // Send message
+    send(sock, message.c_str(), message.size(), 0);
+    // Send newline because the server expects it to end the command
+    send(sock, "\n", 1, 0); 
+
+    // Read response
+    char buffer[4096] = {0};
+    int valread = read(sock, buffer, 4096);
+    
+    close(sock);
+    
+    if (valread > 0) {
+        return std::string(buffer);
     }
     return "";
 }
 
-void close(int fd) {
-    clientFds.erase(std::remove(clientFds.begin(), clientFds.end(), fd), clientFds.end());
-}
-};
-
-// TCPServer class using FakeSocket
-class TCPServer {
-FakeSocket* sock;
-int port;
-
-public:
-TCPServer(int p, FakeSocket* s) : port(p), sock(s) {}
-
-void start() {
-    int fd = sock->socket(0, 0, 0); // Create a socket
-    sock->bind(fd, port);           // Bind to the port
-    sock->listen(fd, 5);            // Start listening with backlog=5
-}
-};
-
-// FakeApp class for testing
-class FakeApp {
-public:
-std::vector[std::string](std::string) receivedCommands; // Store commands received by the App
-std::map<std::string, std::string> responses; 
-
-std::string process(const std::string& cmd) {
-    receivedCommands.push_back(cmd);
-    if(responses.find(cmd) != responses.end())
-        return responses[cmd];
-    return "OK";
-}
-};
-
-// handleClient function
-void handleClient(int clientFd, FakeSocket* sock, FakeApp* app) {
-std::string msg;
-while (!(msg = sock->recv(clientFd)).empty()) {
-std::string response = app->process(msg);
-sock->send(clientFd, response);
-}
-sock->close(clientFd);
-}
-
-// Helper functions
-int connectClient(FakeSocket& sock, const std::string& msg) {
-int fd = sock.accept();
-sock.recvData[fd] = msg;
-return fd;
-}
-
-std::thread startClientThread(FakeSocket& sock, FakeApp& app, int fd) {
-return std::thread([&sock, &app, fd]() {
-handleClient(fd, &sock, &app);
-});
-}
-
-void verifyClientHandled(FakeSocket& sock, FakeApp& app, const std::vector<int>& fds) {
-for(int fd : fds) {
-EXPECT_EQ(sock.sentData[fd], "OK") << "Each client should receive OK response";
-}
-EXPECT_TRUE(sock.clientFds.empty()) << "All client connections should be closed";
-}
-
-// Test Fixture
-class TCPServerTest : public ::testing::Test {
+// Test Fixture: Setup & Teardown
+class ServerIntegrationTest : public ::testing::Test {
 protected:
-FakeSocket sock;
-FakeApp app;
-TCPServer server{5555, &sock};
+    const int port = 5555;
+    fs::path tempDir;
+
+    // Runs before every test
+    void SetUp() override {
+        // Create a unique temporary directory for each test
+        // Use TestInfo to generate a unique folder name based on the test case name
+        const testing::TestInfo* const test_info = 
+            testing::UnitTest::GetInstance()->current_test_info();
+        
+        std::string testName = std::string(test_info->test_case_name()) + "_" + test_info->name();
+        tempDir = fs::temp_directory_path() / testName;
+        
+        // Clean up if exists and create new
+        if (fs::exists(tempDir)) fs::remove_all(tempDir);
+        fs::create_directories(tempDir);
+
+        // Set the environment variable that the server will read
+        setProjectDir(tempDir);
+
+        // Run the server in the background
+        // The server inherits PROJECT_DIR from this process
+        std::system("./appExec 5555 > /dev/null 2>&1 &");
+        // Wait a bit for the server to bind and listen
+        std::this_thread::sleep_for(std::chrono::milliseconds(500));
+    }
+
+    // Runs after every test
+    void TearDown() override {
+        // Kill the server process
+        std::system("pkill appExec");
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+
+        // Cleanup temporary files
+        if (fs::exists(tempDir)) {
+           fs::remove_all(tempDir);
+        }
+    }
 };
 
-// First test: start listening
-TEST_F(TCPServerTest, ShouldStartListeningOnConfiguredPort) {
-ASSERT_NO_THROW(server.start());
-ASSERT_TRUE(sock.socketCalled);
-ASSERT_TRUE(sock.bindCalled);
-ASSERT_EQ(sock.bindPort, 5555);
-ASSERT_TRUE(sock.listenCalled);
-ASSERT_EQ(sock.listenBacklog, 5);
+// TEST POST - Should create file and return 201
+TEST_F(ServerIntegrationTest, ShouldExecutePostCommandCorrectly) {
+    // Send command to server
+    std::string response = sendToRealServer(port, "POST file1.txt hello");
+    
+    // Check protocol response
+    EXPECT_NE(response.find("201 Created"), std::string::npos);
+
+    // Physical check: Verify the file was created in the temp directory
+    EXPECT_TRUE(fs::exists(tempDir / "file1.txt"));
 }
 
-// Second test: accept single client
-TEST_F(TCPServerTest, ShouldAcceptSingleClientConnection) {
-server.start();
-int fd = sock.accept();
-ASSERT_GE(fd, 100);
-ASSERT_EQ(sock.clientFds.size(), 1);
-ASSERT_EQ(sock.clientFds[0], fd);
+// TEST GET - Should return 200 and content
+TEST_F(ServerIntegrationTest, ShouldExecuteGetCommandCorrectly) {
+    // First, create a file via the server
+    sendToRealServer(port, "POST file2.txt XYZ123");
+
+    // Now request it
+    std::string response = sendToRealServer(port, "GET file2.txt");
+
+    // Check protocol response + content
+    EXPECT_NE(response.find("200 Ok"), std::string::npos);
+    EXPECT_NE(response.find("XYZ123"), std::string::npos);
 }
 
-// Third test: handle single client
-TEST_F(TCPServerTest, HandleClientSingle) {
-int fd = connectClient(sock, "HELLO");
-handleClient(fd, &sock, &app);
+// TEST DELETE - Should remove file and return 204
+TEST_F(ServerIntegrationTest, ShouldExecuteDeleteCommandCorrectly) {
+    // Setup: Create a file first
+    sendToRealServer(port, "POST file_to_del.txt content");
+    ASSERT_TRUE(fs::exists(tempDir / "file_to_del.txt")); // Verify it exists
 
-ASSERT_EQ(app.receivedCommands.size(), 1);
-EXPECT_EQ(app.receivedCommands[0], "HELLO");
-EXPECT_EQ(sock.sentData[fd], "OK");
-EXPECT_TRUE(sock.clientFds.empty());
+    // Delete
+    std::string response = sendToRealServer(port, "DELETE file_to_del.txt");
 
+    // Check protocol response
+    EXPECT_NE(response.find("204 No Content"), std::string::npos);
+
+    // Physical check: Verify the file was deleted
+    EXPECT_FALSE(fs::exists(tempDir / "file_to_del.txt"));
 }
 
-// Fourth test: multiple clients concurrently
-TEST_F(TCPServerTest, HandleMultipleClientsConcurrently) {
-const int NUM_CLIENTS = 3;
-std::vector<int> fds;
-std::vector[std::thread](std::thread) threads;
+// TEST SEARCH - Should return filename
+TEST_F(ServerIntegrationTest, ShouldExecuteSearchCommandCorrectly) {
+    // Create files with different content
+    sendToRealServer(port, "POST fileA.txt shalom");
+    sendToRealServer(port, "POST fileB.txt bye");
+    sendToRealServer(port, "POST fileC.txt shalom_world");
 
-for(int i = 0; i < NUM_CLIENTS; ++i)
-    fds.push_back(connectClient(sock, "MSG_" + std::to_string(i)));
+    // Search
+    std::string response = sendToRealServer(port, "SEARCH shal");
 
-for(int fd : fds)
-    threads.push_back(startClientThread(sock, app, fd));
-
-for(auto& t : threads) t.join();
-
-ASSERT_EQ(app.receivedCommands.size(), NUM_CLIENTS);
-for(int i = 0; i < NUM_CLIENTS; ++i)
-    EXPECT_EQ(app.receivedCommands[i], "MSG_" + std::to_string(i));
-
-verifyClientHandled(sock, app, fds);
-
+    // Check that we found the relevant files
+    EXPECT_NE(response.find("200 Ok"), std::string::npos);
+    EXPECT_NE(response.find("fileA.txt"), std::string::npos);
+    EXPECT_NE(response.find("fileC.txt"), std::string::npos);
+    // Ensure we didn't find the unrelated file
+    EXPECT_EQ(response.find("fileB.txt"), std::string::npos);
 }
 
-// Fifth test: keep running after client disconnects/invalid data
-TEST_F(TCPServerTest, ShouldKeepRunningAfterClientDisconnectOrInvalidData) {
-int fd1 = connectClient(sock, "");
-handleClient(fd1, &sock, &app);
-EXPECT_TRUE(std::find(sock.clientFds.begin(), sock.clientFds.end(), fd1) == sock.clientFds.end());
-
-int fd2 = connectClient(sock, "VALID_CMD");
-handleClient(fd2, &sock, &app);
-ASSERT_EQ(app.receivedCommands.size(), 1);
-EXPECT_EQ(app.receivedCommands[0], "VALID_CMD");
-EXPECT_EQ(sock.sentData[fd2], "OK");
-EXPECT_TRUE(sock.clientFds.empty());
-
+// TEST INVALID INPUT - Should return 400
+TEST_F(ServerIntegrationTest, ShouldHandleInvalidInput) {
+    std::string response = sendToRealServer(port, "INVALID_CMD something");
+    EXPECT_NE(response.find("400 Bad Request"), std::string::npos);
 }
 
-// Sixth test: reject malformed messages
-TEST_F(TCPServerTest, ShouldRejectMalformedTCPMessages) {
-std::vector[std::string](std::string) malformedMessages = {"INVALID_CMD", "", "GET\nSEARCH"};
-for(const auto& msg : malformedMessages) {
-int fd = connectClient(sock, msg);
-handleClient(fd, &sock, &app);
-EXPECT_TRUE(std::find(sock.clientFds.begin(), sock.clientFds.end(), fd) == sock.clientFds.end());
-}
-EXPECT_TRUE(app.receivedCommands.empty());
-}
+// TEST 6: CONCURRENCY
+TEST_F(ServerIntegrationTest, ShouldHandleMultipleClientsConcurrently) {
+    auto client1 = std::async(std::launch::async, [this]() {
+        return sendToRealServer(port, "POST thread1.txt A");
+    });
+    
+    auto client2 = std::async(std::launch::async, [this]() {
+        return sendToRealServer(port, "POST thread2.txt B");
+    });
 
-// Seventh test: ensure new thread per client
-TEST_F(TCPServerTest, ShouldCreateNewThreadPerClient) {
-const int NUM_CLIENTS = 3;
-std::vector<int> fds;
-std::vector[std::thread](std::thread) threads;
+    std::string resp1 = client1.get();
+    std::string resp2 = client2.get();
 
-for(int i = 0; i < NUM_CLIENTS; ++i)
-    fds.push_back(connectClient(sock, "CMD_" + std::to_string(i)));
-
-for(int fd : fds)
-    threads.push_back(startClientThread(sock, app, fd));
-
-for(auto& t : threads) t.join();
-
-ASSERT_EQ(app.receivedCommands.size(), NUM_CLIENTS);
-for(int i = 0; i < NUM_CLIENTS; ++i) {
-    EXPECT_EQ(app.receivedCommands[i], "CMD_" + std::to_string(i));
-    EXPECT_EQ(sock.sentData[fds[i]], "OK");
-}
-
-verifyClientHandled(sock, app, fds);
+    EXPECT_NE(resp1.find("201 Created"), std::string::npos);
+    EXPECT_NE(resp2.find("201 Created"), std::string::npos);
+    
+    // Verify that both files were created
+    EXPECT_TRUE(fs::exists(tempDir / "thread1.txt"));
+    EXPECT_TRUE(fs::exists(tempDir / "thread2.txt"));
 }
