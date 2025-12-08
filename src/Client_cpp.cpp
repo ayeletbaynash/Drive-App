@@ -60,7 +60,6 @@ int main(int argc, char *argv[])
         {                                   // Infinite loop
             // memset(buffer, 0, BUFFER_SIZE); // all buffer to zero
             std::string res = input.read();
-            // std::cout << res << std::endl;
             // We defined that $ is a placeholder for \n
             size_t pos = 0;
             while ((pos = res.find('$', pos)) != std::string::npos) {

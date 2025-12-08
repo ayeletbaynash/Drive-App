@@ -71,5 +71,10 @@ void SearchCommand::execute(const std::string& content_to_search,
             result += " ";                                  // add space between names
     }
 
-    output->write(result);
+    //output->write(result);
+    //print the content by using Output
+    std::stringstream output_ss;
+    output_ss << status_codes.at(200) << "$$" << result;
+    output->write(output_ss.str());
+    return;
 }
