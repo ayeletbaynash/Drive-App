@@ -23,11 +23,11 @@
  */
 
 class InputStream : public std::istream {
-private:
-    InputStreamBuf buffer;
 
 public:
     explicit InputStream(int socket_fd);
+private:
+    InputStreamBuf buffer;
 };
 
 #endif
