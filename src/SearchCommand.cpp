@@ -56,7 +56,6 @@ void SearchCommand::execute(const std::string& content_to_search,
         buffer << file.rdbuf();
         std::string file_content = buffer.str();
 
-        std::string filename = entry.path().filename().string();           // Save file name as string to look through
         file_content = compressor->decompress(file_content);               // Decompress the content to search inside
         if (file_content.find(content_to_search) != std::string::npos      // Check if the content appears in file
             || filename.find(content_to_search) != std::string::npos) {    // or in the file name
