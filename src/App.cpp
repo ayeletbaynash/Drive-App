@@ -31,7 +31,7 @@ void App::run() {
         // convert command to lowercase for case-insensitive handling
         std::transform(command.begin(), command.end(), command.begin(),
                        [](unsigned char c){ return std::tolower(c); }); 
-        std::string file_info; 
+        std::string file_info;
         getline(ss, file_info);
         if (!file_info.empty() && file_info[0] == ' ') file_info.erase(0, 1);
 
@@ -43,7 +43,7 @@ void App::run() {
             } catch (...) {
                 // ignore exceptions
             }
-        // else: invalid commit -> ignore
+        // else: invalid command -> ignore
         }
     }  
 }

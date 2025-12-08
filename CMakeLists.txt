@@ -57,6 +57,12 @@ FetchContent_MakeAvailable(googletest)
  # App executables
  add_executable(clientCpp
     src/Client_cpp.cpp
+    src/Input.cpp
+    src/Output.cpp
+    src/InputStream.cpp
+    src/InputStreamBuf.cpp
+    src/OutputStream.cpp
+    src/OutputStreamBuf.cpp
 )
 
 add_executable(serverExec
