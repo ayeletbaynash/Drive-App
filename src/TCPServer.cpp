@@ -1,6 +1,7 @@
 #include <iostream>
 #include <map>
 #include <thread>
+#include <netinet/in.h>
 #include <arpa/inet.h>
 #include <unistd.h>
 
@@ -24,18 +25,17 @@
 void handleClient(int clientSocket)
 {
     try {
-        std::cout << "Handling new client..." << std::endl;
-
         // Input
-        InputStreamBuf inBuf(clientSocket);
-        InputStream    inStream(&inBuf);
+        //InputStreamBuf inBuf(clientSocket); //delete
+        //InputStream    inStream(&inBuf);
+        InputStream inStream(clientSocket);
         Input          input(inStream);
 
         // Output
-        OutputStreamBuf outBuf(clientSocket);
-        OutputStream    outStream(&outBuf);
+        //OutputStreamBuf outBuf(clientSocket); //delete
+        //OutputStream    outStream(&outBuf);
+        OutputStream outStream(clientSocket);
         Output          output(outStream);
-
 
         // Compress and command
         AddCommand addCmd;
@@ -53,21 +53,20 @@ void handleClient(int clientSocket)
         RLECompress compressor;
 
         // App
-        App app(input, output, &compressor, commands);
+        App app(&input, &output, &compressor, commands);
         app.run(); // running until client closes the connection 
 
         // clean everything
         close(clientSocket);
 
-        std::cout << "Client disconnected\n";
-
     } catch (...) {
         std::cerr << "Error in client handler\n";
-        close(clientSocket);
     }
+
+    close(clientSocket);
 }
 
-
+#ifndef TEST_MODE
 // Main function: sets up the server socket, listens for incoming client connections,
 // and launches a new thread to handle each client.
 int main(int argc, char* argv[])
@@ -106,8 +105,6 @@ int main(int argc, char* argv[])
         return 1;
     }
 
-    std::cout << "Server is listening on port " << port << "...\n";
-
     // Multithreading manager: handles launching and managing threads for each connected client.
     IThreads* threadManager = new Multithreading();
 
@@ -133,3 +130,5 @@ int main(int argc, char* argv[])
     close(serverSocket);
     return 0;
 }
+
+#endif
