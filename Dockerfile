@@ -13,7 +13,7 @@ COPY tests/ ./tests
 COPY CMakeLists.txt ./CMakeLists.txt
 
 # Copy Python scripts
-#COPY python_scripts/ ./python_scripts    ->     when created- dont forget to take off # and change name
+# COPY python_scripts/ ./python_scripts    ->     when created- dont forget to take off # and change name
 
 # Set environment variable
 ENV PROJECT_DIR=/usr/src/mytest/app
@@ -25,6 +25,3 @@ WORKDIR /usr/src/mytest/build
 
 # Compile all code + create executables
 RUN cmake .. && make
-
-# Default command: run the main application
-CMD ["./runTests"]
