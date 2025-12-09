@@ -4,8 +4,7 @@
 #include <streambuf>
 
 /**
- * @class InputStreamBuf
- * @brief Custom implementation of std::streambuf designed to read data
+ * InputStreamBuf class custom implementation of std::streambuf designed to read data
  * directly from a network socket (file descriptor).
  *
  * This class overrides the virtual underflow() function to perform
