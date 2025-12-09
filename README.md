@@ -13,10 +13,10 @@ search [text]	Searches all files for the given text in their name or content, re
 delete [file name] Deletes the file and its content.
 
 **Example Usage**  
-post file1 Hello World   // return: 201 Created
+post file1 Hello World   // return: 201 Created  
 get file1                // return: 200 OK \n\n Hello World   
 search Hello             // return: 200 OK \n\n file1  
-delete file1             // return: 204 No Content
+delete file1             // return: 204 No Content  
 
 
 **How to Run the Application:**  
@@ -27,21 +27,32 @@ docker build -t myapp .
 
 
 **To run the app:**  
-**1st terminal - server:**
-First open and enter the container:
-docker run -it --rm --name mycontainer myapp bash
-Then run the server:
-./serverExec 5000
-**2nd terminal - client in cpp**
-First enter the container:
-docker exec -it mycontainer bash
-Then run the cpp client:
-./clientCpp 127.0.0.1 5000
-**3rd terminal - client in python**
-Again enter the container:
-docker exec -it mycontainer bash
-Then run the python client:
-python3 Client_py.py
+**1st terminal - server:**  
+First open and enter the container:  
+docker run -it --rm --name mycontainer myapp bash  
+<img width="259" height="17" alt="docker_run" src="https://github.com/user-attachments/assets/b08d657b-7a28-4c33-95f1-09e6548867eb" />
+
+Then run the server:  
+./serverExec 5000  
+<img width="329" height="17" alt="server_run" src="https://github.com/user-attachments/assets/7cecfebe-173a-4c78-b442-724ab0c81c6f" />
+
+**2nd terminal - client in cpp**  
+First enter the container:  
+docker exec -it mycontainer bash  
+<img width="329" height="17" alt="server_run" src="https://github.com/user-attachments/assets/f81dbf2d-9cca-44b1-b896-55072651f73d" />
+
+Then run the cpp client:  
+./clientCpp 127.0.0.1 5000  
+<img width="380" height="13" alt="clientcpp" src="https://github.com/user-attachments/assets/ba693961-65f4-440a-85ea-63307dd628d2" />
+
+**3rd terminal - client in python**  
+Again enter the container:  
+docker exec -it mycontainer bash  
+<img width="187" height="16" alt="docker_exec" src="https://github.com/user-attachments/assets/6fd2b024-0b6f-4cd0-943f-9b13521434cb" />
+
+Then run the python client:  
+python3 Client_py.py  
+<img width="343" height="14" alt="clientpy" src="https://github.com/user-attachments/assets/28e49cab-a33b-41a9-8658-d4cd0bc1eafc" />
 
 
 **How to Run Tests:**  
