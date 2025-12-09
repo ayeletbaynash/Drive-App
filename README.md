@@ -40,7 +40,7 @@ Then run the server:
 **2nd terminal - client in cpp**  
 First enter the container:  
 docker exec -it mycontainer bash  
-<img width="329" height="17" alt="server_run" src="https://github.com/user-attachments/assets/f81dbf2d-9cca-44b1-b896-55072651f73d" />
+<img width="187" height="16" alt="docker_exec" src="https://github.com/user-attachments/assets/151470e6-9c8a-4777-aac9-9df4ecdafb25" />
 
 Then run the cpp client:  
 ./clientCpp 127.0.0.1 5000  
