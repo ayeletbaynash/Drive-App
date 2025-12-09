@@ -120,9 +120,9 @@ TEST(SearchCommandTests, HandlesSearchWithSpaces) {
     search.execute(" ", &compressor, &test_output); // search for content
     // Return files that include " " witout order sensitivity
     std::string result = ss.str();
-    EXPECT_TRUE(result == "file2 notes1 notes2\n" || result == "file2 notes2 notes1\n" 
-                || result == "notes1 notes2 file2\n" || result == "notes1 file2 notes2 \n"
-                  || result == "notes2 notes1 file2\n" || result == "notes2 file2 notes1\n" );
+    EXPECT_TRUE(result == std::string("200 Ok\x04\x04" "file2 notes1 notes2\n") || result == std::string("200 Ok\x04\x04" "file2 notes2 notes1\n") 
+                || result == std::string("200 Ok\x04\x04notes1 notes2 file2\n") || result == std::string("200 Ok\x04\x04notes1 file2 notes2\n")
+                  || result == std::string("200 Ok\x04\x04notes2 notes1 file2\n") || result == std::string("200 Ok\x04\x04notes2 file2 notes1\n"));
     fs::remove_all(tempDir);   // Delete in the end
 }
 
