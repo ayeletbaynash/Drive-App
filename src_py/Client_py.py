@@ -5,29 +5,23 @@ def main(ip_server="127.0.0.1", port_server=5000):
     # Create TCP socket
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
-    server_address = (ip_server, port_server)
-    sock.connect(server_address)
-    print("Connected to", server_address)
+    sock.connect((ip_server, port_server))
+    sock_file = sock.makefile("r") #wrap the socket in a file-like object for easy read one line everytime
+    while True:
+        #get user input
+        message = input()
 
-    try:
-        while True:
-            # Get user input
-            message = input()
+        #send data to the server
+        sock.sendall(f"{message}\n".encode("utf-8"))
 
-            # Send data
-            sock.sendall(f"{message}\n".encode("utf-8"))
+        #receive response
+        data = sock_file.readline()#read until \n= when output finish
+        
+        data = data.replace('\x04', '\n')  # We decided to use \x04 as placeholder for \n
+        print(data, end="")
 
-            # Receive response
-            data = sock.recv(4096)
-            if not data:
-                print("Server closed connection.")
-                break
-            data = data.decode("utf-8")
-            data = data.replace('\x04', '\n')  # We decided to use \x04 as placeholder for \n
-            print(data)
-
-    except:
-        sock.close()
+    
+    sock.close()
 
 if __name__ == "__main__":
     if len(sys.argv) < 3:
