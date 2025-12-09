@@ -17,6 +17,7 @@ post file1 Hello World   // return: 201 Created
 get file1                // return: 200 OK \n\n Hello World   
 search Hello             // return: 200 OK \n\n file1  
 delete file1             // return: 204 No Content  
+![example](https://github.com/user-attachments/assets/dc5f885f-fd7e-492e-9aa4-3d275ee75f4c)
 
 
 **How to Run the Application:**  
@@ -51,15 +52,14 @@ docker exec -it mycontainer bash
 <img width="187" height="16" alt="docker_exec" src="https://github.com/user-attachments/assets/6fd2b024-0b6f-4cd0-943f-9b13521434cb" />
 
 Then run the python client:  
-python3 Client_py.py  
-<img width="343" height="14" alt="clientpy" src="https://github.com/user-attachments/assets/28e49cab-a33b-41a9-8658-d4cd0bc1eafc" />
-
+python3 Client_py.py 127.0.0.1 5000  
+![py](https://github.com/user-attachments/assets/96922158-8a12-43ac-a0da-6d1e2125ad8e)
 
 **How to Run Tests:**  
 
 docker run --rm -it myapp ./runTests  
 ![run tests command](https://github.com/user-attachments/assets/356cb904-858e-4148-9022-874474cd7bf2)
-![tests run](https://github.com/user-attachments/assets/c108d447-0553-4d78-a545-0a9e6c39abf2)
+![tests](https://github.com/user-attachments/assets/ffc64b62-68ce-4f57-b71d-6021129e0d13)
 
 
 **Design Decisions and How They Support the Open/Closed Principle**
