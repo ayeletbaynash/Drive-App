@@ -41,7 +41,6 @@ FetchContent_MakeAvailable(googletest)
              tests/App_tests.cpp
              tests/GetCommand_tests.cpp
              tests/Search_test.cpp
-#             tests/main_tests.cpp
              tests/Delete_tests.cpp
              tests/InputStream_test.cpp
              tests/InputStreamBuf_test.cpp

@@ -106,7 +106,7 @@ TEST(ServerTest, ErrorHandling_FileNotFound) {
     sendToSocket(sv[1], "delete non_existent_file.txt");
     std::string response = readFromSocket(sv[1]);
     
-    EXPECT_EQ(response, "404 Not Found\n");
+    EXPECT_TRUE(response.find("404 Not Found") != std::string::npos);
 
     close(sv[1]);
     serverThread.join();

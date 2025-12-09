@@ -5,8 +5,7 @@
 #include "OutputStreamBuf.h"
 
 /**
- * @class OutputStream
- * @brief Provides a standard C++ output stream interface (std::ostream)
+ * OutputStream class provides a standard C++ output stream interface (std::ostream)
  * for writing data directly to a network socket (file descriptor).
  *
  * This class achieves network stream abstraction through **composition**

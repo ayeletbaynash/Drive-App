@@ -56,7 +56,7 @@ void handleClient(int clientSocket)
         close(clientSocket);
 
     } catch (...) {
-        std::cerr << "Error in client handler\n";
+        // Silently catch errors to comply with strict output requirements
     }
 
     close(clientSocket);
@@ -108,14 +108,9 @@ int main(int argc, char* argv[]) {
     while (true) {
         clientSocket = accept(serverSocket, (struct sockaddr*)&clientAddr, &clientSize);
         if (clientSocket < 0) {
-            perror("accept() failed");
             continue;
         }
-
-        std::cout << "New connection from "
-                  << inet_ntoa(clientAddr.sin_addr)
-                  << ":" << ntohs(clientAddr.sin_port) << std::endl;
-
+        
         // creating new thread per client
         threadManager->launch([clientSocket]() {
             handleClient(clientSocket);
