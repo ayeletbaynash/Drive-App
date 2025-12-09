@@ -1,4 +1,3 @@
-// Importing the required libraries
 #include <iostream>
 #include <sys/socket.h>
 #include <stdio.h>
@@ -26,7 +25,7 @@ int main(int argc, char *argv[])
     // Creating a structure
     struct sockaddr_in sin;
     memset(&sin, 0, sizeof(sin)); // Reset memory at the sin address
-                                  // Define the structure fields
+    // Define the structure fields
     sin.sin_family = AF_INET;
     sin.sin_addr.s_addr = inet_addr(ip_server);
     sin.sin_port = htons(port_server);
@@ -57,8 +56,7 @@ int main(int argc, char *argv[])
         const int BUFFER_SIZE = 4096; // size of max buffer
         string full_msg = "";
         while (true)
-        {                                   // Infinite loop
-            // memset(buffer, 0, BUFFER_SIZE); // all buffer to zero
+        {   // Infinite loop
             std::string res = input.read();
             // We defined that $ is a placeholder for \n
             size_t pos = 0;

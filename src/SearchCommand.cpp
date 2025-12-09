@@ -1,6 +1,7 @@
 #include "SearchCommand.h"
 #include "ICompress.h"
 #include "Output.h"
+#include "FileLocks.h"
 #include <filesystem>
 #include <fstream>
 #include <sstream>
@@ -41,6 +42,11 @@ void SearchCommand::execute(const std::string& content_to_search,
         if (!entry.is_regular_file()) // Check to make sure file and not folder/link/ect.
             continue;                 // Skip and dont throw exception
 
+        std::string filename = entry.path().filename().string();
+        //lock specific to this file to prevent race conditions
+        std::mutex& fileMutex = getFileMutex(filename);
+        std::lock_guard<std::mutex> lock(fileMutex);
+
         std::ifstream file(entry.path());    // open each file
         if (!file)                           // if doesnt open 
             continue;                        // skip and dont throw exception
@@ -50,7 +56,6 @@ void SearchCommand::execute(const std::string& content_to_search,
         buffer << file.rdbuf();
         std::string file_content = buffer.str();
 
-        std::string filename = entry.path().filename().string();           // Save file name as string to look through
         file_content = compressor->decompress(file_content);               // Decompress the content to search inside
         if (file_content.find(content_to_search) != std::string::npos      // Check if the content appears in file
             || filename.find(content_to_search) != std::string::npos) {    // or in the file name
@@ -71,7 +76,6 @@ void SearchCommand::execute(const std::string& content_to_search,
             result += " ";                                  // add space between names
     }
 
-    //output->write(result);
     //print the content by using Output
     std::stringstream output_ss;
     output_ss << status_codes.at(200) << "\x04\x04" << result;

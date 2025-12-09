@@ -62,7 +62,7 @@ TEST(SearchCommandTests, ReturnFileNameCorrectly) {
 
     search.execute("AAABBBCCC", &compressor, &test_output); // search for content
     
-    EXPECT_EQ(ss.str(), "file1\n");
+    EXPECT_EQ(ss.str(), std::string("200 Ok\x04\x04") +"file1\n");
 
      fs::remove_all(tempDir);   // Delete in the end
 }
@@ -141,7 +141,7 @@ TEST(SearchCommandTests, HandlesSearchOfPrefixAndSuffix) {
     search.execute("or", &compressor, &test_output); // search for content
     // Return files that include or: hello w(or)ld, Cats (or) Dogs witout order sensitivity
     std::string result = ss.str();
-    EXPECT_TRUE(result == "notes1 notes2\n" || result == "notes2 notes1\n");
+    EXPECT_TRUE(result == std::string("200 Ok\x04\x04") +"notes1 notes2\n" || result == std::string("200 Ok\x04\x04") +"notes2 notes1\n");
     fs::remove_all(tempDir);   // Delete in the end
 }
 
@@ -177,7 +177,7 @@ TEST(SearchCommandTests, HandlesSearchContainigSpace) {
     search.execute(" or", &compressor, &test_output); // search for content
     // Return files that include or: hello w(or)ld, Cats (or) Dogs witout order sensitivity
     std::string result = ss.str();
-    EXPECT_TRUE(result == "notes2\n");
+    EXPECT_TRUE(result == std::string("200 Ok\x04\x04") +"notes2\n");
     fs::remove_all(tempDir);   // Delete in the end
 }
 
@@ -197,7 +197,7 @@ TEST(SearchCommandTests, ReturnFindFromFileNameCorrectly) {
     search.execute("file", &compressor, &test_output); // search for content
     
     std::string result = ss.str();
-    EXPECT_TRUE(result == "file1 file2\n" || result == "file2 file1\n");
+    EXPECT_TRUE(result == std::string("200 Ok\x04\x04") +"file1 file2\n" || result == std::string("200 Ok\x04\x04") +"file2 file1\n");
 
      fs::remove_all(tempDir);   // Delete in the end
 }

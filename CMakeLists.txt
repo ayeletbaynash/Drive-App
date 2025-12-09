@@ -32,7 +32,7 @@ FetchContent_MakeAvailable(googletest)
              src/InputStreamBuf.cpp
              src/OutputStream.cpp
              src/OutputStreamBuf.cpp
-#             src/TCPServer.cpp
+             src/TCPServer.cpp
              src/Multithreading.cpp
              tests/Input_test.cpp
              tests/Output_test.cpp
@@ -41,15 +41,16 @@ FetchContent_MakeAvailable(googletest)
              tests/App_tests.cpp
              tests/GetCommand_tests.cpp
              tests/Search_test.cpp
-#             tests/main_tests.cpp
              tests/Delete_tests.cpp
              tests/InputStream_test.cpp
              tests/InputStreamBuf_test.cpp
              tests/OutputStream_test.cpp
              tests/OutputStreamBuf_test.cpp
-#             tests/TCPServer_tests.cpp
              tests/Multithreading_tests.cpp
+             tests/TCPServer_tests.cpp
+
            )
+ target_compile_definitions(runTests PRIVATE TEST_MODE)          
  target_link_libraries(runTests gtest_main)
  include(GoogleTest)
  gtest_discover_tests(runTests)

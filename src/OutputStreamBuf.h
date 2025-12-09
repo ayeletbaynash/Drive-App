@@ -4,8 +4,7 @@
 #include <streambuf>
 
 /**
- * @class OutputStreamBuf
- * @brief Custom implementation of std::streambuf designed to write data
+ * OutputStreamBuf class custom implementation of std::streambuf designed to write data
  * directly to a network socket (file descriptor).
  *
  * This class overrides the virtual overflow() and xsputn() functions to perform

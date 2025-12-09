@@ -5,8 +5,7 @@
 #include "InputStreamBuf.h"
 
 /**
- * @class InputStream
- * @brief Provides a standard C++ input stream interface (std::istream)
+ * InputStream class provides a standard C++ input stream interface (std::istream)
  * for reading data directly from a network socket (file descriptor).
  *
  * This class achieves network stream abstraction by composition: it holds

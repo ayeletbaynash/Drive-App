@@ -6,6 +6,7 @@
 #include <string>
 #include <cstdlib>
 #include <cctype>
+#include "FileLocks.h"
 namespace fs = std::filesystem;
 using std::string;
 using std::stringstream;
@@ -33,6 +34,9 @@ void DeleteCommand::execute(const std::string& file_info, ICompress* compressor,
     //take content
     string content;
     getline(ss, content);
+    //lock specific to this file to prevent race conditions
+    std::mutex& fileMutex = getFileMutex(filename);
+    std::lock_guard<std::mutex> lock(fileMutex);
     //check if there is a whitespace character after the file name- if yes- return code 400
     if (!content.empty() && std::isspace(content[0])){
         output->write(status_codes.at(400));
