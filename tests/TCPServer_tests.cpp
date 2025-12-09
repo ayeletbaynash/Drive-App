@@ -237,19 +237,21 @@ TEST(ServerTest, GracefulShutdown_ClientDisconnect) {
 TEST(ServerTest, Logic_DeleteSuccess) {
     int sv[2];
     socketpair(AF_UNIX, SOCK_STREAM, 0, sv);
+    setenv("PROJECT_DIR", ".", 1);
     std::thread serverThread(handleClient, sv[0]);
 
     // Create a file first
-    sendToSocket(sv[1], "post to_delete.txt junk");
+    sendToSocket(sv[1], "post to_delete.txt junk\n");
     readFromSocket(sv[1]); // Clear buffer (201)
 
     // Delete it
-    sendToSocket(sv[1], "delete to_delete.txt");
+    sendToSocket(sv[1], "delete to_delete.txt\n");
     std::string response = readFromSocket(sv[1]);
     EXPECT_EQ(response, "204 No Content\n");
 
     close(sv[1]);
     serverThread.join();
+    unsetenv("PROJECT_DIR");
 }
 
 // 8. Logic: Search Command
