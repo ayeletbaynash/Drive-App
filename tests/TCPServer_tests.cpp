@@ -44,18 +44,13 @@ TEST(ServerTest, StandardFlow_PostAndGet) {
     std::thread serverThread(handleClient, serverSock);
 
     sendToSocket(clientSock, "post testfile.txt my_content\n");
-    
+    std::this_thread::sleep_for(std::chrono::milliseconds(20));
     // Check for success response (201 Created)
     std::string response = readFromSocket(clientSock);
     EXPECT_TRUE(response.find("201 Created") != std::string::npos);
 
-    // File System Race Condition Fix
-    // We sleep briefly to allow the OS to flush the written file to the disk
-    // before we immediately try to read it back.
-    std::this_thread::sleep_for(std::chrono::milliseconds(100));
-
     sendToSocket(clientSock, "get testfile.txt\n");
-    
+    std::this_thread::sleep_for(std::chrono::milliseconds(20));
     response = readFromSocket(clientSock);
     
     // Verify response headers and content
@@ -83,6 +78,7 @@ TEST(ServerTest, ErrorHandling_InvalidCommand) {
     std::thread serverThread(handleClient, sv[0]);
 
     sendToSocket(sv[1], "INVALID_COMMAND something");
+    std::this_thread::sleep_for(std::chrono::milliseconds(20));
     std::string response = readFromSocket(sv[1]);
     
     EXPECT_EQ(response, "400 Bad Request\n");
@@ -104,6 +100,7 @@ TEST(ServerTest, ErrorHandling_FileNotFound) {
 
     // Try to delete a file that was never created
     sendToSocket(sv[1], "delete non_existent_file.txt");
+    std::this_thread::sleep_for(std::chrono::milliseconds(20));
     std::string response = readFromSocket(sv[1]);
     
     EXPECT_TRUE(response.find("404 Not Found") != std::string::npos);
@@ -134,19 +131,17 @@ TEST(ServerTest, Concurrency_TwoClients) {
 
     // Client 1 posts data
     sendToSocket(sv1[1], "post file1.txt data1\n");
+    std::this_thread::sleep_for(std::chrono::milliseconds(20));
     // Client 2 posts data immediately
     sendToSocket(sv2[1], "post file2.txt data2\n");
-
+    std::this_thread::sleep_for(std::chrono::milliseconds(20));
     // Verify both got confirmation
     EXPECT_TRUE(readFromSocket(sv1[1]).find("201 Created") != std::string::npos);
     EXPECT_TRUE(readFromSocket(sv2[1]).find("201 Created") != std::string::npos);
 
-    // Allow time for file persistence
-    std::this_thread::sleep_for(std::chrono::milliseconds(100));
-
     // Verify data separation - client 1
     sendToSocket(sv1[1], "get file1.txt\n");
-
+    std::this_thread::sleep_for(std::chrono::milliseconds(20));
     // Robust reading loop: Read until "data1" appears or timeout
     std::string resp1 = "";
     int retries = 5;
@@ -162,7 +157,7 @@ TEST(ServerTest, Concurrency_TwoClients) {
 
     // Verify data separation - Client 2
     sendToSocket(sv2[1], "get file2.txt\n");
-    
+    std::this_thread::sleep_for(std::chrono::milliseconds(20));
     std::string resp2 = "";
     retries = 5;
     while (resp2.find("data2") == std::string::npos && retries > 0) {
@@ -242,10 +237,13 @@ TEST(ServerTest, Logic_DeleteSuccess) {
 
     // Create a file first
     sendToSocket(sv[1], "post to_delete.txt junk\n");
+    std::this_thread::sleep_for(std::chrono::milliseconds(20));
     readFromSocket(sv[1]); // Clear buffer (201)
+    //sleep to make sure creation was finished befor search
 
     // Delete it
     sendToSocket(sv[1], "delete to_delete.txt\n");
+    std::this_thread::sleep_for(std::chrono::milliseconds(20));
     std::string response = readFromSocket(sv[1]);
     EXPECT_EQ(response, "204 No Content\n");
 
@@ -270,13 +268,15 @@ TEST(ServerTest, Logic_SearchCommand) {
 
     // Create a file to search for
     sendToSocket(sv[1], "post visible.txt some_content\n");
+    //sleep to make sure creation was finished befor search
+    std::this_thread::sleep_for(std::chrono::milliseconds(20));
     //readFromSocket(sv[1]); // Read 201
-    std::string postResp = readFromSocket(sv[1]);
+    std::string postResp = readFromSocket(sv[1]); 
 
     // Search
     sendToSocket(sv[1], "search visible\n"); 
+    std::this_thread::sleep_for(std::chrono::milliseconds(20));
     std::string response = readFromSocket(sv[1]);
-    
     EXPECT_FALSE(response.empty()) << "Server returned NOTHING for search command!";
     EXPECT_TRUE(response.find("200 Ok") != std::string::npos);
     // Assuming search returns file names found:
@@ -307,7 +307,7 @@ TEST(ServerTest, EdgeCase_EmptyInput) {
     write(sv[1], "\n", 1);
     // Send a follow-up command to verify server is still alive
     sendToSocket(sv[1], "CHECK_ALIVE\n");
-
+    std::this_thread::sleep_for(std::chrono::milliseconds(20));
     std::string response = readFromSocket(sv[1]);
     
     // If we get a response, the server successfully survived the empty input
