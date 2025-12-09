@@ -1,18 +1,22 @@
 # Drive-App
 Drive App is a simple file management simulation. It allows you to:  
-Add files with content, get files and search for text across files  
+Post files with content, delete them, get files and search for text across files.  
+In addition it supports multiple clients in both C++ and Python.
 
 **Command	Description**  
-add [file name] [text]	Adds a file with the given name and content.  
+post [file name] [text]	Posts a file with the given name and content.  
 
 get [file name]	Retrieves the content of the specified file.  
 
-search [text]	Searches all files for the given text.   
+search [text]	Searches all files for the given text in their name or content, returns file name.   
+
+delete [file name] Deletes the file and its content.
 
 **Example Usage**  
-add file1 Hello World   
-get file1         //return Hello World   
-search Hello      // return file1  
+post file1 Hello World   // return: 201 Created
+get file1                // return: 200 OK \n\n Hello World   
+search Hello             // return: 200 OK \n\n file1  
+delete file1             // return: 204 No Content
 
 
 **How to Run the Application:**  
@@ -23,10 +27,22 @@ docker build -t myapp .
 
 
 **To run the app:**  
-docker run --rm -it -v mydata:/usr/src/mytest/app myapp  
+**1st terminal - server:**
+First open and enter the container:
+docker run -it --rm --name mycontainer myapp bash
+Then run the server:
+./serverExec 5000
+**2nd terminal - client in cpp**
+First enter the container:
+docker exec -it mycontainer bash
+Then run the cpp client:
+./clientCpp 127.0.0.1 5000
+**3rd terminal - client in python**
+Again enter the container:
+docker exec -it mycontainer bash
+Then run the python client:
+python3 Client_py.py
 
-![run app command](https://github.com/user-attachments/assets/cbeae59b-8023-4229-b000-d36d13b115cf)
-![example](https://github.com/user-attachments/assets/c3e81f1a-af08-4fbf-9cbf-fc3bbf6ba8ac)
 
 **How to Run Tests:**  
 
@@ -35,3 +51,16 @@ docker run --rm -it myapp ./runTests
 ![tests run](https://github.com/user-attachments/assets/c108d447-0553-4d78-a545-0a9e6c39abf2)
 
 
+**Design Decisions and How They Support the Open/Closed Principle**
+
+**Renaming Existing Commands**
+Renaming commands did not require any changes to the existing code. Since the system uses a map that links a command name to its corresponding action, all we needed to do was update the map so that the new name points to the same existing functionality. The underlying implementation remained untouched.
+
+**Adding New Commands**
+Adding a new command required only creating a new file that implements the command and registering it in the command map, just like the existing ones. No modifications to the old code were needed.
+
+**Changing Command Output Format**
+Adjusting the output format was slightly less convenient, but still did not require modifying existing implementations. We introduced an additional map for system codes, so each command’s response is processed through this map to translate codes into their desired representation. This allows future changes to the output format without altering the original command logic.
+
+**Switching Input/Output to Work Over Sockets**
+Supporting socket-based input/output required adding new wrapper classes around the previously implemented classes. These wrappers handle the communication layer, while the original classes remained unchanged. This design keeps the system closed for modification and open for extension, fully aligning with the Open/Closed Principle.
