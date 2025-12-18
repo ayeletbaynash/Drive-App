@@ -34,6 +34,7 @@ FetchContent_MakeAvailable(googletest)
              src/OutputStreamBuf.cpp
              src/TCPServer.cpp
              src/Multithreading.cpp
+             src/PatchCommand.cpp
              tests/Input_test.cpp
              tests/Output_test.cpp
              tests/Add_tests.cpp 
@@ -48,6 +49,7 @@ FetchContent_MakeAvailable(googletest)
              tests/OutputStreamBuf_test.cpp
              tests/Multithreading_tests.cpp
              tests/TCPServer_tests.cpp
+             tests/Patch_test.cpp
 
            )
  target_compile_definitions(runTests PRIVATE TEST_MODE)          
@@ -81,4 +83,5 @@ add_executable(serverExec
     src/OutputStream.cpp
     src/OutputStreamBuf.cpp
     src/Multithreading.cpp
+    src/PatchCommand.cpp
 )
