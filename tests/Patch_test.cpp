@@ -8,6 +8,14 @@
 
 namespace fs = std::filesystem;
 
+// helper function to read file content and make sure it changed
+static std::string readFile(const fs::path& path) {
+    std::ifstream in(path);
+    std::stringstream buffer;
+    buffer << in.rdbuf();
+    return buffer.str();
+}
+
 // Helper function - creates fake files in the tests only
 static void createTestFile(const fs::path& path, const std::string& content) {
     std::ofstream out(path);
@@ -38,7 +46,7 @@ static void PreparePatchEnv(fs::path tempDir) {
 }
 
 // 1. Should successfully rename a file and return 204 No Content
-TEST(PatchCommandTests, Return204OnSuccessfulRename) {
+TEST(PatchCommandTests, Return204OnSuccessfuPatch){
     fs::path tempDir = fs::temp_directory_path() / "patch_test_1";
     PreparePatchEnv(tempDir);
 
@@ -47,12 +55,12 @@ TEST(PatchCommandTests, Return204OnSuccessfulRename) {
     Output test_output(ss);
     MockCompress compressor;
 
-    // Rename: file1 -> renamed
-    patch.execute("file1 renamed", &compressor, &test_output);
+    // Update: file1 -> new content
+    patch.execute("file1 new content", &compressor, &test_output);
 
     EXPECT_EQ(ss.str(), "204 No Content\n"); // Right system code
-    EXPECT_TRUE(fs::exists(tempDir / "renamed")); // New file name appeared
-    EXPECT_FALSE(fs::exists(tempDir / "file1")); // Old file name disappeared
+    EXPECT_TRUE(fs::exists(tempDir / "file1")); // Same file name still there
+    EXPECT_EQ(readFile(tempDir / "file1"), "new content"); // New content 
 
     fs::remove_all(tempDir); // Cleanup
 }
@@ -67,8 +75,8 @@ TEST(PatchCommandTests, Returns404WhenFileNotFound) {
     Output test_output(ss);
     MockCompress compressor;
 
-    // Try to rename a non-existing file
-    patch.execute("non_existing new_name", &compressor, &test_output);
+    // Try to change a non-existing file
+    patch.execute("non_existing new content", &compressor, &test_output);
 
     EXPECT_EQ(ss.str(), "404 Not Found\n");
     
@@ -85,7 +93,7 @@ TEST(PatchCommandTests, Returns400OnMissingParameters) {
     Output test_output(ss);
     MockCompress compressor;
 
-    // Only provide the source name without the new name
+    // Only provide the source name without the new content
     patch.execute("file1", &compressor, &test_output);
 
     EXPECT_EQ(ss.str(), "400 Bad Request\n");

@@ -1,6 +1,7 @@
 #include "ICommand.h"
 #include "PatchCommand.h"
 #include "Output.h"
+#include "ICompress.h"
 #include "FileLocks.h"
 #include <filesystem>
 #include <fstream>
@@ -13,7 +14,7 @@ namespace fs = std::filesystem;
 using std::string;
 using std::stringstream;
 
-void PatchCommand::execute(const std::string& file_info, ICompress* /*compressor*/, Output* output) {
+void PatchCommand::execute(const std::string& file_info, ICompress* compressor, Output* output) {
     // Check if ENV VAR exist, if not- return a code 500
     const char* dir = std::getenv("PROJECT_DIR");
     if (!dir) {
@@ -26,15 +27,15 @@ void PatchCommand::execute(const std::string& file_info, ICompress* /*compressor
         return;
     }
 
-    // Split the filename and the new name from the input string
+    // Split the filename and the new content from the input string
     stringstream ss(file_info);
     string filename;
-    string newName;
+    string newContent;
 
     ss >> filename;
-    ss >> newName;
+    std::getline(ss >> std::ws, newContent);
 
-    if (newName.empty()) {     // Dont allow empty name
+    if (newContent.empty()) {     // Dont allow empty content
         output->write(status_codes.at(400));
         return;
     }
@@ -51,10 +52,24 @@ void PatchCommand::execute(const std::string& file_info, ICompress* /*compressor
     }
 
     // Execute the patch command
-    fs::path new_path = fs::path(dir) / newName;
+    if (!compressor) {
+        output->write(status_codes.at(500));
+        return;
+    }
+
     try {
-        fs::rename(full_path, new_path);
-        output->write(status_codes.at(204));
+    std::ofstream file(full_path, std::ios::trunc);
+    if (!file.is_open()) {
+        output->write(status_codes.at(500));
+        return;
+    }
+        // Compress the new content before writing to the file
+        string compressedContent = compressor->compress(newContent);
+        file << compressedContent;
+        file.close();
+
+        output->write(status_codes.at(204)); // Success
+
     } catch (...) {
         // Handle filesystem errors (e.g., permissions, disk full)
         output->write(status_codes.at(500));

@@ -83,4 +83,5 @@ add_executable(serverExec
     src/OutputStream.cpp
     src/OutputStreamBuf.cpp
     src/Multithreading.cpp
+    src/PatchCommand.cpp
 )
