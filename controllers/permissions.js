@@ -7,23 +7,25 @@ exports.getPermissionByFileId = (req, res) => {
     //need to check if there is a fileID!!!!!!!!!!!!!!!!!!!!!!!!!!!
         //check how it write in the header!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     const userId = req.headers['user-id']
+    const fileID = req.params.id
     //check if the user is the owner that can update a premission
-    const permissionForUser = Permission.getPermissionForUser(req.params.fileID, userId)
+    const permissionForUser = Permission.getPermissionForUser(fileID, userId)
     if (!permissionForUser) {
         return res.status(403).json({ error: 'User has no permission' })
 }
     if (permissionForUser.permission !== 'owner') {
         return res.status(403).json({ error: 'Only owner can view permissions' })
 }
-    const permissions = Permission.getPermissions(parseInt(req.params.fileID))
+    const permissions = Permission.getPermissions(fileID)
     res.json(permissions)
 }
 
 exports.postPermission = (req, res) => {
-    const { fileID, userID, permission } = req.body
+    const { userID, permission } = req.body
+    const fileID = req.params.id
     const currentUserId = req.headers['user-id']
     //check all require fields are
-    if (!fileID || !userID || !permission) {
+    if ( !userID || !permission) {
         return res.status(400).json({ error: 'Missing fields' })
 }
 //check if the permission is valid 
@@ -51,9 +53,10 @@ exports.postPermission = (req, res) => {
 }
 
 exports.patchPermission = (req, res) => {
-    const { pId, permission } = req.body
+    const { permission } = req.body
+    const pId = req.params.pId
     //check all require fields are
-    if (!pId || !permission) {
+    if (!permission) {
         return res.status(400).json({ error: 'Missing fields' })
 }
 //check if the permission is valid 
@@ -81,9 +84,6 @@ exports.deletePermission = (req, res) => {
     //check how it write in the header!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     const userId = req.headers['user-id']
     const pId = req.params.pId
-        if (!pId) {
-        return res.status(400).json({ error: 'Missing field' })
-}
 //check if the user is the owner that can delete a premission
     const permissionForUser = Permission.getPermissionForPId(pId, userId)
     if (!permissionForUser) {
