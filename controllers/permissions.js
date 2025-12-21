@@ -5,6 +5,16 @@ const VALID_PERMISSIONS = ['read', 'write', 'owner']
 
 exports.getPermissionByFileId = (req, res) => {
     //need to check if there is a fileID!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        //check how it write in the header!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    const userId = req.headers['user-id']
+    //check if the user is the owner that can update a premission
+    const permissionForUser = Permission.getPermissionForUser(req.params.fileID, userId)
+    if (!permissionForUser) {
+        return res.status(403).json({ error: 'User has no permission' })
+}
+    if (permissionForUser.permission !== 'owner') {
+        return res.status(403).json({ error: 'Only owner can view permissions' })
+}
     const permissions = Permission.getPermissions(parseInt(req.params.fileID))
     res.json(permissions)
 }
@@ -32,7 +42,7 @@ exports.postPermission = (req, res) => {
 //chek if there is a permission alredy connected to this file and this user
     const permissionExists = Permission.getPermissionForUser(fileID, userID)
     if (permissionExists) {
-        return res.status(400).json({ error: 'permission alredy exsist' })
+        return res.status(400).json({ error: 'Permission already exists' })
 }
      //need to check if there is a fileID!!!!!!!!!!!!!!!!!!!!!!!!!!! 
      //need to check if there is a userID!!!!!!!!!!!!!!!!!!!!!!!!!!! 
