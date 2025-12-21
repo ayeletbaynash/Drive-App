@@ -32,11 +32,20 @@ const getPermissionForUser = (fileID, userID) => {
   )
 }
 
+const getPermissionForPId = (pId, userID) => {
+  return all_permissions.find(
+    p => p.pId === pId && p.userID === userID
+  )
+}
+
+
+
 
 module.exports = {
     getPermissions,
     postPermission,
     patchPermission,
     deletePermission,
-    getPermissionForUser
+    getPermissionForUser,
+    getPermissionForPId
 }
