@@ -1,4 +1,5 @@
 const searchModel = require('../models/search');
+const fileModel = require('../models/files'); 
 const net = require('net'); // For socket communication with the C++ server
 
 const search = (req, res) => {
@@ -11,20 +12,38 @@ const search = (req, res) => {
         client.write(`search ${query}\n`); // Send the search command in the cpp format
     });
 
-    // Listening for the response that will be returned from C++
+    // Listening for the response from the C++ server
     client.on('data', (data) => {
-        // Converting the response to text and splitting it into an array of file names
-        const externalResults = data.toString().split(' '); 
-        // Merges the two arrays (local and external) and removes duplicates
-        const combinedResults = [...new Set([...localResults, ...externalResults])];
-        res.status(200).json(combinedResults); // Return as JSON
-        client.destroy(); // Close connection
-    });
+        // Receive file names from C++ (raw data to string, trimmed and split by spaces)
+        const externalNames = data.toString().trim().split(' ');
 
-    // If the C++ server is not working, only the local results are returned
-    client.on('error', () => {
-        res.status(200).json(localResults);
+        // Map the names from C++ to full objects (including IDs) from the local memory
+        const externalObjects = externalNames.map(name => {
+            // Find the full file object by its name in our local dataset
+            return fileModel.getFileByName(name); 
+        }).filter(file => file != null); // Remove nulls if a file exists on disk but not in memory
+
+        // Combine local search results with external search results
+        const allResults = [...localResults, ...externalObjects];
+        // Deduplication - Ensure each file (by ID) appears only once in the final list
+        const uniqueResults = allResults.filter((file, index, self) =>
+            // Keep only the first occurrence of each file ID in the array
+            index === self.findIndex((f) => f.id === file.id)
+        );
+
+        res.status(200).json(uniqueResults); // Return as JSON
+        client.destroy(); // Close connection
+
+        // If the C++ server is not working, only the local results are returned
+        client.on('error', () => {
+            res.status(200).json(localResults);
+        });
     });
 };
 
 module.exports = { search };
+
+///////////// need to add to models/file:
+// const getFileByName = (name) => {
+//     return all_files.find(f => f.name === name);
+// };
