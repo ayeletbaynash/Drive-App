@@ -15,6 +15,7 @@ COPY CMakeLists.txt ./CMakeLists.txt
 # Set environment variable
 ENV PROJECT_DIR=/usr/src/mytest/app
 RUN mkdir -p /usr/src/mytest/app
+ENV THREAD_POOL_SIZE=8
 
 # Create build directory
 RUN mkdir build
