@@ -1,0 +1,16 @@
+const express = require('express')
+const app = express()
+const permissionsRoutes = require('./routes/permissions')
+const filesRoutes = require('./routes/files')
+const usersRoutes = require('./routes/users')
+const searchRoutes = require('./routes/search')
+const tokensRoutes = require('./routes/tokens')
+
+
+app.use(express.json())
+app.use('/api/files/:id/permissions', permissionsRoutes)
+app.use('/api/files', filesRoutes)
+app.use('/api/search', searchRoutes)
+app.use('/api/users', usersRoutes)
+app.use('/api/tokens', tokensRoutes)
+app.listen(3000)
