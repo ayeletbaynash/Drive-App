@@ -24,9 +24,15 @@ const getUserById = (id) => {
     return all_users.find(u => u.id === id);
 };
 
+// User retrieval function by username
+const getUserByUsername = (username) => {
+    return all_users.find(u => u.username === username);
+};
+
 // Exporting functions so they can be used in other files
 module.exports = {
     createUser,
     validateUser,
-    getUserById
+    getUserById,
+    getUserByUsername
 };

@@ -5,8 +5,19 @@ const registerUser = (req, res) => {
     // Extract the data sent in the request body
     const { username, password, emailAddress, image } = req.body;
 
-    if (!username || !password) { // if one of them is wrong or missing return error
-        return res.status(400).json({ error: "Username and password are required" });
+    // If one of them is wrong or missing return error
+    if (!username || !password || !emailAddress || !image) { 
+        return res.status(400).json({ error: "All fields are required" });
+    }
+
+    // Cant have 2 users with the same name
+    if (userModel.getUserByUsername(username)) {
+        return res.status(400).json({ error: "Username already exists" });
+    }
+
+    // No spaces allowed in username
+    if (username.includes(' ')) {
+        return res.status(400).json({ error: "Username cannot contain spaces" });
     }
 
     // Calling a function in the Model to register the user in the system and receive the created object.
