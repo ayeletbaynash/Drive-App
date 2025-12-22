@@ -21,6 +21,7 @@
 #include "GetCommand.h"
 #include "SearchCommand.h"
 #include "DeleteCommand.h"
+#include "PatchCommand.h"
 
 // Handles a single connected client: sets up input/output streams, creates the App instance,
 // runs it until the client disconnects, and then cleans up all allocated resources.
@@ -40,12 +41,14 @@ void handleClient(int clientSocket)
         GetCommand getCmd;
         SearchCommand searchCmd;
         DeleteCommand deleteCmd;
+        PatchCommand patchCmd;
 
         std::map<std::string, ICommand*> commands = {
             {"post", &addCmd},
             {"get", &getCmd},
             {"search", &searchCmd},
-            {"delete", &deleteCmd}
+            {"delete", &deleteCmd},
+            {"patch", &patchCmd}
         };
 
         RLECompress compressor;
