@@ -4,10 +4,12 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <unistd.h>
+#include <cstdlib>
 
 #include "TCPServer.h"
 #include "App.h"
 #include "Multithreading.h"
+#include "ThreadPool.h"
 #include "InputStreamBuf.h"
 #include "InputStream.h"
 #include "Input.h"
@@ -104,8 +106,9 @@ int main(int argc, char* argv[]) {
         return 1;
     }
 
-    // Multithreading manager: handles launching and managing threads for each connected client.
-    IThreads* threadManager = new Multithreading();
+    const char* env = std::getenv("THREAD_POOL_SIZE"); // Retrieves the thread pool size from the environment
+    size_t poolSize = env ? std::stoul(env) : 4;
+    IThreads* threadManager = new ThreadPool(poolSize); // Thread pool used to execute client-handling tasks
 
     // Accept
     while (true) {

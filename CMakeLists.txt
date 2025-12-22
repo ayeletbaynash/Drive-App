@@ -34,6 +34,7 @@ FetchContent_MakeAvailable(googletest)
              src/OutputStreamBuf.cpp
              src/TCPServer.cpp
              src/Multithreading.cpp
+             src/ThreadPool.cpp
              src/PatchCommand.cpp
              tests/Input_test.cpp
              tests/Output_test.cpp
@@ -48,6 +49,7 @@ FetchContent_MakeAvailable(googletest)
              tests/OutputStream_test.cpp
              tests/OutputStreamBuf_test.cpp
              tests/Multithreading_tests.cpp
+             tests/ThreadPool_tests.cpp
              tests/TCPServer_tests.cpp
              tests/Patch_test.cpp
 
@@ -83,5 +85,6 @@ add_executable(serverExec
     src/OutputStream.cpp
     src/OutputStreamBuf.cpp
     src/Multithreading.cpp
+    src/ThreadPool.cpp
     src/PatchCommand.cpp
 )
