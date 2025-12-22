@@ -1,6 +1,6 @@
 const net = require('net')
 //defining a client object that opens a connection to the server when created.
-class CppClient {
+class Client {
     constructor(host = '127.0.0.1', port = 5000) {
         this.host = host
         this.port = port
@@ -53,4 +53,4 @@ class CppClient {
     }
 }
 
-module.exports = CppClient
+module.exports = Client
