@@ -18,7 +18,7 @@ class CppClient {
     
      //function that send a mmessage to the server
     send(message) {
-        this.socket.write(`${message}\n`)
+        this.socket.write(message + "\n")
     }
 
      //Receive one response (until \n)
