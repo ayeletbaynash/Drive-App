@@ -8,7 +8,7 @@ const all_files = []
 const getFiles = () => all_files  // Returns the array of all files/folders
 
 // GET a single file/folder by ID
-const getFileById = (id) => all_files.find(f => f.id === id)  // Finds a file/folder by its unique ID
+const getFileById = (id) => all_files.find(f => f.id == id)  // Finds a file/folder by its unique ID
 
 // POST a new file or folder
 // fileData should contain: {user_id, name, type, parent_id(optional)}
@@ -63,7 +63,7 @@ const patchFile = (id, data) => {
 
 // DELETE a file/folder by ID
 const deleteFile = (id) => {
-    const index = all_files.findIndex(f => f.id === id)
+    const index = all_files.findIndex(f => f.id == id)
     if (index === -1) return false // file/folder not found
     all_files.splice(index, 1) // remove the file/folder itself
     return true

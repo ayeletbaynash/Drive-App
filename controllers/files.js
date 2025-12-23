@@ -15,7 +15,7 @@ exports.getFiles = (req, res) => {
     // Filter files: include owned files and files with any permission
     const files = File.getFiles().filter(f => {
         if (f.parent_id !== null) return false
-        if (f.user_id === userId) return true; // Owner always sees
+        if (f.user_id == userId) return true; // Owner always sees
         const perm = Permission.getPermissionForUser(f.id, userId)
         return perm !== undefined // Include if any permission exists
     })
@@ -46,7 +46,7 @@ exports.getFileById = async (req, res) => {
 
     // Folder means no TCP call
     if (file.type === 'folder') {
-        const children = File.getFiles().filter(f => f.parent_id === fileId)
+        const children = File.getFiles().filter(f => f.parent_id == fileId)
 
         return res.status(200).json({
             ...file,
@@ -184,7 +184,7 @@ exports.patchFile = async (req, res) => {
     }
 
     // Prevent circular references
-    if (data.parent_id && Number(data.parent_id) === file.id) {
+    if (data.parent_id && Number(data.parent_id) == file.id) {
         return res.status(400).json({ error: 'Cannot move a folder into itself' });
     }
 
@@ -266,7 +266,7 @@ exports.deleteFile = async (req, res) => {
             const current = File.getFileById(id)
 
             // delete children 
-            const children = File.getFiles().filter(f => f.parent_id === id)
+            const children = File.getFiles().filter(f => f.parent_id == id)
             for (const child of children) {
                 await recursiveDelete(child.id)
             }
