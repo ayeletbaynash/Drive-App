@@ -27,7 +27,7 @@ const postFile = (fileData) => {
 
     // Validate parent folder (if provided)
     if (parent_id !== null) {
-        const parent = all_files.find(f => f.id === parent_id)
+        const parent = all_files.find(f => f.id == parent_id)
         if (!parent || parent.type !== 'folder') {
             throw new Error('Invalid parent folder')
         }

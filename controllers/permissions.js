@@ -7,7 +7,7 @@ exports.getPermissionByFileId = (req, res) => {
     const userId = req.headers['user-id']
     if (!userId) return res.status(401).json({ error: 'Missing user-id header' })
     // check if user exist
-    const user = User.getUserByUsername(userId)
+    const user = User.getUserById(userId)
     if (!user) return res.status(401).json({ error: 'User does not exist' })
     
     const fileID = req.params.id
@@ -38,7 +38,7 @@ exports.postPermission = (req, res) => {
     const currentUserId = req.headers['user-id']
     if (!currentUserId) return res.status(401).json({ error: 'Missing user-id header' })
 
-   const currentUser = User.getUserByUsername(currentUserId)
+   const currentUser = User.getUserById(currentUserId)
     if (!currentUser) return res.status(401).json({ error: 'User does not exist' })
     
     //check if the permission is valid 
@@ -54,7 +54,7 @@ exports.postPermission = (req, res) => {
         return res.status(403).json({ error: 'Only owner can change permissions' })
 }
 
-    const targetUser = User.getUserByUsername(userID)
+    const targetUser = User.getUserById(userID)
     if (!targetUser) return res.status(404).json({ error: 'Target user does not exist' })
 
     //check if there is a permission alredy connected to this file and this user
@@ -85,7 +85,7 @@ exports.patchPermission = (req, res) => {
 
     const userId = req.headers['user-id']
     if (!userId) return res.status(401).json({ error: 'Missing user-id header' })
-    const user = User.getUserByUsername(userId)
+    const user = User.getUserById(userId)
     if (!user) return res.status(401).json({ error: 'User does not exist' })
 
     const existingPermission = Permission.getPermissionByPId(pId)
@@ -110,7 +110,7 @@ exports.patchPermission = (req, res) => {
 exports.deletePermission = (req, res) => {
     const userId = req.headers['user-id']
     if (!userId) return res.status(401).json({ error: 'Missing user-id header' })
-    const user = User.getUserByUsername(userId)
+    const user = User.getUserById(userId)
     if (!user) return res.status(401).json({ error: 'User does not exist' })
     
     const pId = req.params.pId
