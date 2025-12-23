@@ -1,4 +1,4 @@
-const client = require('../client');
+const Client = require('../client');
 const fileModel = require('../models/files'); 
 const Permission = require('../models/permissions');
 
@@ -8,11 +8,11 @@ const search = async (req, res) => {
     if (!query) {     // Validation: Ensure a query was provided
         return res.status(400).json({ error: "Search query is required" });
     }
-    const Client = new Client() // Initialize the TCP client to communicate with the Exercise 2 server
+    const client = new Client() // Initialize the TCP client to communicate with the Exercise 2 server
 
     try {
         // Send the SEARCH command to the old server 
-        const response = await Client.sendAndReceive(`search ${query}`); // all files from c++
+        const response = await client.sendAndReceive(`search ${query}`); // all files from c++
         // check the status in the first row
         const lines = response.split('\n')
         const statusLine = lines[0].trim() // the firs line- the status
@@ -39,7 +39,7 @@ const search = async (req, res) => {
                         // if the query is just in the content and not in the Id of the file 
                         results.push(file)
                     }else {//else- check if the query is in the content
-                        const fileContent = await Client.sendAndReceive(`GET ${file.id}`)
+                        const fileContent = await client.sendAndReceive(`GET ${file.id}`)
                         const linesForFile = fileContent.split('\n')
                         if (linesForFile[2].includes(query)){ //the query is in the content
                             results.push(file)
@@ -61,7 +61,7 @@ const search = async (req, res) => {
         res.status(200).json(results); // return in JSON
             } 
      
-        finally { Client.close(); } // Must close connection in the end
+        finally { client.close(); } // Must close connection in the end
 };
 
 module.exports = { search };
