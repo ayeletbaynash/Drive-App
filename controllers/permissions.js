@@ -64,7 +64,7 @@ exports.postPermission = (req, res) => {
 }
 
     Permission.postPermission(fileID, userID, permission)
-    res.sendStatus(201)
+    res.status(201).send()
 }
 
 exports.patchPermission = (req, res) => {

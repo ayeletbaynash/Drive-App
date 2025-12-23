@@ -1,7 +1,7 @@
 let pIdCounter = 0
 const all_permissions = []
 
-const getPermissions = (fileID) => all_permissions.filter(p => p.fileID === fileID)
+const getPermissions = (fileID) => all_permissions.filter(p => p.fileID == fileID)
 
 const postPermission = (fileID, userID, permission) => {
     const newPermission = { pId: pIdCounter++, fileID, userID, permission}
