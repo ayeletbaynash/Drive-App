@@ -148,6 +148,7 @@ exports.postFile = async (req, res) => {
         })
     }   
 }
+    res.location(`/api/files/${newFile.id}`)
     return res.sendStatus(201)
 
 }
