@@ -11,12 +11,12 @@ const getFiles = () => all_files  // Returns the array of all files/folders
 const getFileById = (id) => all_files.find(f => f.id === id)  // Finds a file/folder by its unique ID
 
 // POST a new file or folder
-// fileData should contain: {user_id, display_name, type, parent_id(optional)}
+// fileData should contain: {user_id, name, type, parent_id(optional)}
 const postFile = (fileData) => {
-    const { user_id, display_name, type, parent_id = null } = fileData
+    const { user_id, name, type, parent_id = null } = fileData
 
     // Validate required fields
-    if (!user_id || !display_name || !type) {
+    if (!user_id || !name || !type) {
         throw new Error('Missing required fields')
     }
 
@@ -36,7 +36,7 @@ const postFile = (fileData) => {
     const newFile = {
         id: fIdCounter++, // assign unique ID
         user_id, // owner of the file/folder
-        display_name, // visible name
+        name, // visible name
         type, // "file" or "folder"
         parent_id, // parent folder ID, null if root
         created_at: new Date().toISOString() // timestamp
@@ -52,7 +52,7 @@ const patchFile = (id, data) => {
     if (index === -1) return false // file/folder not found
 
     // Only allow updating certain fields
-    const allowedFields = ['display_name', 'parent_id']
+    const allowedFields = ['name', 'parent_id']
     for (let key of allowedFields) {
         if (key in data) {
             all_files[index][key] = data[key]
@@ -65,17 +65,6 @@ const patchFile = (id, data) => {
 const deleteFile = (id) => {
     const index = all_files.findIndex(f => f.id === id)
     if (index === -1) return false // file/folder not found
-
-    const fileToDelete = all_files[index]
-
-    // If it's a folder, delete all its children recursively
-    if (fileToDelete.type === 'folder') {
-        const children = all_files.filter(f => f.parent_id === id)
-        for (let child of children) {
-            deleteFile(child.id)
-        }
-    }
-
     all_files.splice(index, 1) // remove the file/folder itself
     return true
 }
