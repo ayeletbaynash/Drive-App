@@ -4,14 +4,16 @@ const User = require('../models/users')   // User Model
 const VALID_PERMISSIONS = ['read', 'write', 'owner']
 
 exports.getPermissionByFileId = (req, res) => {
-    //need to check if there is a fileID!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        //check how it write in the header!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     const userId = req.headers['user-id']
+    if (!userId) return res.status(401).json({ error: 'Missing user-id header' })
     // check if user exist
     const user = User.getUserByUsername(userId)
     if (!user) return res.status(401).json({ error: 'User does not exist' })
     
     const fileID = req.params.id
+    if (!fileID) {
+    return res.status(400).json({ error: 'Missing file ID in request parameters' })
+}
     //check if the user is the owner that can update a premission
     const permissionForUser = Permission.getPermissionForUser(fileID, userId)
     if (!permissionForUser) {
@@ -27,20 +29,23 @@ exports.getPermissionByFileId = (req, res) => {
 exports.postPermission = (req, res) => {
     const { userID, permission } = req.body
     const fileID = req.params.id
-
-    const user = User.getUserByUsername(userId)
-    if (!user) return res.status(401).json({ error: 'User does not exist' })
-    
-    const currentUserId = req.headers['user-id']
-    //check all require fields are
+    if (!fileID) {
+    return res.status(400).json({ error: 'Missing file ID in request parameters' })
+}
     if ( !userID || !permission) {
         return res.status(400).json({ error: 'Missing fields' })
 }
-//check if the permission is valid 
+    const currentUserId = req.headers['user-id']
+    if (!currentUserId) return res.status(401).json({ error: 'Missing user-id header' })
+
+   const currentUser = User.getUserByUsername(currentUserId)
+    if (!currentUser) return res.status(401).json({ error: 'User does not exist' })
+    
+    //check if the permission is valid 
     if (!VALID_PERMISSIONS.includes(permission)) {
   return res.status(400).json({ error: 'Invalid permission type' })
 }
-//check if the user is the owner that can create a premission
+    //check if the user is the owner that can create a premission
     const permissionForUser = Permission.getPermissionForUser(fileID, currentUserId)
     if (!permissionForUser) {
         return res.status(403).json({ error: 'User has no permission' })
@@ -49,33 +54,44 @@ exports.postPermission = (req, res) => {
         return res.status(403).json({ error: 'Only owner can change permissions' })
 }
 
-//chek if there is a permission alredy connected to this file and this user
+    const targetUser = User.getUserByUsername(userID)
+    if (!targetUser) return res.status(404).json({ error: 'Target user does not exist' })
+
+    //check if there is a permission alredy connected to this file and this user
     const permissionExists = Permission.getPermissionForUser(fileID, userID)
     if (permissionExists) {
         return res.status(400).json({ error: 'Permission already exists' })
 }
-     //need to check if there is a fileID!!!!!!!!!!!!!!!!!!!!!!!!!!! 
-     //need to check if there is a userID!!!!!!!!!!!!!!!!!!!!!!!!!!! 
+
     Permission.postPermission(fileID, userID, permission)
     res.sendStatus(201)
 }
 
 exports.patchPermission = (req, res) => {
     const { permission } = req.body
-    const pId = req.params.pId
-    //check all require fields are
     if (!permission) {
         return res.status(400).json({ error: 'Missing fields' })
 }
-//check if the permission is valid 
+
+    const pId = req.params.pId
+    if (!pId) {
+    return res.status(400).json({ error: 'Missing permission ID in request parameters' })
+}
+
+    //check if the permission is valid 
     if (!VALID_PERMISSIONS.includes(permission)) {
         return res.status(400).json({ error: 'Invalid permission type' })
 }
-    //check how it write in the header!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
     const userId = req.headers['user-id']
+    if (!userId) return res.status(401).json({ error: 'Missing user-id header' })
     const user = User.getUserByUsername(userId)
     if (!user) return res.status(401).json({ error: 'User does not exist' })
 
+    const existingPermission = Permission.getPermissionByPId(pId)
+    if (!existingPermission) {
+        return res.status(404).json({ error: 'Permission not found' })
+}
     //check if the user is the owner that can update a premission
     const permissionForUser = Permission.getPermissionForPId(pId, userId)
     if (!permissionForUser) {
@@ -92,13 +108,18 @@ exports.patchPermission = (req, res) => {
 }
 
 exports.deletePermission = (req, res) => {
-    //check how it write in the header!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     const userId = req.headers['user-id']
+    if (!userId) return res.status(401).json({ error: 'Missing user-id header' })
     const user = User.getUserByUsername(userId)
     if (!user) return res.status(401).json({ error: 'User does not exist' })
     
     const pId = req.params.pId
-//check if the user is the owner that can delete a premission
+    if (!pId) return res.status(400).json({ error: 'Missing permission ID in request parameters' })
+
+    const existingPermission = Permission.getPermissionByPId(pId)
+    if (!existingPermission) return res.status(404).json({ error: 'Permission not found' })
+
+    //check if the user is the owner that can delete a premission
     const permissionForUser = Permission.getPermissionForPId(pId, userId)
     if (!permissionForUser) {
         return res.status(403).json({ error: 'User has no permission' })
@@ -108,7 +129,7 @@ exports.deletePermission = (req, res) => {
 }
     const isDeleted = Permission.deletePermission(pId)
     if (!isDeleted) {
-        return res.status(404).json({ error: 'Permission not found' })
+        return res.status(500).json({ error: 'Permission not found' })
     }
     res.status(204).send()
 }
