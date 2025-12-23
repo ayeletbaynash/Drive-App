@@ -65,17 +65,6 @@ const patchFile = (id, data) => {
 const deleteFile = (id) => {
     const index = all_files.findIndex(f => f.id === id)
     if (index === -1) return false // file/folder not found
-
-    const fileToDelete = all_files[index]
-
-    // If it's a folder, delete all its children recursively
-    if (fileToDelete.type === 'folder') {
-        const children = all_files.filter(f => f.parent_id === id)
-        for (let child of children) {
-            deleteFile(child.id)
-        }
-    }
-
     all_files.splice(index, 1) // remove the file/folder itself
     return true
 }
