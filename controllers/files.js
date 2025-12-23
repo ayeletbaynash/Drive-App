@@ -78,7 +78,7 @@ exports.getFileById = async (req, res) => {
     }
 
     // if 200- content
-    const content = rest.join('\n')
+    const content = rest.join('')
     res.status(200).json({
         ...file,
         content
@@ -151,7 +151,7 @@ exports.postFile = async (req, res) => {
         })
     }   
 }
-    res.location(`/api/files/${newFile.physicalName}`)
+    res.location(`/api/files/${newFile.id}`)
     res.status(201).send()
 
 }
@@ -276,7 +276,7 @@ exports.deleteFile = async (req, res) => {
 
             //if this is a file, delete on server
             if (current.type === 'file') {
-                const message = `DELETE ${physicalName}`
+                const message = `DELETE ${current.physicalName}`
                 const deleteResponse = await client.sendAndReceive(message)
 
                 const [statusLine] = deleteResponse.split('\n')

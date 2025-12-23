@@ -1,16 +1,15 @@
-
-
 services:
+  # TCP storage server (C++ server from previous exercise)
   tcp-server:
     build:
       context: .
       dockerfile: Dockerfile
     ports:
       - "5000:5000"
-    # *** זה החלק שחובה להוסיף כדי שהמידע יישמר ***
     volumes:
       - tcp_storage:/usr/src/mytest/app
 
+  # Web API server (Node.js + Express)
   web-server:
     build:
       context: .
@@ -23,4 +22,5 @@ services:
       - tcp-server
 
 volumes:
+  # Named volume to persist TCP server data across container restarts
   tcp_storage:

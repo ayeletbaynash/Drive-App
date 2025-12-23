@@ -24,18 +24,19 @@ const search = async (req, res) => {
             // if it is not 200- return the problem from the server
             return res.status(statusCode).json({ error: statusMessage })
         }
-        // Analyze the response under the assumption it returns fileID separated by whitespace
-        const filesId = lines[2].trim().split(' ')
+        // Analyze the response under the assumption it returns file physical name separated by whitespace
+        const resultLine = lines[2] ? lines[2].trim() : ""
+        const physicalNames = resultLine ? resultLine.split(' ') : []
         // Cross reference c++ memory with node.js 
         //al the filesId that returned that exsist+the user got a premission to them + the query is in the content of the file
         const results = []
-        for (const idStr of filesId) {
-            const id = Number(idStr);
-            const file = fileModel.getFileById(id); 
+        const allFiles = fileModel.getFiles()
+        for (const pName of physicalNames) {
+            const file = allFiles.find(f => f.physicalName === pName)
             if (file) {
                 const userPermission = Permission.getPermissionForUser(file.id, userId);
                 if (userPermission) {
-                    if (!idStr.includes(query)) {
+                    if (!pName.includes(query)) {
                         // if the query is just in the content and not in the Id of the file 
                         results.push(file)
                     }else {//else- check if the query is in the content

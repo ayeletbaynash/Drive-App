@@ -13,7 +13,7 @@ const getFileById = (id) => all_files.find(f => f.id == id)  // Finds a file/fol
 // POST a new file or folder
 // fileData should contain: {user_id, name, type, parent_id(optional)}
 const postFile = (fileData) => {
-    const { user_id, name, type, parent_id = null } = fileData
+    const { user_id, name, type, parent_id = null, physicalName } = fileData
 
     // Validate required fields
     if (!user_id || !name || !type) {
