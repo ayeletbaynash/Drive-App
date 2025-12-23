@@ -1,21 +1,26 @@
-const Client = require('../client')   // check what is the right route!!!!!!!!!!!!!
+const Client = require('../client')   // Client
 const File = require('../models/files')        // File Model (in-memory)
 const Permission = require('../models/permissions') // Permission Model (in-memory)
+const User = require('../models/users')   // User Model
 
-// GET /api/files - Retrieve all files/folders for the connected user.
-// Includes files owned by the user or files where the user has any permission.
+// GET /api/files - Retrieve top-level (root) files/folders for the connected user
 exports.getFiles = (req, res) => {
     const userId = req.headers['user-id'];
     if (!userId) return res.status(401).json({ error: 'Missing user-id header' })
 
+    // check if user exist
+    const user = User.getUserByUsername(userId)
+    if (!user) return res.status(401).json({ error: 'User does not exist' })
+
     // Filter files: include owned files and files with any permission
     const files = File.getFiles().filter(f => {
+        if (f.parent_id !== null) return false
         if (f.user_id === userId) return true; // Owner always sees
-        const perm = Permission.getPermissionForUser(f.id, userId);
-        return perm !== undefined; // Include if any permission exists
+        const perm = Permission.getPermissionForUser(f.id, userId)
+        return perm !== undefined // Include if any permission exists
     })
 
-    res.status(200).json(files); // Return JSON response
+    res.status(200).json(files) // Return JSON response
 }
 
 // GET /api/files/:id - Retrieve a single file/folder by ID for the connected user.
@@ -23,6 +28,9 @@ exports.getFileById = async (req, res) => {
     const userId = req.headers['user-id']
     if (!userId) return res.status(401).json({ error: 'Missing user-id header' })
     
+    const user = User.getUserByUsername(userId)
+    if (!user) return res.status(401).json({ error: 'User does not exist' })
+
     const fileId = Number(req.params.id)
 
     const file = File.getFileById(fileId)
@@ -83,7 +91,10 @@ exports.postFile = async (req, res) => {
         return res.status(401).json({ error: 'Missing user-id header' })
     }
 
-    const { name, type, parent_id = null, content = null } = req.body
+    const user = User.getUserByUsername(userId)
+    if (!user) return res.status(401).json({ error: 'User does not exist' })
+
+    const { name, type, content = null, parent_id = null } = req.body
 
     // Validate required fields
     if (!name || !type) {
@@ -147,6 +158,9 @@ exports.patchFile = async (req, res) => {
     const userId = req.headers['user-id']
     if (!userId) return res.status(401).json({ error: 'Missing user-id header' })
     
+    const user = User.getUserByUsername(userId)
+    if (!user) return res.status(401).json({ error: 'User does not exist' })
+
     const fileId = Number(req.params.id)
     const data = req.body
 
@@ -228,6 +242,9 @@ exports.patchFile = async (req, res) => {
 exports.deleteFile = async (req, res) => {
     const userId = req.headers['user-id']
     if (!userId) return res.status(401).json({ error: 'Missing user-id header' })
+    
+    const user = User.getUserByUsername(userId)
+    if (!user) return res.status(401).json({ error: 'User does not exist' })
 
     const fileId = Number(req.params.id)
     const file = File.getFileById(fileId)
