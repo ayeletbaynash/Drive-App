@@ -2,6 +2,7 @@ const Client = require('../client')   // Client
 const File = require('../models/files')        // File Model (in-memory)
 const Permission = require('../models/permissions') // Permission Model (in-memory)
 const User = require('../models/users')   // User Model
+const crypto = require('crypto')  // for the pysical name
 
 // GET /api/files - Retrieve top-level (root) files/folders for the connected user
 exports.getFiles = (req, res) => {
@@ -58,7 +59,7 @@ exports.getFileById = async (req, res) => {
     // File means get content from TCP server
     const client = new Client()
 
-    const response = await client.sendAndReceive(`GET ${file.id}`)
+    const response = await client.sendAndReceive(`GET ${file.physicalName}`)
     client.close()
 
     //split response into lines
@@ -116,11 +117,13 @@ exports.postFile = async (req, res) => {
         }
     }
 
+    const physicalName = type === 'file' ? crypto.randomUUID() : null;
 
     // Create the file/folder in memory
     const newFile = File.postFile({
         user_id: userId,
         name,
+        physicalName,
         type,
         parent_id
     })
@@ -132,7 +135,7 @@ exports.postFile = async (req, res) => {
     if (type === 'file') {
         const client = new Client()
         const response = await client.sendAndReceive(
-            `POST ${newFile.id} ${content}`
+            `POST ${newFile.physicalName} ${content}`
         )
         client.close()
 
@@ -148,7 +151,7 @@ exports.postFile = async (req, res) => {
         })
     }   
 }
-    res.location(`/api/files/${newFile.id}`)
+    res.location(`/api/files/${newFile.physicalName}`)
     res.status(201).send()
 
 }
@@ -202,7 +205,7 @@ exports.patchFile = async (req, res) => {
         const client = new Client() 
         try {
             // Delete existing file from TCP server
-            const deleteResponse = await client.sendAndReceive(`DELETE ${file.id}`)
+            const deleteResponse = await client.sendAndReceive(`DELETE ${file.physicalName}`)
             const [statusLine] = deleteResponse.split('\n')
             const [codeStr, ...msgParts] = statusLine.split(' ')
             const statusCode = Number(codeStr)
@@ -214,7 +217,7 @@ exports.patchFile = async (req, res) => {
             }
 
             // Add file again with new content (if provided)
-            const addResponse = await client.sendAndReceive(`POST ${file.id} ${data.content}`)
+            const addResponse = await client.sendAndReceive(`POST ${file.physicalName} ${data.content}`)
             const [addStatusLine] = addResponse.split('\n')
             const [addCodeStr, ...addMsgParts] = addStatusLine.split(' ')
             const addStatusCode = Number(addCodeStr)
@@ -273,7 +276,7 @@ exports.deleteFile = async (req, res) => {
 
             //if this is a file, delete on server
             if (current.type === 'file') {
-                const message = `DELETE ${id}`
+                const message = `DELETE ${physicalName}`
                 const deleteResponse = await client.sendAndReceive(message)
 
                 const [statusLine] = deleteResponse.split('\n')

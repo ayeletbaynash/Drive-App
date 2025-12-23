@@ -39,7 +39,7 @@ const search = async (req, res) => {
                         // if the query is just in the content and not in the Id of the file 
                         results.push(file)
                     }else {//else- check if the query is in the content
-                        const fileContent = await client.sendAndReceive(`GET ${file.id}`)
+                        const fileContent = await client.sendAndReceive(`GET ${file.physicalName}`)
                         const linesForFile = fileContent.split('\n')
                         if (linesForFile[2].includes(query)){ //the query is in the content
                             results.push(file)

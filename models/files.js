@@ -37,6 +37,7 @@ const postFile = (fileData) => {
         id: fIdCounter++, // assign unique ID
         user_id, // owner of the file/folder
         name, // visible name
+        physicalName, // Unique identifier
         type, // "file" or "folder"
         parent_id, // parent folder ID, null if root
         created_at: new Date().toISOString() // timestamp
