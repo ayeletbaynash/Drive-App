@@ -1,5 +1,5 @@
-const Permission = require('../models/permissions')
-
+const Permission = require('../models/permissions')  // Permissions Model
+const User = require('../models/users')   // User Model
 
 const VALID_PERMISSIONS = ['read', 'write', 'owner']
 
@@ -7,6 +7,10 @@ exports.getPermissionByFileId = (req, res) => {
     //need to check if there is a fileID!!!!!!!!!!!!!!!!!!!!!!!!!!!
         //check how it write in the header!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     const userId = req.headers['user-id']
+    // check if user exist
+    const user = User.getUserByUsername(userId)
+    if (!user) return res.status(401).json({ error: 'User does not exist' })
+    
     const fileID = req.params.id
     //check if the user is the owner that can update a premission
     const permissionForUser = Permission.getPermissionForUser(fileID, userId)
@@ -23,6 +27,10 @@ exports.getPermissionByFileId = (req, res) => {
 exports.postPermission = (req, res) => {
     const { userID, permission } = req.body
     const fileID = req.params.id
+
+    const user = User.getUserByUsername(userId)
+    if (!user) return res.status(401).json({ error: 'User does not exist' })
+    
     const currentUserId = req.headers['user-id']
     //check all require fields are
     if ( !userID || !permission) {
@@ -65,6 +73,9 @@ exports.patchPermission = (req, res) => {
 }
     //check how it write in the header!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     const userId = req.headers['user-id']
+    const user = User.getUserByUsername(userId)
+    if (!user) return res.status(401).json({ error: 'User does not exist' })
+
     //check if the user is the owner that can update a premission
     const permissionForUser = Permission.getPermissionForPId(pId, userId)
     if (!permissionForUser) {
@@ -83,6 +94,9 @@ exports.patchPermission = (req, res) => {
 exports.deletePermission = (req, res) => {
     //check how it write in the header!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     const userId = req.headers['user-id']
+    const user = User.getUserByUsername(userId)
+    if (!user) return res.status(401).json({ error: 'User does not exist' })
+    
     const pId = req.params.pId
 //check if the user is the owner that can delete a premission
     const permissionForUser = Permission.getPermissionForPId(pId, userId)
