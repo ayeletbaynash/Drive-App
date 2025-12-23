@@ -9,7 +9,7 @@ exports.getFiles = (req, res) => {
     if (!userId) return res.status(401).json({ error: 'Missing user-id header' })
 
     // check if user exist
-    const user = User.getUserByUsername(userId)
+    const user = User.getUserById(Number(userId))
     if (!user) return res.status(401).json({ error: 'User does not exist' })
 
     // Filter files: include owned files and files with any permission
@@ -28,7 +28,7 @@ exports.getFileById = async (req, res) => {
     const userId = req.headers['user-id']
     if (!userId) return res.status(401).json({ error: 'Missing user-id header' })
     
-    const user = User.getUserByUsername(userId)
+    const user = User.getUserById(userId)
     if (!user) return res.status(401).json({ error: 'User does not exist' })
 
     const fileId = Number(req.params.id)
@@ -56,7 +56,7 @@ exports.getFileById = async (req, res) => {
     }
 
     // File means get content from TCP server
-    const client = new Client('127.0.0.1', 5000)
+    const client = new Client()
 
     const response = await client.sendAndReceive(`GET ${file.id}`)
     client.close()
@@ -91,7 +91,7 @@ exports.postFile = async (req, res) => {
         return res.status(401).json({ error: 'Missing user-id header' })
     }
 
-    const user = User.getUserByUsername(userId)
+    const user = User.getUserById(userId)
     if (!user) return res.status(401).json({ error: 'User does not exist' })
 
     const { name, type, content = null, parent_id = null } = req.body
@@ -130,7 +130,7 @@ exports.postFile = async (req, res) => {
 
     // if it's a file – store content in TCP server
     if (type === 'file') {
-        const client = new Client('127.0.0.1', 5000)
+        const client = new Client()
         const response = await client.sendAndReceive(
             `POST ${newFile.id} ${content}`
         )
@@ -158,7 +158,7 @@ exports.patchFile = async (req, res) => {
     const userId = req.headers['user-id']
     if (!userId) return res.status(401).json({ error: 'Missing user-id header' })
     
-    const user = User.getUserByUsername(userId)
+    const user = User.getUserById(userId)
     if (!user) return res.status(401).json({ error: 'User does not exist' })
 
     const fileId = Number(req.params.id)
@@ -198,7 +198,7 @@ exports.patchFile = async (req, res) => {
 
     if (data.content !== undefined){
         // Update content on TCP server
-        const client = new Client('127.0.0.1', 5000) 
+        const client = new Client() 
         try {
             // Delete existing file from TCP server
             const deleteResponse = await client.sendAndReceive(`DELETE ${file.id}`)
@@ -243,7 +243,7 @@ exports.deleteFile = async (req, res) => {
     const userId = req.headers['user-id']
     if (!userId) return res.status(401).json({ error: 'Missing user-id header' })
     
-    const user = User.getUserByUsername(userId)
+    const user = User.getUserById(userId)
     if (!user) return res.status(401).json({ error: 'User does not exist' })
 
     const fileId = Number(req.params.id)
@@ -257,7 +257,7 @@ exports.deleteFile = async (req, res) => {
     }
 
     // Open one TCP client for all deletions
-    const client = new Client('127.0.0.1', 5000)
+    const client = new Client()
 
     try {
         // recursive deletion helper

@@ -8,7 +8,7 @@ const search = async (req, res) => {
     if (!query) {     // Validation: Ensure a query was provided
         return res.status(400).json({ error: "Search query is required" });
     }
-    const Client = new client('127.0.0.1', 5000); // Initialize the TCP client to communicate with the Exercise 2 server
+    const Client = new Client() // Initialize the TCP client to communicate with the Exercise 2 server
 
     try {
         // Send the SEARCH command to the old server 

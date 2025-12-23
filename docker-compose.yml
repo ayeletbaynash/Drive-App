@@ -1,0 +1,26 @@
+
+
+services:
+  tcp-server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "5000:5000"
+    # *** זה החלק שחובה להוסיף כדי שהמידע יישמר ***
+    volumes:
+      - tcp_storage:/usr/src/mytest/app
+
+  web-server:
+    build:
+      context: .
+      dockerfile: Dockerfile.node
+    ports:
+      - "3000:3000"
+    environment:
+      - TCP_HOST=tcp-server
+    depends_on:
+      - tcp-server
+
+volumes:
+  tcp_storage:

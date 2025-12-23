@@ -24,3 +24,5 @@ COPY src_py/ .
 
 # Compile all code + create executables
 RUN cmake .. && make
+
+CMD ["./serverExec", "5000"]

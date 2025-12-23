@@ -1,0 +1,18 @@
+# משתמשים ב-Node.js
+FROM node:18-alpine
+
+# תיקיית עבודה עבור ה-Web Server
+WORKDIR /usr/src/app
+
+# העתקת קבצי החבילות והתקנתן (זה קורה בתוך הדוקר!)
+COPY package*.json ./
+RUN npm install
+
+# העתקת כל שאר הקבצים (הוא פשוט יתעלם מקבצי ה-C++)
+COPY . .
+
+# חשיפת הפורט של ה-Node (נניח 3000)
+EXPOSE 3000
+
+# הרצת השרת
+CMD ["node", "app.js"]
