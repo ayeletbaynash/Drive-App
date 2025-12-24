@@ -16,14 +16,14 @@ Since the application exposes a RESTful API, operations are performed via HTTP r
 {Requires: in header: user-id. in body: name, type (folder/file), parent_id (if exist) content (optional)}  
 **Get File:**	GET	/api/files/:id	- Retrieves the content of the file specified by its numeric ID.  
 **Update File:**  PATCH  /api/files/:id - Updates a file's name or content.  
-{Requires: in header: user-id. in body: content/name/parentID (depending on what type of change you want to make} 
+{Requires: in header: user-id. in body: content/name/parentID (depending on what type of change you want to make}  
 **Search:**	GET	/api/search/:query	- Searches all files for the given text (in name or content) and returns matching files.  
 **Delete:**	DELETE	/api/files/:id	- Deletes the file and its content recursively by its numeric ID.   
 **Get Permissions:**  GET /api/files/:id/permissions  - Lists all users who have permissions for a specific file.   
 **Post Permission:**  POST /api/files/:id/permissions  - Grants 'read' or 'write' permission to another user.  
 {Requires: in header: user-id. in body: userID, permission (read, write, owner)}  
 **Edit Permission:**  PATCH /api/files/:id/permissions/:pId  - Updates an existing permission type.  
-
+{Requires: in header: user-id. in body: userID, permission (read, write, owner)}  
 **Remove Permission:**  DELETE /api/files/:id/permissions/:pId  - Revokes a specific permission from a user.  
 
 
@@ -37,7 +37,7 @@ docker-compose up --build
 
 
 **2nd terminal - 'client'**  
-Start running with the HTTP requests (works only on WSL and CMD):
+Start running with the HTTP requests (works in CMD for windows and WSL to elustrate linux):
 
 All variables in the fields can be changed. This is just a sample run.  
 **User Registration & Authentication:**  
@@ -52,31 +52,31 @@ All variables in the fields can be changed. This is just a sample run.
 
 **File Operations & Permissions:**  
 **4.** Create a root folder named 'Projects' for user 0 -> Gets ID 0  
-curl -i -X POST http://localhost:3000/api/files -H "user-id: 0" -H "Content-Type: application/json" -d "{\"name\":\"Projects\", \"type\":\"folder\", \"parent_id\": null}"  
+```curl -i -X POST http://localhost:3000/api/files -H "user-id: 0" -H "Content-Type: application/json" -d "{\"name\":\"Projects\", \"type\":\"folder\", \"parent_id\": null}"```  
 **5.** Create a file 'todo.txt' inside folder ID 0 -> Gets ID 1  
-curl -i -X POST http://localhost:3000/api/files -H "user-id: 0" -H "Content-Type: application/json" -d "{\"name\":\"todo.txt\", \"type\":\"file\", \"parent_id\": 0, \"content\":\"Finish the Drive app project\"}"  
+``` curl -i -X POST http://localhost:3000/api/files -H "user-id: 0" -H "Content-Type: application/json" -d "{\"name\":\"todo.txt\", \"type\":\"file\", \"parent_id\": 0, \"content\":\"Finish the Drive app project\"}" ```  
 **6.** List all root files/folders for user 0  
-curl -i -X GET http://localhost:3000/api/files -H "user-id: 0"  
+```curl -i -X GET http://localhost:3000/api/files -H "user-id: 0"```  
 **7.** Rename file ID 1 to 'urgent_tasks.txt' (PATCH request)  
-curl -i -X PATCH http://localhost:3000/api/files/1 -H "user-id: 0" -H "Content-Type: application/json" -d "{\"name\":\"urgent_tasks.txt\"}"  
+```curl -i -X PATCH http://localhost:3000/api/files/1 -H "user-id: 0" -H "Content-Type: application/json" -d "{\"name\":\"urgent_tasks.txt\"}"```  
 **8.** View specific details of file ID 1 to verify the rename  
-curl -i -X GET http://localhost:3000/api/files/1 -H "user-id: 0"  
+```curl -i -X GET http://localhost:3000/api/files/1 -H "user-id: 0"```  
 **9.** Delete file ID 1  
-curl -i -X DELETE http://localhost:3000/api/files/1 -H "user-id: 0"  
+```curl -i -X DELETE http://localhost:3000/api/files/1 -H "user-id: 0"```  
 **10.** Register a second user ('cat') -> Gets ID 1  
-curl -i -X POST http://localhost:3000/api/users -H "Content-Type: application/json" -d "{\"username\": \"cat\", \"password\": \"cat123\", \"emailAddress\": \"cat@gmail.com\", \"image\": \"cat.jpg\"}"  
+```curl -i -X POST http://localhost:3000/api/users -H "Content-Type: application/json" -d "{\"username\": \"cat\", \"password\": \"cat123\", \"emailAddress\": \"cat@gmail.com\", \"image\": \"cat.jpg\"}"```  
 **11.** Create a new file 'new_document.txt' inside folder ID 0 -> Gets ID 2  
-curl -i -X POST http://localhost:3000/api/files -H "user-id: 0" -H "Content-Type: application/json" -d "{\"name\":\"new_document.txt\", \"type\":\"file\", \"parent_id\": 0, \"content\":\"Testing permissions\"}"  
+```curl -i -X POST http://localhost:3000/api/files -H "user-id: 0" -H "Content-Type: application/json" -d "{\"name\":\"new_document.txt\", \"type\":\"file\", \"parent_id\": 0, \"content\":\"Testing permissions\"}"```  
 **12.** Grant 'read' permission to user ID 1 ('cat') on file ID 2  
-curl -i -X POST http://localhost:3000/api/files/2/permissions -H "user-id: 0" -H "Content-Type: application/json" -d "{\"userID\": \"1\", \"permission\": \"read\"}"  
+```curl -i -X POST http://localhost:3000/api/files/2/permissions -H "user-id: 0" -H "Content-Type: application/json" -d "{\"userID\": \"1\", \"permission\": \"read\"}"```  
 **13.** View all permissions for file ID 2  
-curl -i -X GET http://localhost:3000/api/files/2/permissions -H "user-id: 0"  
+```curl -i -X GET http://localhost:3000/api/files/2/permissions -H "user-id: 0"```  
 **14** Update an existing permission (ID 3) for file ID 2 to 'write' (PATCH request)  
-curl -i -X PATCH http://localhost:3000/api/files/2/permissions/3 -H "user-id: 0" -H "Content-Type: application/json" -d "{\"permission\": \"write\"}"
+```curl -i -X PATCH http://localhost:3000/api/files/2/permissions/3 -H "user-id: 0" -H "Content-Type: application/json" -d "{\"permission\": \"write\"}"```  
 **15** Delete a specific permission (ID 3) from file ID 2  
-curl -i -X DELETE http://localhost:3000/api/files/2/permissions/3 -H "user-id: 0"  
-**16** Search for files containing a specific query ('Testing') (GET request)
-curl -i -X GET http://localhost:3000/api/search/Testing -H "user-id: 0"
+```curl -i -X DELETE http://localhost:3000/api/files/2/permissions/3 -H "user-id: 0"```  
+**16** Search for files containing a specific query ('Testing') (GET request)  
+```curl -i -X GET http://localhost:3000/api/search/Testing -H "user-id: 0"```  
 <img width="1600" height="928" alt="image" src="https://github.com/user-attachments/assets/8602caf4-b9c7-4989-8a5e-5d8778481017" />
 
 
