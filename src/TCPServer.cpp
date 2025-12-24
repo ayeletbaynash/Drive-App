@@ -40,7 +40,6 @@ void handleClient(int clientSocket)
         GetCommand getCmd;
         SearchCommand searchCmd;
         DeleteCommand deleteCmd;
-        PatchCommand patchCmd;
 
         std::map<std::string, ICommand*> commands = {
             {"post", &addCmd},
