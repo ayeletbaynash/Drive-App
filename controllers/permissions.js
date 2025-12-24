@@ -1,7 +1,23 @@
 const Permission = require('../models/permissions')  // Permissions Model
 const User = require('../models/users')   // User Model
-
+const File = require('../models/files')        // File Model
 const VALID_PERMISSIONS = ['read', 'write', 'owner']
+
+const getPermissionRecursive = (fileId, userId) => {
+    const permissionForUser = Permission.getPermissionForUser(fileId, userId)
+    if (permissionForUser){
+        return permissionForUser
+    }
+    const file = File.getFileById(fileId)
+    if (file.parent_id === null) {
+        return null
+    }
+    return getPermissionRecursive (file.parent_id, userId)
+}
+
+
+
+
 
 exports.getPermissionByFileId = (req, res) => {
     const userId = req.headers['user-id']
@@ -15,7 +31,7 @@ exports.getPermissionByFileId = (req, res) => {
     return res.status(400).json({ error: 'Missing file ID in request parameters' })
 }
     //check if the user is the owner that can update a premission
-    const permissionForUser = Permission.getPermissionForUser(fileID, userId)
+    const permissionForUser = getPermissionRecursive(fileID, userId)
     if (!permissionForUser) {
         return res.status(403).json({ error: 'User has no permission' })
 }

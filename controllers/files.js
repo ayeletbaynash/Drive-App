@@ -4,6 +4,19 @@ const Permission = require('../models/permissions') // Permission Model (in-memo
 const User = require('../models/users')   // User Model
 const crypto = require('crypto')  // for the pysical name
 
+
+const getPermissionRecursive = (fileId, userId) => {
+    const permissionForUser = Permission.getPermissionForUser(fileId, userId)
+    if (permissionForUser){
+        return permissionForUser
+    }
+    const file = File.getFileById(fileId)
+    if (file.parent_id === null) {
+        return null
+    }
+    return getPermissionRecursive (file.parent_id, userId)
+}
+
 // GET /api/files - Retrieve top-level (root) files/folders for the connected user
 exports.getFiles = (req, res) => {
     const userId = req.headers['user-id'];
@@ -17,8 +30,8 @@ exports.getFiles = (req, res) => {
     const files = File.getFiles().filter(f => {
         if (f.parent_id !== null) return false
         if (f.user_id == userId) return true; // Owner always sees
-        const perm = Permission.getPermissionForUser(f.id, userId)
-        return perm !== undefined // Include if any permission exists
+        const perm = getPermissionRecursive(f.id, userId)
+        return perm !== null // Include if any permission exists
     })
 
     res.status(200).json(files) // Return JSON response
@@ -41,7 +54,7 @@ exports.getFileById = async (req, res) => {
 
     // Permission check: owner or any permission
     if (file.user_id !== userId) {
-        const perm = Permission.getPermissionForUser(fileId, userId);
+        const perm = getPermissionRecursive(fileId, userId);
         if (!perm) return res.status(403).json({ error: 'No permission to access this file' });
     }
 
@@ -111,7 +124,7 @@ exports.postFile = async (req, res) => {
     if (parent_id !== null) {
         const parentId = Number(parent_id)
         const parent = File.getFileById(parentId);
-        const perm = Permission.getPermissionForUser(parentId, userId);
+        const perm = getPermissionRecursive(parentId, userId);
         if (!parent || parent.type !== 'folder' || !perm || !['write', 'owner'].includes(perm.permission)) {
             return res.status(403).json({ error: 'No permission to add file to this folder' });
         }
@@ -174,7 +187,7 @@ exports.patchFile = async (req, res) => {
     }
 
     // Permission check: only 'write' or 'owner' can edit
-    const permission = Permission.getPermissionForUser(fileId, userId)
+    const permission = getPermissionRecursive(fileId, userId)
     if (!permission || !['write', 'owner'].includes(permission.permission)) {
         return res.status(403).json({ error: 'No permission to edit this file' })
     }
@@ -194,7 +207,7 @@ exports.patchFile = async (req, res) => {
     // Check parent folder permission if moving
     if (data.parent_id) {
         const newParent = File.getFileById(data.parent_id);
-        const parentPerm = Permission.getPermissionForUser(data.parent_id, userId);
+        const parentPerm = getPermissionRecursive(data.parent_id, userId);
         if (!newParent || !parentPerm || !['write', 'owner'].includes(parentPerm.permission)) {
             return res.status(403).json({ error: 'No permission to move file into target folder' });
         }
