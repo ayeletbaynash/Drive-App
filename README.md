@@ -37,6 +37,7 @@ docker-compose up --build
 **2nd terminal - 'client'**  
 Start running with the HTTP requests (works only on WSL and CMD):
 
+All variables in the fields can be changed. This is just a sample run.  
 **User Registration & Authentication:**  
 **1.** Register the first user ('admin') -> Returns HTTP 201 Created  
 curl -i -X POST http://localhost:3000/api/users -H "Content-Type: application/json" -d "{\"username\": \"admin\", \"password\": \"1234\", \"emailAddress\": \"admin@gmail.com\", \"image\": \"admin.jpg\"}"  
@@ -44,7 +45,8 @@ curl -i -X POST http://localhost:3000/api/users -H "Content-Type: application/js
 curl -i -X GET http://localhost:3000/api/users/0  
 **3.** Login as 'admin' -> Returns User ID (0) to confirm credentials  
 curl -i -X POST http://localhost:3000/api/tokens -H "Content-Type: application/json" -d "{\"username\": \"admin\", \"password\": \"1234\"}"  
-**picture!!!!!!!!!!!!!!**
+<img width="1600" height="953" alt="image" src="https://github.com/user-attachments/assets/3f56174d-3124-4cf2-bd72-3c47b2fcacb2" />
+
 
 **File Operations & Permissions:**  
 **4.** Create a root folder named 'Projects' for user 0 -> Gets ID 0  
@@ -65,5 +67,8 @@ curl -i -X POST http://localhost:3000/api/files -H "user-id: 0" -H "Content-Type
 curl -i -X POST http://localhost:3000/api/files/2/permissions -H "user-id: 0" -H "Content-Type: application/json" -d "{\"userID\": \"1\", \"permission\": \"read\"}"  
 **12.** View all permissions for file ID 2  
 curl -i -X GET http://localhost:3000/api/files/2/permissions -H "user-id: 0"  
-**picture!!!!!!!!!!!!!!**
+**13** Update an existing permission (ID 3) for file ID 2 to 'write' (PATCH request)  
+curl -i -X PATCH http://localhost:3000/api/files/2/permissions/3 -H "user-id: 0" -H "Content-Type: application/json" -d "{\"permission\": \"write\"}"
+<img width="1600" height="928" alt="image" src="https://github.com/user-attachments/assets/8602caf4-b9c7-4989-8a5e-5d8778481017" />
+
 
