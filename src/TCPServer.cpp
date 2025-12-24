@@ -21,7 +21,6 @@
 #include "GetCommand.h"
 #include "SearchCommand.h"
 #include "DeleteCommand.h"
-#include "PatchCommand.h"
 
 // Handles a single connected client: sets up input/output streams, creates the App instance,
 // runs it until the client disconnects, and then cleans up all allocated resources.
@@ -47,8 +46,7 @@ void handleClient(int clientSocket)
             {"post", &addCmd},
             {"get", &getCmd},
             {"search", &searchCmd},
-            {"delete", &deleteCmd},
-            {"patch", &patchCmd}
+            {"delete", &deleteCmd}
         };
 
         RLECompress compressor;
