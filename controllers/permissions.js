@@ -106,12 +106,12 @@ exports.patchPermission = (req, res) => {
     const user = User.getUserById(userId)
     if (!user) return res.status(401).json({ error: 'User does not exist' })
 
-    const existingPermission = Permission.getPermissionForPId(pId)
-    if (!existingPermission) {
+   const existingPermission = Permission.getPermissionsPid(pId)
+   if (!existingPermission) {
         return res.status(404).json({ error: 'Permission not found' })
-}
+    }
     //check if the user is the owner that can update a premission
-    const permissionForUser = Permission.getPermissionForPId(existingPermission.fileID, userId)
+    const permissionForUser = Permission.getPermissionForUser(existingPermission.fileID, userId)
     if (!permissionForUser) {
         return res.status(403).json({ error: 'User has no permission' })
 }
@@ -134,7 +134,7 @@ exports.deletePermission = (req, res) => {
     const pId = req.params.pId
     if (!pId) return res.status(400).json({ error: 'Missing permission ID in request parameters' })
 
-    const existingPermission = Permission.getPermissionByPId(pId)
+    const existingPermission = Permission.getPermissionsPid(pId)
     if (!existingPermission) return res.status(404).json({ error: 'Permission not found' })
 
     //check if the user is the owner that can delete a premission

@@ -2,6 +2,7 @@ let pIdCounter = 0
 const all_permissions = []
 
 const getPermissions = (fileID) => all_permissions.filter(p => p.fileID == fileID)
+const getPermissionsPid = (PId) => all_permissions.find(p => p.pId == PId)
 
 const postPermission = (fileID, userID, permission) => {
     const newPermission = { pId: pIdCounter++, fileID, userID, permission}
@@ -47,5 +48,6 @@ module.exports = {
     patchPermission,
     deletePermission,
     getPermissionForUser,
-    getPermissionForPId
+    getPermissionForPId,
+    getPermissionsPid
 }
