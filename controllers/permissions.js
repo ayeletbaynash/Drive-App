@@ -79,8 +79,10 @@ exports.postPermission = (req, res) => {
         return res.status(400).json({ error: 'Permission already exists' })
 }
 
-    Permission.postPermission(fileID, userID, permission)
-    res.status(201).send()
+    const newPerm = Permission.postPermission(fileID, userID, permission)
+    res.status(201).json({
+    pId: newPerm.pId 
+})
 }
 
 exports.patchPermission = (req, res) => {

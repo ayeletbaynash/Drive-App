@@ -165,8 +165,9 @@ exports.postFile = async (req, res) => {
     }   
 }
     res.location(`/api/files/${newFile.id}`)
-    res.status(201).send()
-
+    res.status(201).json({
+    id: newFile.id
+})
 }
 
 // PATCH /api/files/:id - Update an existing file/folder.
