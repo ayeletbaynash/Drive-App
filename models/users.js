@@ -21,7 +21,7 @@ const validateUser = (username, password) => {
 
 // User retrieval function by ID
 const getUserById = (id) => {
-    return all_users.find(u => u.id === id);
+    return all_users.find(u => u.id == id);
 };
 
 // User retrieval function by username

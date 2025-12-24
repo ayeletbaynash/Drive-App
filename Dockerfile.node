@@ -1,0 +1,18 @@
+# Use Node.js base image
+FROM node:18-alpine
+
+# Set working directory for the web server
+WORKDIR /usr/src/app
+
+# Copy package files and install dependencies (runs inside the Docker container)
+COPY package*.json ./
+RUN npm install
+
+# Copy the rest of the project files (C++ files are simply ignored by Node)
+COPY . .
+
+# Expose the Node.js server port (assumed to be 3000)
+EXPOSE 3000
+
+# Start the server
+CMD ["node", "app.js"]

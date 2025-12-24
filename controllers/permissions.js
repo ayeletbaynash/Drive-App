@@ -1,13 +1,29 @@
 const Permission = require('../models/permissions')  // Permissions Model
 const User = require('../models/users')   // User Model
-
+const File = require('../models/files')        // File Model
 const VALID_PERMISSIONS = ['read', 'write', 'owner']
+
+const getPermissionRecursive = (fileId, userId) => {
+    const permissionForUser = Permission.getPermissionForUser(fileId, userId)
+    if (permissionForUser){
+        return permissionForUser
+    }
+    const file = File.getFileById(fileId)
+    if (file.parent_id === null) {
+        return null
+    }
+    return getPermissionRecursive (file.parent_id, userId)
+}
+
+
+
+
 
 exports.getPermissionByFileId = (req, res) => {
     const userId = req.headers['user-id']
     if (!userId) return res.status(401).json({ error: 'Missing user-id header' })
     // check if user exist
-    const user = User.getUserByUsername(userId)
+    const user = User.getUserById(userId)
     if (!user) return res.status(401).json({ error: 'User does not exist' })
     
     const fileID = req.params.id
@@ -15,7 +31,7 @@ exports.getPermissionByFileId = (req, res) => {
     return res.status(400).json({ error: 'Missing file ID in request parameters' })
 }
     //check if the user is the owner that can update a premission
-    const permissionForUser = Permission.getPermissionForUser(fileID, userId)
+    const permissionForUser = getPermissionRecursive(fileID, userId)
     if (!permissionForUser) {
         return res.status(403).json({ error: 'User has no permission' })
 }
@@ -38,7 +54,7 @@ exports.postPermission = (req, res) => {
     const currentUserId = req.headers['user-id']
     if (!currentUserId) return res.status(401).json({ error: 'Missing user-id header' })
 
-   const currentUser = User.getUserByUsername(currentUserId)
+   const currentUser = User.getUserById(currentUserId)
     if (!currentUser) return res.status(401).json({ error: 'User does not exist' })
     
     //check if the permission is valid 
@@ -54,7 +70,7 @@ exports.postPermission = (req, res) => {
         return res.status(403).json({ error: 'Only owner can change permissions' })
 }
 
-    const targetUser = User.getUserByUsername(userID)
+    const targetUser = User.getUserById(userID)
     if (!targetUser) return res.status(404).json({ error: 'Target user does not exist' })
 
     //check if there is a permission alredy connected to this file and this user
@@ -63,8 +79,10 @@ exports.postPermission = (req, res) => {
         return res.status(400).json({ error: 'Permission already exists' })
 }
 
-    Permission.postPermission(fileID, userID, permission)
-    res.sendStatus(201)
+    const newPerm = Permission.postPermission(fileID, userID, permission)
+    res.status(201).json({
+    pId: newPerm.pId 
+})
 }
 
 exports.patchPermission = (req, res) => {
@@ -85,15 +103,15 @@ exports.patchPermission = (req, res) => {
 
     const userId = req.headers['user-id']
     if (!userId) return res.status(401).json({ error: 'Missing user-id header' })
-    const user = User.getUserByUsername(userId)
+    const user = User.getUserById(userId)
     if (!user) return res.status(401).json({ error: 'User does not exist' })
 
-    const existingPermission = Permission.getPermissionByPId(pId)
+    const existingPermission = Permission.getPermissionForPId(pId)
     if (!existingPermission) {
         return res.status(404).json({ error: 'Permission not found' })
 }
     //check if the user is the owner that can update a premission
-    const permissionForUser = Permission.getPermissionForPId(pId, userId)
+    const permissionForUser = Permission.getPermissionForPId(existingPermission.fileID, userId)
     if (!permissionForUser) {
         return res.status(403).json({ error: 'User has no permission' })
 }
@@ -110,7 +128,7 @@ exports.patchPermission = (req, res) => {
 exports.deletePermission = (req, res) => {
     const userId = req.headers['user-id']
     if (!userId) return res.status(401).json({ error: 'Missing user-id header' })
-    const user = User.getUserByUsername(userId)
+    const user = User.getUserById(userId)
     if (!user) return res.status(401).json({ error: 'User does not exist' })
     
     const pId = req.params.pId
@@ -120,7 +138,7 @@ exports.deletePermission = (req, res) => {
     if (!existingPermission) return res.status(404).json({ error: 'Permission not found' })
 
     //check if the user is the owner that can delete a premission
-    const permissionForUser = Permission.getPermissionForPId(pId, userId)
+    const permissionForUser = Permission.getPermissionForUser(existingPermission.fileID, userId)
     if (!permissionForUser) {
         return res.status(403).json({ error: 'User has no permission' })
 }

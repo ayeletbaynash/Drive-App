@@ -1,7 +1,7 @@
 const net = require('net')
 //defining a client object that opens a connection to the server when created.
 class Client {
-    constructor(host = '127.0.0.1', port = 5000) {
+    constructor(host = process.env.TCP_HOST ||'127.0.0.1', port = 5000) {
         this.host = host
         this.port = port
         this.socket = new net.Socket()
