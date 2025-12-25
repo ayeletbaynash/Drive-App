@@ -13,19 +13,19 @@ Since the application exposes a RESTful API, operations are performed via HTTP r
 **Get User:** GET /api/users/:id - Retrieves public profile information for a specific user.  
 **Get Root Files:** GET /api/files - Retrieves files and folders in the user's root directory.    
 **Post File:**	POST	/api/files	- Creates a new file with the given name and content.  
-{Requires: in header: user-id. in body: name, type (folder/file), parent_id (if exist) content (optional)}  
+{Requires in body: name, type (folder/file), parent_id (if exist) content (optional)}  
 **Get File:**	GET	/api/files/:id	- Retrieves the content of the file specified by its numeric ID.  
 **Update File:**  PATCH  /api/files/:id - Updates a file's name or content.  
-{Requires: in header: user-id. in body: content/name/parentID (depending on what type of change you want to make}  
+{Requires in body: content/name/parentID (depending on what type of change you want to make}  
 **Search:**	GET	/api/search/:query	- Searches all files for the given text (in name or content) and returns matching files.  
 **Delete:**	DELETE	/api/files/:id	- Deletes the file and its content recursively by its numeric ID.   
 **Get Permissions:**  GET /api/files/:id/permissions  - Lists all users who have permissions for a specific file.   
 **Post Permission:**  POST /api/files/:id/permissions  - Grants 'read' or 'write' permission to another user.  
-{Requires: in header: user-id. in body: userID, permission (read, write, owner)}  
+{Requires in body: userID, permission (read, write, owner)}  
 **Edit Permission:**  PATCH /api/files/:id/permissions/:pId  - Updates an existing permission type.  
-{Requires: in header: user-id. in body: userID, permission (read, write, owner)}  
+{Requires in body: permission (read, write, owner)}  
 **Remove Permission:**  DELETE /api/files/:id/permissions/:pId  - Revokes a specific permission from a user.  
-
+- Note: The user-id header must be included in every request, regardless of whether a body is present, excluding User Registration & Authentication requests.
 
 # How to Run the Application:  
 
