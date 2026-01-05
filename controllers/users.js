@@ -20,6 +20,26 @@ const registerUser = (req, res) => {
         return res.status(400).json({ error: "Username cannot contain spaces" });
     }
 
+    // At least 8 char for password
+    if (password.length < 8) {
+        return res.status(400).json({ error: "Password must be at least 8 characters long" });
+    }
+
+    // Password containing upper lower and number
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$/;
+    if (!passwordRegex.test(password)) {
+        return res.status(400).json({ 
+            error: "Password must include at least one uppercase letter, one lowercase letter, and one number" 
+        });
+    }
+
+    // Email must be "__@__.__"
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(formData.emailAddress)) {
+        setError("Please enter a valid email address");
+        return;
+    }
+
     // Calling a function in the Model to register the user in the system and receive the created object.
     const newUser = userModel.createUser(username, password, emailAddress, image);
     // Return the users id
