@@ -5,14 +5,13 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import Register from './pages/registration'; 
 import Login from './pages/login';
 import HomePage from './pages/HomePage';
+import TopBar from './components/topbar/TopBar';
 
 function App() {
 
-  // קומפוננטת תוכן פנימית (כדי שנוכל להשתמש ב-useAuth)
-  const App = () => {
     const [user, setUser] = useState(() => {
         const saved = localStorage.getItem('user');
-        return saved ? JSON.parse(saved) : { id: 0, name: "Guest Admin", email: "admin@test.com" };
+        return saved ? JSON.parse(saved) : { id: 0, name: "Guest Admin", email: "admin@test.com" };  // to check: { id: 0, name: "Guest Admin", email: "admin@test.com" };
     });
     const [searchQuery, setSearchQuery] = useState(""); // המצב היחיד ש-App מנהל: "מה מחפשים?"
 
@@ -22,30 +21,26 @@ function App() {
         localStorage.removeItem('user');
         localStorage.removeItem('token');
         setUser(null); // זה מה שגורם להחלפת המסך!
-        // navigate(`/login`);
     };
 
   return (
-    <BrowserRouter>
-    <div>
+    
       <Router>
-        <Routes>
-          <Route path="/registration" element={<Register />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/" element={<Login />} />
-          <Route path="/home" element={<HomePage />} />
-      </Routes>
-    </Router>
-
+        <div>
+            {/* שינוי 2: ה-TopBar יופיע רק אם יש משתמש מחובר [cite: 83, 86] */}
                 {user && (
                     <TopBar 
                         user={user} 
-                        onLogout={handleLogout} // שליחת הפונקציה לדרך
+                        onLogout={handleLogout} 
                         onSearch={setSearchQuery} 
                     />
                 )}
-
-                <Routes>                    
+        <Routes>
+          <Route path="/registration" element={<Register />} />
+          <Route path="/login" element={
+                user ? <Navigate to="/" /> : <Login onLogin={setUser} />
+            } />
+          
                     <Route path="/" element={
                         user ? (
                             <HomePage user={user} searchQuery={searchQuery} />
@@ -53,12 +48,13 @@ function App() {
                             <Navigate to="/login" />
                         )
                     } />
+                    <Route path="*" element={<Navigate to="/" />} />
                 </Routes> 
-        
    </div>
-       </BrowserRouter>
+         </Router>
+
 
   );
-}}
+}
 
 export default App;

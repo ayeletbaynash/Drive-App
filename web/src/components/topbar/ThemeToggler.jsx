@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import './styles/theme.css';
+import '../../styles/theme.css';
 
 function ThemeToggler() {
   const [isDark, setIsDark] = useState(false);
@@ -11,7 +11,7 @@ function ThemeToggler() {
   };
 
   return (
-    <button onClick={toggleTheme}>
+    <button onClick={toggle}>
       {isDark ? '☀️ Light Mode' : '🌙 Dark Mode'}
     </button>
   );

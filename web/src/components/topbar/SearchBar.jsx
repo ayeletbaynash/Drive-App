@@ -1,21 +1,15 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 
 function SearchBar() {
   const [text, setText] = useState('');
-  const navigate = useNavigate(); // הוק של הראוטר למעבר עמודים
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (text.trim()) {
-      // מעביר את המשתמש לכתובת חדשה. הרכיב SearchPage יטפל בשאר.
-      navigate(`/search/${text}`); 
-      setText(''); // ניקוי השדה
-    }
+    onSearch(text);
   };
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form onSubmit={handleSubmit} style={{ display: 'inline-block' }}>
       <input 
         type="text" 
         placeholder="Search files..." 

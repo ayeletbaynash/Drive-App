@@ -12,27 +12,6 @@ import SideMenu from '../components/SideMenu';
 // לא צריך לייבא פה את TopBar או MainLayout כי הם כבר נמצאים ב-App
 function HomePage({ user, searchQuery }) {
 
-  const HomePage = () => {
-  return (
-    <div>
-
-      <div style={{ display: 'flex' }}>
-        <SideMenu />
-
-        <div style={{ flex: 1 }}>
-          <Routes>
-            <Route path="my-drive" element={<div>my drive</div>} />
-            <Route path="shared" element={<div>Shared with me content</div>} />
-            <Route path="recent" element={<div>Recent files content</div>} />
-            <Route path="starred" element={<div>Starred files content</div>} />
-            <Route path="trash" element={<div>Trash content</div>} />
-            <Route path="home" element={<div>home</div>} />
-          </Routes>
-        </div>
-      </div>
-    </div>
-  );
-};
     const [files, setFiles] = useState([]);
 
     // זה המקום שבו השותפה שלך תכתוב את הלוגיקה של השרת
@@ -52,6 +31,21 @@ function HomePage({ user, searchQuery }) {
     }, [searchQuery, user]); // הרשימה תתעדכן כל פעם שהחיפוש משתנה
 
     return (
+    <div>
+      <div style={{ display: 'flex' }}>
+        <SideMenu />
+
+        <div style={{ flex: 1 }}>
+          <Routes>
+            <Route path="my-drive" element={<div>my drive</div>} />
+            <Route path="shared" element={<div>Shared with me content</div>} />
+            <Route path="recent" element={<div>Recent files content</div>} />
+            <Route path="starred" element={<div>Starred files content</div>} />
+            <Route path="trash" element={<div>Trash content</div>} />
+            <Route path="home" element={<div>home</div>} />
+          </Routes>
+        </div>
+      </div>      
         <div style={{ padding: '20px' }}>
             <h1>My Files</h1>
             
@@ -67,7 +61,8 @@ function HomePage({ user, searchQuery }) {
                 <p>File list will load here...</p>
             </div>
         </div>
+        </div>
     );
-}
 
+};
 export default HomePage;
