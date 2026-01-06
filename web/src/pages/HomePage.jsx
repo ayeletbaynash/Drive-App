@@ -1,6 +1,7 @@
 import { Routes, Route } from 'react-router-dom';
-import SideMenu from '../components/SideMenu';
-//import HomeFiles from '../components/HomeFiles';
+import SideMenu from '../components/sideMenu/SideMenu';
+import React, { useState, useEffect } from 'react';
+import HomeFiles from '../components/main content/HomeFiles';
 //import DriveFiles from '../components/DriveFiles';
 //import SharedFiles from '../components/SharedFiles';
 //import RecentFiles from '../components/RecentFiles';
@@ -9,6 +10,19 @@ import SideMenu from '../components/SideMenu';
 
 
 const HomePage = () => {
+    const [items, setItems] = useState([]);
+//talk with the server- and update the files
+    const fetchFilesFromServer = () => {
+        fetch('http://localhost:8080/api/files')
+            .then(response => response.json())
+            .then(data => setItems(data))
+            .catch(error => console.error("Error:", error));
+        };
+//load the item in the firs
+    useEffect(() => {
+        fetchFilesFromServer();
+    }, []);
+
   return (
     <div>
 
@@ -22,7 +36,7 @@ const HomePage = () => {
             <Route path="recent" element={<div>Recent files content</div>} />
             <Route path="starred" element={<div>Starred files content</div>} />
             <Route path="trash" element={<div>Trash content</div>} />
-            <Route path="home" element={<div>home</div>} />
+            <Route path="home" element={<HomeFiles files={items} onRefresh={fetchFilesFromServer}/>} />
           </Routes>
         </div>
       </div>
