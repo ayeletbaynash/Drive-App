@@ -7,8 +7,12 @@ const loginUser = (req, res) => {
     // Check if user exists
     const user = userModel.validateUser(username, password);
     if (user) {
-        // If yes - return it
-        res.status(200).json({ id: user.id });
+        // If yes - return it with all its details
+        res.status(200).json({
+            id: user.id,
+            username: user.username, 
+            image: user.image
+            });
     } else {
         // If no - return error
         res.status(401).json({ error: "Invalid username or password" });

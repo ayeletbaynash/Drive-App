@@ -42,9 +42,12 @@ const Login = () => {
                 */
                 localStorage.setItem('token', data.token);
                 
-                // Store the username to personalize the UI later
+                // Store the username and photo to personalize the UI later
                 if (data.username) {
                     localStorage.setItem('username', data.username);
+                }
+                if (data.image) {
+                    localStorage.setItem('userImage', data.image);
                 }
 
                 alert('Login successful!');
