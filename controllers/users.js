@@ -35,9 +35,8 @@ const registerUser = (req, res) => {
 
     // Email must be "__@__.__"
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(formData.emailAddress)) {
-        setError("Please enter a valid email address");
-        return;
+    if (!emailRegex.test(emailAddress)) {
+        return res.status(400).json({ error: "Please enter a valid email address" });
     }
 
     // Calling a function in the Model to register the user in the system and receive the created object.

@@ -77,7 +77,7 @@ const Register = () => {
         // The call to server
         try {
             // API Integration - POST /api/users
-            const response = await fetch('http://localhost:5000/api/users', {
+            const response = await fetch('http://localhost:3000/api/users', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -87,7 +87,8 @@ const Register = () => {
                     username: formData.username,
                     password: formData.password,
                     emailAddress: formData.emailAddress,
-                    image: formData.image
+                    //image: formData.image
+                    image: "test-image-string" //////////////////////////////// for testing
                 }),
             });
 
