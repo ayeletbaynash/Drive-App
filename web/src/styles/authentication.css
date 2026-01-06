@@ -1,0 +1,102 @@
+/* src/styles/authentication.css */
+@import './theme.css';
+
+/* קונטיינר כללי לדפי התחברות/הרשמה */
+.auth-page-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 80vh;
+    background-color: var(--background);
+    font-family: var(--font-family);
+}
+
+/* כרטיס לבן מרכזי - גנרי לכל הטפסים */
+.auth-card {
+    width: 100%;
+    max-width: 400px;
+    background-color: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-md);
+    padding: var(--spacing-xl);
+}
+
+/* כותרת גדולה ומרכזית */
+.auth-title {
+    font-size: var(--size-h1) ;
+    font-weight: var(--weight-black);
+    color: var(--text-main);
+    text-align: center;
+    margin-bottom: var(--spacing-xxl);
+    letter-spacing: -1px;
+    display: block;
+    width: 100%;
+}
+
+/* עיצוב כפתור - הורדתי כפילויות והשתמשתי בסלקטור חזק כדי להימנע מ-!important */
+button.auth-button.btn {
+    background-color: var(--primary);
+    border: var(--border);
+    padding: var(--spacing-md);
+    font-size: var(--size-md);
+    font-weight: var(--weight-bold);
+    border-radius: var(--radius-md);
+    transition: all var(--transition-normal);
+    margin-top: var(--spacing-sm);
+    color: var(--white);
+}
+
+button.auth-button.btn:hover {
+    background-color: var(--primary-hover);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+/* לינק למעבר בין דפים (למשל מרגיסטר ללוגין) */
+.auth-link {
+    color: var(--primary);
+    cursor: pointer;
+    text-decoration: underline;
+    font-weight: var(--weight-bold);
+    transition: color var(--transition-fast);
+}
+
+.auth-link:hover {
+    color: var(--primary-hover);
+    text-decoration: none;
+}
+
+/* הגדרה גנרית לשדות קלט בפוקוס */
+.form-control:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.15);
+}
+
+.auth-image-preview {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    border: 3px solid var(--primary);
+    margin: 0 auto;
+}
+
+.auth-required-container {
+    display: flex;          /* זה מה שגורם להם להיות בשורה אחת */
+    align-items: center;    /* מיישר אותם באותו גובה */
+    justify-content: left; /* ממרכז את כל השורה (אם את רוצה את זה באמצע) */
+    gap: 5px;               /* יוצר רווח קטן בין הכוכבית לטקסט */
+    margin-bottom: 1px;    /* רווח קטן מהשדות שלמטה */
+}
+
+.required-star {
+    color: var(--error);    /* צבע אדום */
+    font-weight: bold;
+    font-size: 1.2rem;
+}
+
+.required-note {
+    font-size: var(--size-xs);
+    color: var(--text-muted);
+    font-style: italic;
+}

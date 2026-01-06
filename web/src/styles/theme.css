@@ -1,0 +1,81 @@
+/* src/styles/theme.css */
+
+:root {
+    /* --- Spacing --- */
+    --spacing-xs: 4px;
+    --spacing-sm: 8px;
+    --spacing-md: 12px;
+    --spacing-lg: 16px;
+    --spacing-xl: 20px;
+    --spacing-xxl: 40px;
+
+    /* --- Border Radius --- */
+    --radius-sharp: 0px;
+    --radius-sm: 4px;
+    --radius-md: 8px;
+    --radius-lg: 15px;
+    --radius-round: 50%;
+
+    /* --- Typography --- */
+    --font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    
+    --weight-light: 300;
+    --weight-regular: 400;
+    --weight-medium: 500;
+    --weight-bold: 700;
+    --weight-black: 900;
+
+    --size-xs: 0.75rem;
+    --size-sm: 0.875rem;
+    --size-md: 1rem;
+    --size-lg: 1.25rem;
+    --size-xl: 1.5rem;
+    --size-h1: 2.5rem;
+    --size-h0: 3.5rem;
+    --size-display: 4rem;
+
+    --line-height-tight: 1.2;
+    --line-height-normal: 1.5;
+    --line-height-relaxed: 1.8;
+
+    /* --- Shadows --- */
+    --shadow-none: none;
+    --shadow-sm: 0 2px 4px rgba(0,0,0,0.05);
+    --shadow-md: 0 4px 12px rgba(0,0,0,0.1);
+    --shadow-lg: 0 8px 24px rgba(0,0,0,0.15);
+
+    /* --- Transitions --- */
+    --transition-fast: 0.2s ease-in-out;
+    --transition-normal: 0.3s ease-in-out;
+
+    /* --- Default Light Mode Colors --- */
+    --primary: #0d6efd;
+    --primary-hover: #073f93;
+    --secondary: #6c757d;
+    --success: #198754;
+    --error: #dc3545;
+    --warning: #ffc107;
+    --background: #f4f7f6;
+    --surface: #ffffff;
+    --border: #dee2e6;
+    --text-main: #212529;
+    --text-muted: #6c757d;
+    --white: #ffffff;
+}
+
+/* --- Dark Mode Overrides --- */
+/* This will trigger when the body or a parent container has the 'dark' class */
+[data-theme='dark'], .dark-mode {
+    --primary: #3786ff;
+    --primary-hover: #5a9bff;
+    --secondary: #a0a0a0;
+    --success: #28a745;
+    --error: #ff4d4d;
+    --warning: #ffc107;
+    --background: #121212;
+    --surface: #1e1e1e;
+    --border: #333333;
+    --text-main: #f8f9fa;
+    --text-muted: #b0b0b0;
+    --white: #ffffff; /* Usually stays white even in dark mode */
+}

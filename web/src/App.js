@@ -1,11 +1,15 @@
-import { useState } from 'react';
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import TopBar from './components/topbar/TopBar'; // מכיל את ה-Search וה-UserMenu
-import HomePage from './pages/HomePage';
 import './styles/theme.css';
+import './App.css';
+import { useState } from 'react';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import Register from './pages/registration'; 
+import Login from './pages/login';
+import HomePage from './pages/HomePage';
 
-// קומפוננטת תוכן פנימית (כדי שנוכל להשתמש ב-useAuth)
-const App = () => {
+function App() {
+
+  // קומפוננטת תוכן פנימית (כדי שנוכל להשתמש ב-useAuth)
+  const App = () => {
     const [user, setUser] = useState(() => {
         const saved = localStorage.getItem('user');
         return saved ? JSON.parse(saved) : { id: 0, name: "Guest Admin", email: "admin@test.com" };
@@ -21,9 +25,18 @@ const App = () => {
         // navigate(`/login`);
     };
 
-    return (
-        <BrowserRouter>
-            <div>
+  return (
+    <BrowserRouter>
+    <div>
+      <Router>
+        <Routes>
+          <Route path="/registration" element={<Register />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/" element={<Login />} />
+          <Route path="/home" element={<HomePage />} />
+      </Routes>
+    </Router>
+
                 {user && (
                     <TopBar 
                         user={user} 
@@ -41,9 +54,11 @@ const App = () => {
                         )
                     } />
                 </Routes> 
-            </div>
-        </BrowserRouter>
-    );
-};
+        
+   </div>
+       </BrowserRouter>
+
+  );
+}}
 
 export default App;
