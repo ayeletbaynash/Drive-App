@@ -79,3 +79,33 @@
     --text-muted: #b0b0b0;
     --white: #ffffff; /* Usually stays white even in dark mode */
 }
+
+/* זה החלק הקריטי שחסר לך */
+/* הגדרה גלובלית לכל האתר */
+body, html, #root {
+    background-color: var(--background) !important;
+    color: var(--text-main) !important;
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* מוודא שגם ה-Container של האפליקציה נצבע */
+.app-container {
+    background-color: var(--background);
+    min-height: 100vh;
+}
+
+/* אם את רוצה שגם הקומפוננטות של ה-Bootstrap ישתנו */
+.navbar, .card, .auth-card {
+    background-color: var(--surface) !important;
+    color: var(--text-main) !important;
+    border-color: var(--border) !important;
+}
+
+input, select, textarea {
+    background-color: var(--surface) !important;
+    color: var(--text-main) !important;
+    border: 1px solid var(--border) !important;
+}

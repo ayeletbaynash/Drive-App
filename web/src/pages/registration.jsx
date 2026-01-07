@@ -77,7 +77,7 @@ const Register = () => {
         // The call to server
         try {
             // API Integration - POST /api/users
-            const response = await fetch('http://localhost:5000/api/users', {
+            const response = await fetch('http://localhost:8080/api/users', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -97,6 +97,7 @@ const Register = () => {
             if (response.ok) {
                 // Success
                 console.log("Registered successfully!");
+                alert("You'r account has been created successfully!");
                 navigate('/login'); 
             } else {
                 // Display server error 

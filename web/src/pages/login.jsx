@@ -27,7 +27,7 @@ const Login = () => {
 
         try {
             // Sending login credentials to the Node.js API server
-            const response = await fetch('http://localhost:5000/api/users/login', {
+            const response = await fetch('http://localhost:8080/api/tokens', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(formData),
@@ -42,9 +42,12 @@ const Login = () => {
                 */
                 localStorage.setItem('token', data.token);
                 
-                // Store the username to personalize the UI later
+                // Store the username and photo to personalize the UI later
                 if (data.username) {
                     localStorage.setItem('username', data.username);
+                }
+                if (data.image) {
+                    localStorage.setItem('userImage', data.image);
                 }
 
                 alert('Login successful!');
