@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import SideMenu from '../components/sideMenu/SideMenu';
 import HomeFiles from '../components/main content/HomeFiles';
+import SearchFiles from '../components/main content/SearchFiles'; // הייבוא החדש
 import TopBar from '../components/topbar/TopBar';
 //import DriveFiles from '../components/DriveFiles';
 //import SharedFiles from '../components/SharedFiles';
@@ -13,16 +14,22 @@ import TopBar from '../components/topbar/TopBar';
 // לא צריך לייבא פה את TopBar או MainLayout כי הם כבר נמצאים ב-App
 function HomePage({ user, onLogout }) {
 
-    const [searchQuery, setSearchQuery] = useState("");
+    const [searchResults, setSearchResults] = useState([]);
     const [items, setItems] = useState([]);
 //talk with the server- and update the files
     
-    const fetchFilesFromServer = () => {
-        fetch('http://localhost:8080/api/files')
+        const fetchFilesFromServer = () => {
+        const token = localStorage.getItem('token');
+        fetch('http://localhost:8080/api/files', {
+            headers: { 
+                'user-id': user.id.toString(),
+                'Authorization': `Bearer ${token}`
+            }
+        })
             .then(response => response.json())
             .then(data => setItems(data))
             .catch(error => console.error("Error:", error));
-        };
+    };
 //load the item in the firs
     useEffect(() => {
         fetchFilesFromServer();
@@ -33,19 +40,26 @@ function HomePage({ user, onLogout }) {
             <TopBar 
                 user={user} 
                 onLogout={onLogout} 
-                onSearch={setSearchQuery} 
+                onSearch={setSearchResults} 
             />
       <div style={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
         <SideMenu />
 
         <div style={{ flex: 1 }}>
           <Routes>
+            <Route path="home" element={<HomeFiles files={items} onRefresh={fetchFilesFromServer}/>} />
+            {/* --- הנתיב החדש לחיפוש --- */}
+            {/* הוא מקבל את searchResults שהגיעו מה-SearchBar */}
+            <Route path="search" element={
+                <SearchFiles results={searchResults} onRefresh={fetchFilesFromServer} />
+            } />
             <Route path="my-drive" element={<div>my drive</div>} />
             <Route path="shared" element={<div>Shared with me content</div>} />
             <Route path="recent" element={<div>Recent files content</div>} />
             <Route path="starred" element={<div>Starred files content</div>} />
             <Route path="trash" element={<div>Trash content</div>} />
-            <Route path="home" element={<HomeFiles files={items} onRefresh={fetchFilesFromServer}/>} />
+
+            <Route path="/" element={<HomeFiles files={items} onRefresh={fetchFilesFromServer}/>} />
           </Routes>
         </div>
       </div>      

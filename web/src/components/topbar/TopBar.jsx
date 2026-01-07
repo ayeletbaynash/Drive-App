@@ -16,7 +16,7 @@ function TopBar({ onSearch, user, onLogout }) {
             <div style={{ fontWeight: 'bold', fontSize: '1.2rem' }}>My Drive App</div>
 
             {/* הרכיבים שיצרנו - כל אחד עם הלוגיקה שלו */}
-            <SearchBar onSearch={onSearch} />
+            <SearchBar onSearch={onSearch} user={user} />
             <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
                 <ThemeToggler />
                 <UserAvatar user={user} onLogout={onLogout} />

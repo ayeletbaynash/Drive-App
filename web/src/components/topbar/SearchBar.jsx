@@ -1,98 +1,130 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 
-function SearchBar({ onSearch }) {
+function SearchBar({ user, onSearch }) {
   const [text, setText] = useState('');
+  const [suggestions, setSuggestions] = useState([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const navigate = useNavigate();
 
+  // פונקציה לשליפת כל הקבצים וסינון בזמן אמת
+  useEffect(() => {
+    // אם אין טקסט, ננקה את ההצעות
+    if (!text.trim()) {
+        setSuggestions([]);
+        return;
+    }
+
+    const fetchAndFilter = async () => {
+        try {
+            const token = localStorage.getItem('token'); // שליפת הטוקן
+            const response = await fetch('http://localhost:8080/api/files', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'user-id': user.id.toString(), // לפי דרישות תרגיל 3
+                    'Authorization': `Bearer ${token}` // שליחת הטוקן החדש
+                }
+            });
+
+            if (response.ok) {
+                const allFiles = await response.json();
+                
+                // --- הסינון החכם שביקשת ---
+                const filtered = allFiles.filter(file => {
+                    // 1. בדיקה שהקובץ לא באשפה (בהנחה שיש שדה כזה או לפי מיקום)
+                    // תצטרכי להתאים את התנאי הזה לאיך שהשרת שומר "אשפה"
+                    const isTrash = file.location === 'trash' || file.isTrash === true; 
+                    
+                    // 2. בדיקה שהשם מכיל את הטקסט (ללא רגישות לאותיות גדולות)
+                    const matchesText = file.name.toLowerCase().includes(text.toLowerCase());
+
+                    return !isTrash && matchesText;
+                });
+
+                const top5Suggestions = filtered.slice(0, 5);
+
+                setSuggestions(top5Suggestions);
+                setShowSuggestions(true);
+            }
+        } catch (error) {
+            console.error("Error fetching suggestions:", error);
+        }
+    };
+
+    // Debounce - כדי לא להפציץ את השרת על כל אות, מחכים קצת
+    const timeoutId = setTimeout(() => {
+        fetchAndFilter();
+    }, 300);
+
+    return () => clearTimeout(timeoutId);
+
+  }, [text, user.id]);
+
+
+  // פונקציה שמטפלת בלחיצה על ENTER או על כפתור החיפוש
   const handleSubmit = (e) => {
     e.preventDefault();
-    onSearch(text);
+    setShowSuggestions(false); // סגירת ההצעות
+    
+    // שליחת התוצאות (ההצעות הנוכחיות) לדף הבית כדי שיציג אותן
+    onSearch(suggestions); 
+    
+    // מעבר לנתיב של תוצאות החיפוש
+    navigate('/home/search');
+  };
+
+  // פונקציה שמטפלת בלחיצה על הצעה ספציפית מהרשימה
+  const handleSuggestionClick = (file) => {
+      setText(file.name);
+      setShowSuggestions(false);
+      // במקרה של לחיצה על קובץ ספציפי, נציג רק אותו או את כל התוצאות
+      onSearch([file]); 
+      navigate('/home/search');
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <input 
-        type="text" 
-        placeholder="Search files..." 
-        value={text}
-        onChange={(e) => setText(e.target.value)}
-      />
-      <button type="submit">🔍</button>
-    </form>
+    <div style={{ position: 'relative' }}> 
+        <form onSubmit={handleSubmit} className="d-flex">
+          <input 
+            className="form-control me-2"
+            type="text" 
+            placeholder="Search files..." 
+            value={text}
+            onChange={(e) => setText(e.target.value)}
+            onBlur={() => setTimeout(() => setShowSuggestions(false), 200)} // סגירה בהשהייה כדי לאפשר קליק
+          />
+          <button className="btn btn-outline-primary" type="submit">🔍</button>
+        </form>
+
+        {/* --- התפריט הקופץ (Dropdown) --- */}
+        {showSuggestions && suggestions.length > 0 && (
+            <div className="search-suggestions" style={{
+                position: 'absolute',
+                top: '100%',
+                left: 0,
+                right: 0,
+                backgroundColor: 'var(--surface)',
+                border: '1px solid var(--border)',
+                zIndex: 1000,
+                maxHeight: '200px',
+                overflowY: 'auto',
+                boxShadow: '0 4px 6px rgba(0,0,0,0.1)'
+            }}>
+                {suggestions.map(file => (
+                    <div 
+                        key={file.id} 
+                        onClick={() => handleSuggestionClick(file)}
+                        style={{ padding: '8px', cursor: 'pointer', borderBottom: '1px solid #eee' }}
+                        className="suggestion-item"
+                    >
+                        {file.type === 'folder' ? '📁' : '📄'} {file.name}
+                    </div>
+                ))}
+            </div>
+        )}
+    </div>
   );
 }
 
 export default SearchBar;
-// // 1. State שמחזיק את רשימת הקבצים שמוצגת על המסך
-//   const [files, setFiles] = useState([]);
-  
-//   // הניחי שהוא רץ בפורט 3000 לפי תרגיל 3
-//   const SERVER_URL = 'http://localhost:3000'; 
-
-//   // 2. פונקציית עזר לשליפת נתונים (GET)
-//   const fetchData = async (endpoint) => {
-//     // הגנה: אם אין יוזר מחובר, אי אפשר לשלוח בקשה כי חסר ID
-//     if (!user || user.id === undefined) {
-//         console.error("No user ID found, cannot fetch files");
-//         return;
-//     }
-
-//     try {
-//       const response = await fetch(`${SERVER_URL}${endpoint}`, {
-//         method: 'GET',
-//         headers: {
-//           'Content-Type': 'application/json',
-//           // --- התיקון הקריטי לפי ה-README והקוד ששלחת ---
-//           'user-id': user.id.toString() 
-//           // השרת מצפה לקבל את ה-ID של המשתמש בהדר הזה
-//         }
-//       });
-
-//       if (response.ok) {
-//         const data = await response.json();
-//         setFiles(data); // עדכון ה-State גורם לריאקט לצייר מחדש את המסך
-//       } else {
-//         console.error('Error fetching data:', response.status);
-//         // כאן אפשר להציג הודעת שגיאה למשתמש
-//         // טיפול במקרה של 401 (לא מורשה) - אולי להוציא ללוגאאוט?
-//         if (response.status === 401) onLogout();
-//       }
-//     } catch (error) {
-//       console.error('Network error:', error);
-//     }
-//   };
-
-//   // 3. טעינה ראשונית - מביאים את כל הקבצים כשהדף עולה
-//   useEffect(() => {
-//     fetchData('/api/files');
-//   }, [User]); // add User here!!!!!!!!!!!!!
-
-//   // 4. הלוגיקה של החיפוש - מחוברת ל-TopBar
-//   const handleSearch = (query) => {
-//     console.log("Searching for:", query);
-
-//     if (!query || query.trim() === '') {
-//       // אם אין חיפוש - מביאים את הכל
-//       fetchData('/api/files');
-//     } else {
-//       // אם יש חיפוש - פונים ל-API של החיפוש
-//       // שימי לב: ה-API מוגדר כ: /api/search/:query
-//       fetchData(`/api/search/${query}`);
-//     }
-//   };
-
-    //   {/* 5. הצגת רשימת הקבצים בצורה דינמית */}
-    //   <div className="files-container">
-    //     {files.length === 0 ? (
-    //       <p>No files found.</p>
-    //     ) : (
-    //       <ul style={{ listStyleType: "none", padding: 0 }}>
-    //         {files.map((file) => (
-    //           // הנחנו שלכל קובץ יש id ו-name לפי דוגמאות ה-JSON בנספח
-    //           <li key={file.id} style={{ padding: "10px", borderBottom: "1px solid #ccc" }}>
-    //             {/* כאן נציג אייקון לפי file.type (folder/file) */}
-    //             <strong>{file.type === 'folder' ? '📁' : '📄'} {file.name}</strong>
-    //           </li>
-    //         ))}
-    //       </ul>
-    //     )}
-    //   </div> 

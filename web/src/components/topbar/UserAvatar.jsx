@@ -9,6 +9,8 @@ function UserAvatar({ user, onLogout }) {
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
+    const savedName = localStorage.getItem('username');
+    const savedEmail = localStorage.getItem('userEmail');
     const savedImage = localStorage.getItem('userImage');
     if (savedImage) {
       setImage(savedImage);

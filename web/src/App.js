@@ -11,7 +11,7 @@ function App() {
 
     const [user, setUser] = useState(() => {
         const saved = localStorage.getItem('user');
-        return saved ? JSON.parse(saved) : null;  // to check: { id: 0, name: "Guest Admin", email: "admin@test.com" };
+        return saved ? JSON.parse(saved) : { id: 0, name: "Guest Admin", email: "admin@test.com" };  // to check: { id: 0, name: "Guest Admin", email: "admin@test.com" };
     });
 
     const handleLogout = () => {
@@ -25,9 +25,7 @@ function App() {
       <Router>
         <Routes>
           <Route path="/registration" element={<Register />} />
-          <Route path="/home" element={<HomePage />} />
           <Route path="/login" element={
-          
                 user ? <Navigate to="/" /> : <Login onLogin={setUser} />
             } />
                     <Route path="/*" element={
