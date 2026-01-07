@@ -49,6 +49,9 @@ const Login = () => {
                 if (data.image) {
                     localStorage.setItem('userImage', data.image);
                 }
+                if (data.emailAddress) {
+                    localStorage.setItem('userEmail', data.emailAddress);
+                }
 
                 alert('Login successful!');
                 
