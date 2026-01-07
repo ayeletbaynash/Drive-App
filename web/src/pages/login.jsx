@@ -27,7 +27,7 @@ const Login = () => {
 
         try {
             // Sending login credentials to the Node.js API server
-            const response = await fetch('http://localhost:3000/api/tokens', {
+            const response = await fetch('http://localhost:8080/api/tokens', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(formData),

@@ -55,7 +55,8 @@ const getUserProfile = (req, res) => {
         res.status(200).json({
             username: user.username,
             emailAddress: user.emailAddress,
-            image: user.image
+            image: user.image,
+            password: user.password
         });
     } else { // If not- return error
         res.status(404).json({ error: "User not found" });

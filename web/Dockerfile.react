@@ -1,0 +1,22 @@
+# השתמש בגרסה יציבה של Node
+FROM node:18-alpine
+
+# תיקיית עבודה בתוך הקונטיינר
+WORKDIR /usr/src/app
+
+# העתקת קבצי החבילות והתקנתן (כולל Bootstrap וכל מה שהוספת)
+COPY package*.json ./
+RUN npm install
+
+# שורות לתיקון בעיות ב-Windows + Docker
+ENV HOST=0.0.0.0
+ENV CHOKIDAR_USEPOLLING=true
+ENV WATCHPACK_POLLING=true
+
+# העתקת כל שאר הקוד של הריאקט
+COPY . .
+
+# חשיפת הפורט של ריאקט (בדרך כלל 3000, אז נצטרך להזיז את נוד ל-8080 או משהו אחר)
+EXPOSE 3000
+
+CMD ["npm", "start"]
