@@ -4,7 +4,7 @@ import FloatingMenu from '../FloatingMenu';
 import CreateFolder from '../operations/CreateFolder';
 import CreateFile from '../operations/CreateFile';
 
-const SideMenu = ({ onRefresh }) => {
+const SideMenu = () => {
   const menuItems = [
     { id: 1, label: 'Home', to: 'home' },
     { id: 2, label: 'My Drive', to: 'my-drive' },
@@ -23,10 +23,10 @@ const SideMenu = ({ onRefresh }) => {
       {isMenuOpen && (
                 <FloatingMenu onClose={() => setIsMenuOpen(false)}>
                     <CreateFolder 
-                        onSuccess={() => { setIsMenuOpen(false); onRefresh(); }} 
+                        onSuccess={() => { setIsMenuOpen(false); }} 
                     />
                     <CreateFile 
-                        onSuccess={() => { setIsMenuOpen(false); onRefresh(); }} 
+                        onSuccess={() => { setIsMenuOpen(false); }} 
                     />
                 </FloatingMenu>
             )}

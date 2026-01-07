@@ -32,7 +32,7 @@ function App() {
           } />
 
           {/* ecplicit rout to home */}
-          <Route path="/home" element={
+          <Route path="/home/*" element={
           user ? <HomePage user={user} onLogout={handleLogout} /> : <Navigate to="/login" />
           } />
 

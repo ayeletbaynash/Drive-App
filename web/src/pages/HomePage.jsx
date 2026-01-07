@@ -28,12 +28,12 @@ function HomePage({ user, onLogout }) {
 
         <div style={{ flex: 1 }}>
           <Routes>
+            <Route index element={<HomeFiles />} />
             <Route path="my-drive" element={<div>my drive</div>} />
             <Route path="shared" element={<div>Shared with me content</div>} />
             <Route path="recent" element={<div>Recent files content</div>} />
             <Route path="starred" element={<div>Starred files content</div>} />
             <Route path="trash" element={<div>Trash content</div>} />
-            <Route path="home" element={<HomeFiles files={items} onRefresh={fetchFilesFromServer}/>} />
           </Routes>
         </div>
       </div>      

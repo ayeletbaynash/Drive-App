@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
 
-const CreateFile = ({ onSuccess }) => {
+const CreateFolder = ({ onSuccess }) => {
     const [isOpen, setIsOpen] = useState(false);
     const [name, setName] = useState('');
-    const [content, setContent] = useState('');
     
     const pathArray = window.location.pathname.split('/');
     const lastPart = pathArray[pathArray.length - 1];
@@ -12,9 +11,8 @@ const CreateFile = ({ onSuccess }) => {
     const handleCreate = async () => {
         const bodyData = {
             name: name,
-            type: 'file',
-            parent_id: folderId,
-            content: content || "" 
+            type: 'folder',
+            parent_id: folderId
         };
 
         try {
@@ -30,35 +28,30 @@ const CreateFile = ({ onSuccess }) => {
             if (response.ok) {
                 setIsOpen(false);
                 setName('');
-                setContent('');
                 onSuccess();
             } else {
                 const errorData = await response.json().catch(() => ({}));
-                alert(`Error ${response.status}: ${errorData.message || 'Failed to create file'}`);
+                alert(`Error ${response.status}: ${errorData.message || 'Failed'}`);
             }
         } catch (error) {
-            alert('Network error: Could not connect to the server');
+            alert('Network error');
         }
     };
 
     return (
         <div>
-            <button onClick={() => setIsOpen(true)}>New File</button>
-
+            <button onClick={() => setIsOpen(true)}>New Folder</button>
             {isOpen && (
                 <div>
                     <div>
                         Name: <input value={name} onChange={(e) => setName(e.target.value)} placeholder="Name" />
                     </div>
-                    <div>
-                        Content: <textarea value={content} onChange={(e) => setContent(e.target.value)} placeholder="Content" />
-                    </div>
                     <button onClick={handleCreate}>OK</button>
-                    <button onClick={() => { setIsOpen(false); setName(''); setContent(''); }}>Cancel</button>
+                    <button onClick={() => { setIsOpen(false); setName(''); }}>Cancel</button>
                 </div>
             )}
         </div>
     );
 };
 
-export default CreateFile;
+export default CreateFolder;
