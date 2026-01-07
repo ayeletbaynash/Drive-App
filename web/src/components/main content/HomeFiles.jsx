@@ -21,8 +21,18 @@ const HomeFiles = () => {
     };
 
     useEffect(() => {
+    onRefresh();
+
+    const handleRefreshEvent = () => {
         onRefresh();
-    }, []); 
+    };
+
+    window.addEventListener('fileCreated', handleRefreshEvent);
+
+    return () => {
+        window.removeEventListener('fileCreated', handleRefreshEvent);
+    };
+}, []);
 
     return (
         <div>
