@@ -1,6 +1,7 @@
 import SearchBar from './SearchBar';
 import ThemeToggler from './ThemeToggler';
 import UserAvatar from './UserAvatar';
+import AppLogo from './AppLogo'; 
 
 function TopBar({ onSearch, user, onLogout }) {
   return (
@@ -10,11 +11,11 @@ function TopBar({ onSearch, user, onLogout }) {
             alignItems: 'center',
             padding: '10px 20px',
             borderBottom: '1px solid var(--border)',
-            backgroundColor: 'var(--surface)'
+            backgroundColor: 'var(--surface)',
+            height: '60px'
         }}>
-            {/* איזור שמאלי */}
-            <div style={{ fontWeight: 'bold', fontSize: '1.2rem' }}>My Drive App</div>
-
+          
+            <AppLogo />
             {/* הרכיבים שיצרנו - כל אחד עם הלוגיקה שלו */}
             <SearchBar onSearch={onSearch} user={user} />
             <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>

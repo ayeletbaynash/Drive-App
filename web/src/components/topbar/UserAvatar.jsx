@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import UserMenu from './UserMenu';
+import FloatingMenu from '../FloatingMenu';
 
 const DEFAULT_AVATAR =
   'https://www.gravatar.com/avatar/?d=mp&f=y';
@@ -9,8 +10,6 @@ function UserAvatar({ user, onLogout }) {
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
-    const savedName = localStorage.getItem('username');
-    const savedEmail = localStorage.getItem('userEmail');
     const savedImage = localStorage.getItem('userImage');
     if (savedImage) {
       setImage(savedImage);
@@ -25,11 +24,11 @@ function UserAvatar({ user, onLogout }) {
         width={40}
         height={40}
         onClick={() => setOpen(!open)}
-        style={{ cursor: 'pointer', borderRadius: '50%', border: '2px solid var(--primary)' }}
+        style={{ cursor: 'pointer', borderRadius: '50%', border: '2px solid var(--primary)', objectFit: 'cover' }}
       />
 
       {open && (
-        // המיקום של התפריט הצף
+        <FloatingMenu onClose={() => setOpen(false)}>
                 <div style={{ 
                     position: 'absolute', 
                     right: 0, 
@@ -42,6 +41,7 @@ function UserAvatar({ user, onLogout }) {
                 }}>
         <UserMenu user={user} onLogout={onLogout} />
         </div>
+        </FloatingMenu>
       )}
     </div>
   );

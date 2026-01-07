@@ -2,8 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" type="image/svg+xml" href="%PUBLIC_URL%/favicon.svg" />    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#000000" />
     <meta
       name="description"
@@ -27,6 +26,23 @@
     <title>React App</title>
   </head>
   <body>
+    <script>
+    (function() {
+      const savedTheme = localStorage.getItem('selected-theme');
+      
+      if (savedTheme === 'dark') {
+        
+        document.body.setAttribute('data-theme', 'dark');
+        
+        document.body.style.backgroundColor = '#121212';
+        document.body.style.color = '#f8f9fa';
+        
+      } else {
+        document.body.setAttribute('data-theme', 'light');
+        document.body.style.backgroundColor = '#f4f7f6'; // צבע הרקע הבהיר שלך
+      }
+    })();
+  </script>
     <noscript>You need to enable JavaScript to run this app.</noscript>
     <div id="root"></div>
     <!--

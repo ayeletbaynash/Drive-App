@@ -4,62 +4,53 @@ import { useNavigate } from 'react-router-dom';
 function SearchBar({ user, onSearch }) {
   const [text, setText] = useState('');
   const [suggestions, setSuggestions] = useState([]);
+  const [allItems, setAllItems] = useState([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const navigate = useNavigate();
 
-  // פונקציה לשליפת כל הקבצים וסינון בזמן אמת
+// 1. שליפה ראשונית של כל הקבצים כדי שיהיו זמינים לסינון מהיר
   useEffect(() => {
-    // אם אין טקסט, ננקה את ההצעות
+    const fetchAllFiles = async () => {
+        try {
+            const token = localStorage.getItem('token');
+            const response = await fetch('http://localhost:8080/api/files', {
+                headers: {
+                    'user-id': user.id.toString(),
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+            if (response.ok) {
+                const data = await response.json();
+                // סינון ראשוני של זבל - אנחנו לא רוצים לחפש שם אף פעם
+                const cleanFiles = data.filter(f => f.location !== 'trash' && !f.isTrash);
+                setAllItems(cleanFiles);
+            }
+        } catch (error) {
+            console.error("Search fetch error:", error);
+        }
+    };
+
+    if (user?.id) {
+        fetchAllFiles();
+    }
+  }, [user.id]);
+
+  // 2. סינון בזמן אמת עבור ההצעות (Suggestions)
+  useEffect(() => {
     if (!text.trim()) {
         setSuggestions([]);
         return;
     }
 
-    const fetchAndFilter = async () => {
-        try {
-            const token = localStorage.getItem('token'); // שליפת הטוקן
-            const response = await fetch('http://localhost:8080/api/files', {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'user-id': user.id.toString(), // לפי דרישות תרגיל 3
-                    'Authorization': `Bearer ${token}` // שליחת הטוקן החדש
-                }
-            });
+    // סינון מתוך הרשימה שכבר יש לנו בזיכרון (הרבה יותר מהיר מלפנות לשרת כל אות)
+    const matches = allItems.filter(file => 
+        file.name.toLowerCase().includes(text.toLowerCase())
+    );
 
-            if (response.ok) {
-                const allFiles = await response.json();
-                
-                // --- הסינון החכם שביקשת ---
-                const filtered = allFiles.filter(file => {
-                    // 1. בדיקה שהקובץ לא באשפה (בהנחה שיש שדה כזה או לפי מיקום)
-                    // תצטרכי להתאים את התנאי הזה לאיך שהשרת שומר "אשפה"
-                    const isTrash = file.location === 'trash' || file.isTrash === true; 
-                    
-                    // 2. בדיקה שהשם מכיל את הטקסט (ללא רגישות לאותיות גדולות)
-                    const matchesText = file.name.toLowerCase().includes(text.toLowerCase());
+    setSuggestions(matches.slice(0, 5)); // כאן אנחנו מגבילים ל-5 רק בשביל התצוגה הקופצת!
+    setShowSuggestions(true);
 
-                    return !isTrash && matchesText;
-                });
-
-                const top5Suggestions = filtered.slice(0, 5);
-
-                setSuggestions(top5Suggestions);
-                setShowSuggestions(true);
-            }
-        } catch (error) {
-            console.error("Error fetching suggestions:", error);
-        }
-    };
-
-    // Debounce - כדי לא להפציץ את השרת על כל אות, מחכים קצת
-    const timeoutId = setTimeout(() => {
-        fetchAndFilter();
-    }, 300);
-
-    return () => clearTimeout(timeoutId);
-
-  }, [text, user.id]);
+  }, [text, allItems]);
 
 
   // פונקציה שמטפלת בלחיצה על ENTER או על כפתור החיפוש
@@ -67,21 +58,16 @@ function SearchBar({ user, onSearch }) {
     e.preventDefault();
     setShowSuggestions(false); // סגירת ההצעות
     
+    const fullResults = allItems.filter(file => 
+        file.name.toLowerCase().includes(text.toLowerCase())
+    );
     // שליחת התוצאות (ההצעות הנוכחיות) לדף הבית כדי שיציג אותן
-    onSearch(suggestions); 
+    onSearch(fullResults); 
     
     // מעבר לנתיב של תוצאות החיפוש
     navigate('/home/search');
   };
 
-  // פונקציה שמטפלת בלחיצה על הצעה ספציפית מהרשימה
-  const handleSuggestionClick = (file) => {
-      setText(file.name);
-      setShowSuggestions(false);
-      // במקרה של לחיצה על קובץ ספציפי, נציג רק אותו או את כל התוצאות
-      onSearch([file]); 
-      navigate('/home/search');
-  };
 
   return (
     <div style={{ position: 'relative' }}> 
@@ -107,18 +93,31 @@ function SearchBar({ user, onSearch }) {
                 backgroundColor: 'var(--surface)',
                 border: '1px solid var(--border)',
                 zIndex: 1000,
-                maxHeight: '200px',
+                maxHeight: '300px',
                 overflowY: 'auto',
-                boxShadow: '0 4px 6px rgba(0,0,0,0.1)'
+                boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
+                borderRadius: '0 0 8px 8px'
             }}>
                 {suggestions.map(file => (
                     <div 
                         key={file.id} 
                         onClick={() => handleSuggestionClick(file)}
-                        style={{ padding: '8px', cursor: 'pointer', borderBottom: '1px solid #eee' }}
                         className="suggestion-item"
+                        style={{ 
+                            padding: '10px', 
+                            cursor: 'pointer', 
+                            borderBottom: '1px solid var(--border)',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '10px'
+                        }}
+                        onMouseOver={(e) => e.currentTarget.style.backgroundColor = 'var(--background)'}
+                        onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
                     >
-                        {file.type === 'folder' ? '📁' : '📄'} {file.name}
+                        {/* אייקון לפי סוג */}
+                        <span>{file.type === 'folder' ? '📁' : '📄'}</span>
+                        {/* שם הקובץ */}
+                        <span>{file.name}</span>
                     </div>
                 ))}
             </div>

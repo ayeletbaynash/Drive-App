@@ -1,7 +1,7 @@
 import './styles/theme.css';
 import './styles/authentication.css';
 import './App.css';
-import { useState } from 'react';
+import { useState, useLayoutEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Register from './pages/registration'; 
 import Login from './pages/login';
@@ -11,7 +11,7 @@ function App() {
 
     const [user, setUser] = useState(() => {
         const saved = localStorage.getItem('user');
-        return saved ? JSON.parse(saved) : { id: 0, name: "Guest Admin", email: "admin@test.com" };  // to check: { id: 0, name: "Guest Admin", email: "admin@test.com" };
+        return saved ? JSON.parse(saved) : null;  // to check: { id: 0, name: "Guest Admin", email: "admin@test.com" };
     });
 
     const handleLogout = () => {
@@ -19,6 +19,11 @@ function App() {
         localStorage.removeItem('token');
         setUser(null);
     };
+
+    useLayoutEffect(() => {
+        const savedTheme = localStorage.getItem('selected-theme') || 'light';
+        document.body.setAttribute('data-theme', savedTheme);
+    }, []);
 
   return (
     
