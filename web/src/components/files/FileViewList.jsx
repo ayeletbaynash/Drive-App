@@ -10,7 +10,7 @@ const FileViewList = ({items, onRefresh}) =>{
 
     // When double click, save the file information.
     const handleOpen = (file) => {
-        setSelectedFile(file.id); 
+        setSelectedFile(file); 
     };
 
     return(

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import FloatingMenu from '../FloatingMenu';
 
-const FileItem = ({ file, onRefresh }) => {
+const FileItem = ({ file, onOpen }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const handleDoubleClick = () => {
@@ -9,7 +9,6 @@ const FileItem = ({ file, onRefresh }) => {
     if (onOpen) {
       onOpen(file); // Calls the parent function and passes it the file object
     }
-    alert("Opening file: " + file.name);
   };
 
   return (
