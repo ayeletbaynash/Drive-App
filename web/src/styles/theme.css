@@ -85,6 +85,7 @@
 body, html, #root {
     background-color: var(--background) !important;
     color: var(--text-main) !important;
+    height: 100%;
     margin: 0;
     padding: 0;
     min-height: 100vh;
@@ -108,4 +109,13 @@ input, select, textarea {
     background-color: var(--surface) !important;
     color: var(--text-main) !important;
     border: 1px solid var(--border) !important;
+}
+
+/* וידוא שכל הקישורים והכפתורים יורשים את הצבעים הנכונים */
+a {
+    color: var(--primary);
+}
+
+button {
+    color: var(--text-main);
 }

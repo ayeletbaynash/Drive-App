@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import SideMenu from '../components/sideMenu/SideMenu';
 import HomeFiles from '../components/main content/HomeFiles';
+import SearchFiles from '../components/main content/SearchFiles'; // הייבוא החדש
 import TopBar from '../components/topbar/TopBar';
 //import DriveFiles from '../components/DriveFiles';
 //import SharedFiles from '../components/SharedFiles';
@@ -12,28 +13,86 @@ import TopBar from '../components/topbar/TopBar';
 // מקבלים את user ואת searchQuery ישירות מהאבא (App.js)
 // לא צריך לייבא פה את TopBar או MainLayout כי הם כבר נמצאים ב-App
 function HomePage({ user, onLogout }) {
+    const [fullUser, setFullUser] = useState(user); 
 
-    const [searchQuery, setSearchQuery] = useState("");
+    useEffect(() => {
+        if (!user || !user.id) return;
 
+        const fetchFullUserProfile = async () => {
+            try {
+                const token = localStorage.getItem('token');
+                // קריאה לשרת לקבלת פרטי המשתמש המלאים לפי ה-ID
+                const response = await fetch(`http://localhost:8080/api/users/${user.id}`, {
+                    headers: { 
+                        'Authorization': `Bearer ${token}`,
+                        'user-id': user.id.toString() 
+                    }
+                });
+
+                if (response.ok) {
+                    const userData = await response.json();
+                    setFullUser(userData); // עכשיו יש לנו אובייקט עם emailAddress!
+                }
+            } catch (error) {
+                console.error("Failed to fetch full user profile", error);
+            }
+        };
+
+        fetchFullUserProfile();
+    }, [user]);
+
+    const [searchResults, setSearchResults] = useState([]);
+    const [items, setItems] = useState([]);
+//talk with the server- and update the files
+    
+        const fetchFilesFromServer = () => {
+        const token = localStorage.getItem('token');
+        fetch('http://localhost:8080/api/files', {
+            headers: { 
+                'user-id': user.id.toString(),
+                'Authorization': `Bearer ${token}`
+            }
+        })
+            .then(response => response.json())
+            .then(data => setItems(data))
+            .catch(error => console.error("Error:", error));
+    };
+//load the item in the firs
+    useEffect(() => {
+        fetchFilesFromServer();
+    }, []);
+
+    const handleSearchResults = (results) => {
+        setSearchResults(results); // שומר את התוצאות לדף החיפוש
+        // אנחנו לא קוראים לשרת פה! סומכים על מה שהגיע מה-Search
+    };
 
     return (
         <div style={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
             <TopBar 
-                user={user} 
+                user={fullUser} 
                 onLogout={onLogout} 
-                onSearch={setSearchQuery} 
+                onSearch={handleSearchResults} 
             />
       <div style={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
         <SideMenu />
 
         <div style={{ flex: 1 }}>
           <Routes>
-            <Route index element={<HomeFiles />} />
+            <Route path="home" element={<HomeFiles files={items} onRefresh={fetchFilesFromServer}/>} />
+            {/* --- הנתיב החדש לחיפוש --- */}
+            {/* הוא מקבל את searchResults שהגיעו מה-SearchBar */}
+            <Route path="search" element={
+                <SearchFiles results={searchResults} onRefresh={fetchFilesFromServer} />
+            } />
+            
             <Route path="my-drive" element={<div>my drive</div>} />
             <Route path="shared" element={<div>Shared with me content</div>} />
             <Route path="recent" element={<div>Recent files content</div>} />
             <Route path="starred" element={<div>Starred files content</div>} />
             <Route path="trash" element={<div>Trash content</div>} />
+
+            <Route path="/" element={<HomeFiles files={items} onRefresh={fetchFilesFromServer}/>} />
           </Routes>
         </div>
       </div>      
@@ -42,15 +101,3 @@ function HomePage({ user, onLogout }) {
 
 };
 export default HomePage;
-
-// // פונקציית שליפה מהשרת
-//     const fetchFilesFromServer = () => {
-//         const url = searchQuery 
-//             ? `http://localhost:8080/api/search?q=${searchQuery}` 
-//             : 'http://localhost:8080/api/files';
-
-//         fetch(url, { headers: { 'user-id': user.id } })
-//             .then(res => res.json())
-//             .then(data => setItems(data))
-//             .catch(err => console.error("Error:", err));
-//     };
