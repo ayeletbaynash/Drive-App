@@ -87,8 +87,7 @@ const Register = () => {
                     username: formData.username,
                     password: formData.password,
                     emailAddress: formData.emailAddress,
-                    //image: formData.image
-                    image: "test-image-string" //////////////////////////////// for testing
+                    image: formData.image
                 }),
             });
 
@@ -98,6 +97,7 @@ const Register = () => {
             if (response.ok) {
                 // Success
                 console.log("Registered successfully!");
+                alert("You'r account has been created successfully!");
                 navigate('/login'); 
             } else {
                 // Display server error 
