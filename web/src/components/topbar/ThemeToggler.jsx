@@ -8,6 +8,7 @@ function ThemeToggler() {
     const nextTheme = isDark ? 'light' : 'dark';
     setIsDark(!isDark);
     document.body.setAttribute('data-theme', nextTheme);
+    localStorage.setItem('selected-theme', nextTheme); // שמירה בזיכרון
   };
 
   return (

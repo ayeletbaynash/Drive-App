@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import SideMenu from '../components/sideMenu/SideMenu';
-import React, { useState, useEffect } from 'react';
 import HomeFiles from '../components/main content/HomeFiles';
+import TopBar from '../components/topbar/TopBar';
 //import DriveFiles from '../components/DriveFiles';
 //import SharedFiles from '../components/SharedFiles';
 //import RecentFiles from '../components/RecentFiles';
@@ -11,28 +11,12 @@ import HomeFiles from '../components/main content/HomeFiles';
 
 // מקבלים את user ואת searchQuery ישירות מהאבא (App.js)
 // לא צריך לייבא פה את TopBar או MainLayout כי הם כבר נמצאים ב-App
-function HomePage({ user, searchQuery }) {
+function HomePage({ user, onLogout }) {
 
-    const [files, setFiles] = useState([]);
-
-    // זה המקום שבו השותפה שלך תכתוב את הלוגיקה של השרת
-    useEffect(() => {
-        // הגנה: אם אין משתמש, לא עושים כלום
-        if (!user) return;
-
-        console.log("--- HomePage Logic ---");
-        console.log("Connected User ID:", user.id);
-        console.log("Current Search Query:", searchQuery);
-
-        // פה תהיה הקריאה לשרת:
-        // const fetchData = async () => { ... }
-        // if (searchQuery) -> חפשי קובץ
-        // else -> תביאי את כל הקבצים
-
-    }, [searchQuery, user]); // הרשימה תתעדכן כל פעם שהחיפוש משתנה
-
-      const [items, setItems] = useState([]);
+    const [searchQuery, setSearchQuery] = useState("");
+    const [items, setItems] = useState([]);
 //talk with the server- and update the files
+    
     const fetchFilesFromServer = () => {
         fetch('http://localhost:8080/api/files')
             .then(response => response.json())
@@ -44,9 +28,14 @@ function HomePage({ user, searchQuery }) {
         fetchFilesFromServer();
     }, []);
 
-  return (
-    <div>
-      <div style={{ display: 'flex' }}>
+    return (
+        <div style={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
+            <TopBar 
+                user={user} 
+                onLogout={onLogout} 
+                onSearch={setSearchQuery} 
+            />
+      <div style={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
         <SideMenu />
 
         <div style={{ flex: 1 }}>
@@ -60,23 +49,20 @@ function HomePage({ user, searchQuery }) {
           </Routes>
         </div>
       </div>      
-        <div style={{ padding: '20px' }}>
-            <h1>My Files</h1>
-            
-            {/* בדיקה ויזואלית שזה עובד */}
-            <div style={{ background: '#f0f0f0', padding: '10px', borderRadius: '5px', marginBottom: '20px' }}>
-                <strong>Debug Info:</strong>
-                <p>User: {user.name}</p>
-                <p>Searching for: {searchQuery || "(Nothing - showing all files)"}</p>
-            </div>
-
-            {/* כאן תופיע רשימת הקבצים בעתיד */}
-            <div className="file-list">
-                <p>File list will load here...</p>
-            </div>
-        </div>
         </div>
     );
 
 };
 export default HomePage;
+
+// // פונקציית שליפה מהשרת
+//     const fetchFilesFromServer = () => {
+//         const url = searchQuery 
+//             ? `http://localhost:8080/api/search?q=${searchQuery}` 
+//             : 'http://localhost:8080/api/files';
+
+//         fetch(url, { headers: { 'user-id': user.id } })
+//             .then(res => res.json())
+//             .then(data => setItems(data))
+//             .catch(err => console.error("Error:", err));
+//     };

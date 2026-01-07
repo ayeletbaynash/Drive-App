@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-function SearchBar() {
+function SearchBar({ onSearch }) {
   const [text, setText] = useState('');
 
   const handleSubmit = (e) => {
@@ -9,7 +9,7 @@ function SearchBar() {
   };
 
   return (
-    <form onSubmit={handleSubmit} style={{ display: 'inline-block' }}>
+    <form onSubmit={handleSubmit}>
       <input 
         type="text" 
         placeholder="Search files..." 

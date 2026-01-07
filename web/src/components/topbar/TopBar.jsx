@@ -1,20 +1,26 @@
 import SearchBar from './SearchBar';
 import ThemeToggler from './ThemeToggler';
-import UserMenu from './UserMenu';
+import UserAvatar from './UserAvatar';
 
-function TopBar({ onSearch, user, onLogout, onToggleTheme }) {
+function TopBar({ onSearch, user, onLogout }) {
   return (
-    <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+    <header style={{ 
+            display: 'flex', 
+            justifyContent: 'space-between', 
+            alignItems: 'center',
+            padding: '10px 20px',
+            borderBottom: '1px solid var(--border)',
+            backgroundColor: 'var(--surface)'
+        }}>
             {/* איזור שמאלי */}
-            <div>My Drive App</div>
+            <div style={{ fontWeight: 'bold', fontSize: '1.2rem' }}>My Drive App</div>
 
             {/* הרכיבים שיצרנו - כל אחד עם הלוגיקה שלו */}
             <SearchBar onSearch={onSearch} />
-            
-            <div style={{ display: 'flex', gap: '15px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
                 <ThemeToggler />
-                <UserMenu user={user} onLogout={onLogout} />
-            </div>
+                <UserAvatar user={user} onLogout={onLogout} />
+            </div>    
     </header>
   );
 }
