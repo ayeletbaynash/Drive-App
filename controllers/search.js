@@ -4,7 +4,7 @@ const Permission = require('../models/permissions');
 
 const search = async (req, res) => {
     const query = req.params.query; // Extracting the search string 
-    const userId = req.headers['user-id']; // Identify user through header
+    const userId = req.userId; // Identify user through header
     if (!query) {     // Validation: Ensure a query was provided
         return res.status(400).json({ error: "Search query is required" });
     }

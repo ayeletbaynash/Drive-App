@@ -19,13 +19,7 @@ const getPermissionRecursive = (fileId, userId) => {
 
 // GET /api/files - Retrieve top-level (root) files/folders for the connected user
 exports.getFiles = (req, res) => {
-    const userId = req.headers['user-id'];
-    if (!userId) return res.status(401).json({ error: 'Missing user-id header' })
-
-    // check if user exist
-    const user = User.getUserById(Number(userId))
-    if (!user) return res.status(401).json({ error: 'User does not exist' })
-
+    const userId = req.userId;
     // Filter files: include owned files and files with any permission
     const files = File.getFiles().filter(f => {
         if (f.parent_id !== null) return false
@@ -39,11 +33,7 @@ exports.getFiles = (req, res) => {
 
 // GET /api/files/:id - Retrieve a single file/folder by ID for the connected user.
 exports.getFileById = async (req, res) => {
-    const userId = req.headers['user-id']
-    if (!userId) return res.status(401).json({ error: 'Missing user-id header' })
-    
-    const user = User.getUserById(userId)
-    if (!user) return res.status(401).json({ error: 'User does not exist' })
+    const userId = req.userId;
 
     const fileId = Number(req.params.id)
 
@@ -100,13 +90,7 @@ exports.getFileById = async (req, res) => {
 
 // POST /api/files - Create a new file or folder.
 exports.postFile = async (req, res) => {
-    const userId = req.headers['user-id']
-    if (!userId) {
-        return res.status(401).json({ error: 'Missing user-id header' })
-    }
-
-    const user = User.getUserById(userId)
-    if (!user) return res.status(401).json({ error: 'User does not exist' })
+    const userId = req.userId;
 
     const { name, type, content = null, parent_id = null } = req.body
 
@@ -173,11 +157,7 @@ exports.postFile = async (req, res) => {
 // PATCH /api/files/:id - Update an existing file/folder.
 // Only users with 'write' or 'owner' permission can update.
 exports.patchFile = async (req, res) => {
-    const userId = req.headers['user-id']
-    if (!userId) return res.status(401).json({ error: 'Missing user-id header' })
-    
-    const user = User.getUserById(userId)
-    if (!user) return res.status(401).json({ error: 'User does not exist' })
+    const userId = req.userId;
 
     const fileId = Number(req.params.id)
     const data = req.body
@@ -258,11 +238,7 @@ exports.patchFile = async (req, res) => {
 // DELETE /api/files/:id - Delete a file/folder and all its children recursively (if folder).
 // Only 'owner' can delete. Also removes all permissions to avoid memory leaks.
 exports.deleteFile = async (req, res) => {
-    const userId = req.headers['user-id']
-    if (!userId) return res.status(401).json({ error: 'Missing user-id header' })
-    
-    const user = User.getUserById(userId)
-    if (!user) return res.status(401).json({ error: 'User does not exist' })
+    const userId = req.userId;
 
     const fileId = Number(req.params.id)
     const file = File.getFileById(fileId)

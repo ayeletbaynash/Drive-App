@@ -1,8 +1,8 @@
 import SidebarItem from './SidebarItem';
 import React, { useState } from 'react';
 import FloatingMenu from '../FloatingMenu';
-import CreateFolder from './CreateFolder';
-import CreateFile from './CreateFile';
+import CreateFolder from '../operations/CreateFolder';
+import CreateFile from '../operations/CreateFile';
 
 const SideMenu = ({ onRefresh }) => {
   const menuItems = [

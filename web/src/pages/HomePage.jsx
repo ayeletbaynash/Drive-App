@@ -14,19 +14,7 @@ import TopBar from '../components/topbar/TopBar';
 function HomePage({ user, onLogout }) {
 
     const [searchQuery, setSearchQuery] = useState("");
-    const [items, setItems] = useState([]);
-//talk with the server- and update the files
-    
-    const fetchFilesFromServer = () => {
-        fetch('http://localhost:8080/api/files')
-            .then(response => response.json())
-            .then(data => setItems(data))
-            .catch(error => console.error("Error:", error));
-        };
-//load the item in the firs
-    useEffect(() => {
-        fetchFilesFromServer();
-    }, []);
+
 
     return (
         <div style={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
