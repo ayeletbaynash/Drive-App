@@ -85,6 +85,7 @@ function HomePage({ user, onLogout }) {
             <Route path="search" element={
                 <SearchFiles results={searchResults} onRefresh={fetchFilesFromServer} />
             } />
+            
             <Route path="my-drive" element={<div>my drive</div>} />
             <Route path="shared" element={<div>Shared with me content</div>} />
             <Route path="recent" element={<div>Recent files content</div>} />
@@ -100,6 +101,8 @@ function HomePage({ user, onLogout }) {
 
 };
 export default HomePage;
+
+// <Route index element={<HomeFiles />} />
 
 // import { useEffect, useState, useCallback } from 'react';
 // import { Routes, Route } from 'react-router-dom';

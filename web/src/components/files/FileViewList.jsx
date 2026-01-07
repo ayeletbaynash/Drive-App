@@ -11,13 +11,13 @@ const FileViewList = ({items, onRefresh}) =>{
             <h2>folders</h2>
             <div>
                 {folders.map(f => (
-                    <FolderItem folder={f} onRefresh={onRefresh} />
+                    <FolderItem key={f.id} folder={f} onRefresh={onRefresh} />
                 ))}
             </div>
             <h2>files</h2>
             <div>
                 {files.map(f => (
-                    <FileItem file={f} onRefresh={onRefresh} />
+                    <FileItem key={f.id} file={f} onRefresh={onRefresh} />
                 ))}
             </div>
         </div>
