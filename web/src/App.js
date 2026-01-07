@@ -1,22 +1,40 @@
 import './styles/theme.css';
+import './styles/authentication.css';
 import './App.css';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { useState } from 'react';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Register from './pages/registration'; 
 import Login from './pages/login';
 import HomePage from './pages/HomePage';
 
 function App() {
+
+    const [user, setUser] = useState(() => {
+        const saved = localStorage.getItem('user');
+        return saved ? JSON.parse(saved) : { id: 0, name: "Guest Admin", email: "admin@test.com" };  // to check: { id: 0, name: "Guest Admin", email: "admin@test.com" };
+    });
+
+    const handleLogout = () => {
+        localStorage.removeItem('user');
+        localStorage.removeItem('token');
+        setUser(null);
+    };
+
   return (
-    <div>
+    
       <Router>
         <Routes>
           <Route path="/registration" element={<Register />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/" element={<Login />} />
-          <Route path="/home" element={<HomePage />} />
-      </Routes>
-    </Router>
-   </div>
+          <Route path="/login" element={
+                user ? <Navigate to="/" /> : <Login onLogin={setUser} />
+            } />
+                    <Route path="/*" element={
+                    user ? <HomePage user={user} onLogout={handleLogout} /> : <Navigate to="/login" />
+                } />
+                </Routes> 
+         </Router>
+
+
   );
 }
 
