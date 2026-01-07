@@ -68,6 +68,14 @@ function SearchBar({ user, onSearch }) {
     navigate('/home/search');
   };
 
+  // 4. טיפול בלחיצה על הצעה ספציפית מהרשימה
+  const handleSuggestionClick = (file) => {
+      setText(file.name); 
+      setShowSuggestions(false); 
+      
+      onSearch([file]); 
+      navigate('/home/search');
+  };
 
   return (
     <div style={{ position: 'relative' }}> 
