@@ -3,7 +3,7 @@ import { Form, Button, Card, Container, Alert } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import '../styles/authentication.css'
 
-const Login = () => {
+const Login = ({ onLogin }) => {
     // State to manage input fields
     const [formData, setFormData] = useState({
         username: '',
@@ -41,6 +41,8 @@ const Login = () => {
                    We store the token in LocalStorage so it persists even if the page refreshes.
                 */
                 localStorage.setItem('token', data.token);
+                localStorage.setItem('user', JSON.stringify(data));
+
                 
                 // Store the username and photo to personalize the UI later
                 if (data.username) {
@@ -54,6 +56,10 @@ const Login = () => {
                 }
 
                 alert('Login successful!');
+
+                if (onLogin) {
+                onLogin(data); // This updates the setUser in App.js
+                }
                 
                 // Redirect user to the home page
                 navigate('/home'); 
