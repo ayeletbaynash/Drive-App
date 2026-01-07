@@ -25,17 +25,23 @@ function App() {
       <Router>
         <Routes>
           <Route path="/registration" element={<Register />} />
-          <Route path="/home" element={<HomePage />} />
-          <Route path="/login" element={
-          
-                user ? <Navigate to="/" /> : <Login onLogin={setUser} />
-            } />
-                    <Route path="/*" element={
-                    user ? <HomePage user={user} onLogout={handleLogout} /> : <Navigate to="/login" />
-                } />
-                </Routes> 
-         </Router>
 
+          {/* if user already loged in go strait to home page*/}
+          <Route path="/login" element={
+          user ? <Navigate to="/home" /> : <Login onLogin={setUser} />
+          } />
+
+          {/* ecplicit rout to home */}
+          <Route path="/home" element={
+          user ? <HomePage user={user} onLogout={handleLogout} /> : <Navigate to="/login" />
+          } />
+
+          {/* else */}
+          <Route path="/*" element={
+          user ? <HomePage user={user} onLogout={handleLogout} /> : <Navigate to="/login" />
+          } />
+        </Routes> 
+      </Router>
 
   );
 }

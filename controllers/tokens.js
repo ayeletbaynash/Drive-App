@@ -1,14 +1,21 @@
 const userModel = require('../models/users'); // import the model
+const jwt = require("jsonwebtoken"); // npm install jsonwebtoken
+const key = "My super secret key!!!"; 
 
 // Login - POST /api/tokens
 const loginUser = (req, res) => {
-    // Extract the login details sent in the request body    
-    const { username, password } = req.body;
-    // Check if user exists
-    const user = userModel.validateUser(username, password);
+    const { username, password } = req.body; // Extract the login details sent in the request body    
+    const user = userModel.validateUser(username, password); // Check if user exists
     if (user) {
-        // If yes - return it with all its details
+        // Create the data we want to store in the token
+        const data = { 
+            id: user.id, 
+            username: user.username 
+        };
+        const token = jwt.sign(data, key); // create the token
+        // If yes - return it with all its details + token
         res.status(200).json({
+            token: token,
             id: user.id,
             username: user.username, 
             image: user.image
