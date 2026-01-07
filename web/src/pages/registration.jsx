@@ -97,7 +97,7 @@ const Register = () => {
             if (response.ok) {
                 // Success
                 console.log("Registered successfully!");
-                alert("You'r account has been created successfully!");
+                alert("Your account has been created successfully!");
                 navigate('/login'); 
             } else {
                 // Display server error 
