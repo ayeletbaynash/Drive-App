@@ -29,10 +29,16 @@ const getUserByUsername = (username) => {
     return all_users.find(u => u.username === username);
 };
 
+// User retrieval function by email
+const getUserByEmail = (email) => {
+    return all_users.find(u => u.emailAddress === email);
+};
+
 // Exporting functions so they can be used in other files
 module.exports = {
     createUser,
     validateUser,
     getUserById,
-    getUserByUsername
+    getUserByUsername,
+    getUserByEmail
 };

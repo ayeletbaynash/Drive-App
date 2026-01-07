@@ -15,6 +15,11 @@ const registerUser = (req, res) => {
         return res.status(400).json({ error: "Username already exists" });
     }
 
+    // Cant use same email twice
+    if (userModel.getUserByEmail(emailAddress)) {
+    return res.status(400).json({ error: "Email already registered" });
+    }
+
     // No spaces allowed in username
     if (username.includes(' ')) {
         return res.status(400).json({ error: "Username cannot contain spaces" });
