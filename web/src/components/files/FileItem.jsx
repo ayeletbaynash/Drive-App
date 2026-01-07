@@ -1,11 +1,14 @@
 import React, { useState } from 'react';
 import FloatingMenu from '../FloatingMenu';
 
-const FileItem = ({ file }) => {
+const FileItem = ({ file, onOpen }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const handleDoubleClick = () => {
     // Logic for fetching content and opening the white page will go here
+    if (onOpen) {
+      onOpen(file); // Calls the parent function and passes it the file object
+    }
     alert("Opening file: " + file.name);
   };
 
