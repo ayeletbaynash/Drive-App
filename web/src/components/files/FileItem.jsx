@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import FloatingMenu from '../FloatingMenu';
 
-const FileItem = ({ file, onOpen }) => {
+const FileItem = ({ file, onRefresh }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const handleDoubleClick = () => {

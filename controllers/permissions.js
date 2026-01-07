@@ -20,11 +20,7 @@ const getPermissionRecursive = (fileId, userId) => {
 
 
 exports.getPermissionByFileId = (req, res) => {
-    const userId = req.headers['user-id']
-    if (!userId) return res.status(401).json({ error: 'Missing user-id header' })
-    // check if user exist
-    const user = User.getUserById(userId)
-    if (!user) return res.status(401).json({ error: 'User does not exist' })
+    const userId = req.userId;
     
     const fileID = req.params.id
     if (!fileID) {
@@ -51,11 +47,7 @@ exports.postPermission = (req, res) => {
     if ( !userID || !permission) {
         return res.status(400).json({ error: 'Missing fields' })
 }
-    const currentUserId = req.headers['user-id']
-    if (!currentUserId) return res.status(401).json({ error: 'Missing user-id header' })
-
-   const currentUser = User.getUserById(currentUserId)
-    if (!currentUser) return res.status(401).json({ error: 'User does not exist' })
+    const currentUserId = req.userId;
     
     //check if the permission is valid 
     if (!VALID_PERMISSIONS.includes(permission)) {
@@ -101,10 +93,7 @@ exports.patchPermission = (req, res) => {
         return res.status(400).json({ error: 'Invalid permission type' })
 }
 
-    const userId = req.headers['user-id']
-    if (!userId) return res.status(401).json({ error: 'Missing user-id header' })
-    const user = User.getUserById(userId)
-    if (!user) return res.status(401).json({ error: 'User does not exist' })
+    const userId = req.userId;
 
    const existingPermission = Permission.getPermissionsPid(pId)
    if (!existingPermission) {
@@ -126,10 +115,7 @@ exports.patchPermission = (req, res) => {
 }
 
 exports.deletePermission = (req, res) => {
-    const userId = req.headers['user-id']
-    if (!userId) return res.status(401).json({ error: 'Missing user-id header' })
-    const user = User.getUserById(userId)
-    if (!user) return res.status(401).json({ error: 'User does not exist' })
+    const userId = req.userId;
     
     const pId = req.params.pId
     if (!pId) return res.status(400).json({ error: 'Missing permission ID in request parameters' })

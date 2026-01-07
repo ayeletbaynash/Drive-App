@@ -18,7 +18,7 @@ const FileViewList = ({items, onRefresh}) =>{
             <h2>folders</h2>
             <div>
                 {folders.map(f => (
-                    <FolderItem folder={f} onRefresh={onRefresh} />
+                    <FolderItem key={f.id} folder={f} onRefresh={onRefresh} />
                 ))}
             </div>
             <h2>files</h2>
