@@ -2,12 +2,14 @@
 import React, { useState, useEffect } from 'react';
 import FileViewList from '../files/FileViewList';
 import { useParams } from 'react-router-dom'
-import { authorizedFetch } from '../../App';
+import { authorizedFetch } from '../../App'
+import { useFileActions } from '../FileContext';
 
 const HomeFiles = () => {
     const [files, setFiles] = useState([]);
     const { folderId } = useParams();
     const [currentFolderName, setCurrentFolderName] = useState('');
+    const { deletedFiles } = useFileActions();
 
     const onRefresh = async () => {
         try {
@@ -40,20 +42,22 @@ const HomeFiles = () => {
         onRefresh();
     };
 
-    window.addEventListener('fileCreated', handleRefreshEvent);
-    window.addEventListener('folderCreated', handleRefreshEvent);
+    window.addEventListener('somthingChange', handleRefreshEvent);
 
-
+    
     return () => {
-        window.removeEventListener('fileCreated', handleRefreshEvent)
-        window.removeEventListener('folderCreated', handleRefreshEvent)
-    };
+        window.removeEventListener('somthingChange', handleRefreshEvent)
+        };
 }, [folderId]);
 
-    return (
+
+    const visibleFiles = files.filter(file => 
+    !deletedFiles.some(deletedFile => deletedFile.id === file.id))
+
+return (
         <div>
             <h1>{currentFolderName}</h1>
-            <FileViewList items={files} onRefresh={onRefresh} />
+            <FileViewList items={visibleFiles} />
         </div>
     );
 }

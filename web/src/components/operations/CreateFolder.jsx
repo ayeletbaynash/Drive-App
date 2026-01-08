@@ -30,7 +30,7 @@ const CreateFolder = ({ onSuccess }) => {
                 setIsOpen(false)
                 setName('')
                 onSuccess()
-                window.dispatchEvent(new Event('folderCreated'))
+                window.dispatchEvent(new Event('somthingChange'))
 
             } else {
                 const errorData = await response.json().catch(() => ({}));
