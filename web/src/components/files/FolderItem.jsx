@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import FloatingMenu from '../FloatingMenu';
+import { useNavigate } from 'react-router-dom'
 
-const FolderItem = ({ folder, onRefresh }) => {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-
+const FolderItem = ({ folder }) => {
+  const [isMenuOpen, setIsMenuOpen] = useState(false)
+    const navigate = useNavigate()
   const handleDoubleClick = () => {
-    // Logic for fetching content and opening the white page will go here
-    alert("Opening folder: " + folder.name);
+    navigate(`/home/${folder.id}`)
   };
 
   return (
@@ -18,7 +18,7 @@ const FolderItem = ({ folder, onRefresh }) => {
         <div className="menu-wrapper">
           <button onClick={(e) => {
             e.stopPropagation(); 
-            setIsMenuOpen(!isMenuOpen);
+            setIsMenuOpen(!isMenuOpen)
           }}>
             ⋮
           </button>

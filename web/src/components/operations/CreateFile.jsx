@@ -28,11 +28,11 @@ const CreateFile = ({ onSuccess }) => {
             });
 
             if (response.ok) {
-                setIsOpen(false);
-                setName('');
-                setContent('');
-                onSuccess();
-                window.dispatchEvent(new Event('fileCreated'));
+                setIsOpen(false)
+                setName('')
+                setContent('')
+                onSuccess()
+                window.dispatchEvent(new Event('fileCreated'))
             } else {
                 const errorData = await response.json().catch(() => ({}));
                 alert(`Error ${response.status}: ${errorData.message || 'Failed to create file'}`);

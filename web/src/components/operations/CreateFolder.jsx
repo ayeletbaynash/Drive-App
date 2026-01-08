@@ -26,9 +26,11 @@ const CreateFolder = ({ onSuccess }) => {
             });
 
             if (response.ok) {
-                setIsOpen(false);
-                setName('');
-                onSuccess();
+                setIsOpen(false)
+                setName('')
+                onSuccess()
+                window.dispatchEvent(new Event('folderCreated'))
+
             } else {
                 const errorData = await response.json().catch(() => ({}));
                 alert(`Error ${response.status}: ${errorData.message || 'Failed'}`);
