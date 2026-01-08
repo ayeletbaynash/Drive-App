@@ -42,7 +42,7 @@ function SearchBar({ user, onSearch }) {
         return;
     }
 
-    // סינון מתוך הרשימה שכבר יש לנו בזיכרון (הרבה יותר מהיר מלפנות לשרת כל אות)
+    // סינון מתוך הרשימה שכבר יש לנו בזיכרון (הרבה יותר מהיר מלפנות לשרת כל אות)  לבדוק אולי פה בגלל זה הוא לא מוצא בתוכן עצמו
     const matches = allItems.filter(file => 
         file.name.toLowerCase().includes(text.toLowerCase())
     );
@@ -64,7 +64,7 @@ function SearchBar({ user, onSearch }) {
     // שליחת התוצאות (ההצעות הנוכחיות) לדף הבית כדי שיציג אותן
     onSearch(fullResults); 
     
-    // מעבר לנתיב של תוצאות החיפוש
+    // מעבר לנתיב של תוצאות החיפוש - להוסיף פה שהוא עובר לנתיב שכולל את המחרוזת שחיפשנו
     navigate('/home/search');
   };
 
@@ -83,7 +83,7 @@ function SearchBar({ user, onSearch }) {
           <input 
             className="form-control me-2"
             type="text" 
-            placeholder="Search files..." 
+            placeholder="Search in drive" 
             value={text}
             onChange={(e) => setText(e.target.value)}
             onBlur={() => setTimeout(() => setShowSuggestions(false), 200)} // סגירה בהשהייה כדי לאפשר קליק

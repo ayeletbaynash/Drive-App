@@ -13,33 +13,6 @@ import TopBar from '../components/topbar/TopBar';
 // מקבלים את user ואת searchQuery ישירות מהאבא (App.js)
 // לא צריך לייבא פה את TopBar או MainLayout כי הם כבר נמצאים ב-App
 function HomePage({ user, onLogout }) {
-    const [fullUser, setFullUser] = useState(user); 
-
-    useEffect(() => {
-        if (!user || !user.id) return;
-
-        const fetchFullUserProfile = async () => {
-            try {
-                const token = localStorage.getItem('token');
-                // קריאה לשרת לקבלת פרטי המשתמש המלאים לפי ה-ID
-                const response = await fetch(`http://localhost:8080/api/users/${user.id}`, {
-                    headers: { 
-                        'Authorization': `Bearer ${token}`,
-                        'user-id': user.id.toString() 
-                    }
-                });
-
-                if (response.ok) {
-                    const userData = await response.json();
-                    setFullUser(userData); // עכשיו יש לנו אובייקט עם emailAddress!
-                }
-            } catch (error) {
-                console.error("Failed to fetch full user profile", error);
-            }
-        };
-
-        fetchFullUserProfile();
-    }, [user]);
 
     const [searchResults, setSearchResults] = useState([]);
     const [items, setItems] = useState([]);
@@ -70,7 +43,7 @@ function HomePage({ user, onLogout }) {
     return (
         <div style={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
             <TopBar 
-                user={fullUser} 
+                user={user} 
                 onLogout={onLogout} 
                 onSearch={handleSearchResults} 
             />
