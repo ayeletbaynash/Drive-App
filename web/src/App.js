@@ -36,11 +36,6 @@ function App() {
           user ? <Navigate to="/home" /> : <Login onLogin={setUser} />
           } />
 
-          {/* ecplicit rout to home */}
-          <Route path="/home/*" element={
-          user ? <HomePage user={user} onLogout={handleLogout} /> : <Navigate to="/login" />
-          } />
-
           {/* else */}
           <Route path="/*" element={
           user ? <HomePage user={user} onLogout={handleLogout} /> : <Navigate to="/login" />

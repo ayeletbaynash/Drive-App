@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, Navigate } from 'react-router-dom';
 import SideMenu from '../components/sideMenu/SideMenu';
 import HomeFiles from '../components/main content/HomeFiles';
 import SearchFiles from '../components/main content/SearchFiles'; // הייבוא החדש
@@ -79,7 +79,8 @@ function HomePage({ user, onLogout }) {
 
         <div style={{ flex: 1 }}>
           <Routes>
-            <Route path="home" element={<HomeFiles files={items} onRefresh={fetchFilesFromServer}/>} />
+            <Route path="home" element={<HomeFiles/>} />
+            <Route path="home/:folderId" element={<HomeFiles/>} />
             {/* --- הנתיב החדש לחיפוש --- */}
             {/* הוא מקבל את searchResults שהגיעו מה-SearchBar */}
             <Route path="search" element={
@@ -92,8 +93,7 @@ function HomePage({ user, onLogout }) {
             <Route path="starred" element={<div>Starred files content</div>} />
             <Route path="trash" element={<div>Trash content</div>} />
 
-            <Route path="/" element={<HomeFiles files={items} onRefresh={fetchFilesFromServer}/>} />
-          </Routes>
+            <Route path="/" element={<Navigate to="/home" replace />} />          </Routes>
         </div>
       </div>      
         </div>
