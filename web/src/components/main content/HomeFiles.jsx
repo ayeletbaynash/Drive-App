@@ -43,9 +43,12 @@ const HomeFiles = () => {
     };
 
     window.addEventListener('fileCreated', handleRefreshEvent);
+    window.addEventListener('folderCreated', handleRefreshEvent);
+
 
     return () => {
-        window.removeEventListener('fileCreated', handleRefreshEvent);
+        window.removeEventListener('fileCreated', handleRefreshEvent)
+        window.removeEventListener('folderCreated', handleRefreshEvent)
     };
 }, [folderId]);
 
