@@ -1,15 +1,18 @@
 import React, { useState } from 'react';
+import { authorizedFetch } from '../../App';
+import { useParams } from 'react-router-dom';
 
 const CreateFile = ({ onSuccess }) => {
     const [isOpen, setIsOpen] = useState(false);
     const [name, setName] = useState('');
     const [content, setContent] = useState('');
-    
-    const pathArray = window.location.pathname.split('/');
-    const lastPart = pathArray[pathArray.length - 1];
-    const folderId = Number(lastPart) || null;
 
     const handleCreate = async () => {
+        const pathArray = window.location.pathname.split('/');
+        const lastPart = pathArray[pathArray.length - 1];
+        const folderId = (lastPart === "" || isNaN(lastPart)) ? null : Number(lastPart);
+        console.log("Current URL Params:", folderId);
+
         const bodyData = {
             name: name,
             type: 'file',
@@ -18,11 +21,10 @@ const CreateFile = ({ onSuccess }) => {
         };
 
         try {
-            const response = await fetch('http://localhost:8080/api/files', {
+            const response = await authorizedFetch('http://localhost:8080/api/files', {
                 method: 'POST',
                 headers: { 
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${localStorage.getItem('token')}`
                 },
                 body: JSON.stringify(bodyData)
             });

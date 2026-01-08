@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import FileViewList from '../files/FileViewList';
 import { useParams } from 'react-router-dom'
+import { authorizedFetch } from '../../App';
 
 const HomeFiles = () => {
     const [files, setFiles] = useState([]);
@@ -16,11 +17,8 @@ const HomeFiles = () => {
             } else {
                 url = 'http://localhost:8080/api/files'
             }
-            const response = await fetch(url, {
-                method: 'GET',
-                headers: {
-                    'Authorization': `Bearer ${localStorage.getItem('token')}`
-                }
+            const response = await authorizedFetch(url, {
+                method: 'GET'
             });
             const data = await response.json()
             if (folderId) {
