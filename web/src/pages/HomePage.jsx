@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, Navigate } from 'react-router-dom';
 import SideMenu from '../components/sideMenu/SideMenu';
 import HomeFiles from '../components/main content/HomeFiles';
 import SearchFiles from '../components/main content/SearchFiles'; // הייבוא החדש
@@ -13,23 +13,46 @@ import TopBar from '../components/topbar/TopBar';
 // מקבלים את user ואת searchQuery ישירות מהאבא (App.js)
 // לא צריך לייבא פה את TopBar או MainLayout כי הם כבר נמצאים ב-App
 function HomePage({ user, onLogout }) {
-
+    const [fullUser, setFullUser] = useState(user); 
     const [searchResults, setSearchResults] = useState([]);
     const [items, setItems] = useState([]);
+
+    useEffect(() => {
+        if (!user || !user.id) return;
+
+        const fetchFullUserProfile = async () => {
+            try {
+                const response = await authorizedFetch(`http://localhost:8080/api/users/${user.id}`)
+                if (response && response.ok) {
+                    const userData = await response.json();
+                    setFullUser(userData);
+                }
+            } catch (error) {
+                console.error("Failed to fetch full user profile", error);
+            }
+        };
+
+        fetchFullUserProfile();
+    }, [user]);
+
 //talk with the server- and update the files
     
-        const fetchFilesFromServer = () => {
-        const token = localStorage.getItem('token');
-        fetch('http://localhost:8080/api/files', {
-            headers: { 
-                'user-id': user.id.toString(),
-                'Authorization': `Bearer ${token}`
+    const fetchFilesFromServer = async () => {
+        try{
+            const response = await authorizedFetch('http://localhost:8080/api/files');
+            if (!response) return;
+            const data = await response.json();
+            if (response.ok) {
+            // ודאי שאת מעדכנת את הסטייט רק אם data הוא באמת מערך
+            setItems(Array.isArray(data) ? data : []); 
+            } else {
+            console.error("Server error:", data.error);
             }
-        })
-            .then(response => response.json())
-            .then(data => setItems(data))
-            .catch(error => console.error("Error:", error));
+        } catch (error) {
+            console.error("Error fetching files:", error);
+        }
     };
+
 //load the item in the firs
     useEffect(() => {
         fetchFilesFromServer();
@@ -52,7 +75,8 @@ function HomePage({ user, onLogout }) {
 
         <div style={{ flex: 1 }}>
           <Routes>
-            <Route path="home" element={<HomeFiles files={items} onRefresh={fetchFilesFromServer}/>} />
+            <Route path="home" element={<HomeFiles/>} />
+            <Route path="home/:folderId" element={<HomeFiles/>} />
             {/* --- הנתיב החדש לחיפוש --- */}
             {/* הוא מקבל את searchResults שהגיעו מה-SearchBar */}
             <Route path="search" element={
@@ -65,7 +89,7 @@ function HomePage({ user, onLogout }) {
             <Route path="starred" element={<div>Starred files content</div>} />
             <Route path="trash" element={<div>Trash content</div>} />
 
-            <Route path="/" element={<HomeFiles files={items} onRefresh={fetchFilesFromServer}/>} />
+            <Route path="/" element={<Navigate to="/home" replace />} />
           </Routes>
         </div>
       </div>      

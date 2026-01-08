@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import { authorizedFetch } from '../../App';
+import { useParams } from 'react-router-dom';
 
 const CreateFolder = ({ onSuccess }) => {
     const [isOpen, setIsOpen] = useState(false);
@@ -6,29 +8,30 @@ const CreateFolder = ({ onSuccess }) => {
     
     const pathArray = window.location.pathname.split('/');
     const lastPart = pathArray[pathArray.length - 1];
-    const folderId = Number(lastPart) || null;
+    const folderId = (lastPart === "" || isNaN(lastPart)) ? null : Number(lastPart);
 
     const handleCreate = async () => {
         const bodyData = {
             name: name,
             type: 'folder',
-            parent_id: folderId
+            parent_id: folderId 
         };
 
         try {
-            const response = await fetch('http://localhost:8080/api/files', {
+            const response = await authorizedFetch('http://localhost:8080/api/files', {
                 method: 'POST',
                 headers: { 
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${localStorage.getItem('token')}`
                 },
                 body: JSON.stringify(bodyData)
             });
 
             if (response.ok) {
-                setIsOpen(false);
-                setName('');
-                onSuccess();
+                setIsOpen(false)
+                setName('')
+                onSuccess()
+                window.dispatchEvent(new Event('folderCreated'))
+
             } else {
                 const errorData = await response.json().catch(() => ({}));
                 alert(`Error ${response.status}: ${errorData.message || 'Failed'}`);

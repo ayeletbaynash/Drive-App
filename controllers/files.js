@@ -54,7 +54,7 @@ exports.getFileById = async (req, res) => {
 
         return res.status(200).json({
             ...file,
-            children: children.map(child => child.name)
+            children
         }
         )
     }

@@ -1,4 +1,5 @@
 const jwt = require("jsonwebtoken");
+const User = require('../models/users');
 const key = "My super secret key!!!"; // same as in login page
 
 const verifyToken = (req, res, next) => {
@@ -15,6 +16,11 @@ const verifyToken = (req, res, next) => {
     try {
         // verify the token
         const decoded = jwt.verify(token, key);
+        // Checking the user  exists in the system (by the ID in the token)
+        const user = User.getUserById(Number(decoded.id));
+        if (!user) { // if not in db memory
+            return res.status(401).json({ error: "User no longer exists. Please login again." });
+        }
         
         // Adding the user to the request (so that other controllers can use the ID)
         req.userId = decoded.id; 
