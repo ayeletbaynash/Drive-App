@@ -7,6 +7,32 @@ import Register from './pages/registration';
 import Login from './pages/login';
 import HomePage from './pages/HomePage';
 
+  // One function that centralizes all server calls
+  export const authorizedFetch = async (url, options = {}) => {
+      const token = localStorage.getItem('token');
+      const userId = localStorage.getItem('userId');
+
+      // Automatically adding headers to each request
+      const headers = {
+          ...options.headers,
+          'Authorization': `Bearer ${token}`,
+          'user-id': userId
+      };
+
+      const response = await fetch(url, { ...options, headers });
+
+      // if the id/token not there delete them from the webpage and sent the user back to login
+      if (response.status === 401) {
+          localStorage.removeItem('token');
+          localStorage.removeItem('userId');
+          localStorage.removeItem('user');
+          window.location.href = '/login';
+          return;
+      }
+
+      return response;
+  };
+
 function App() {
 
     const [user, setUser] = useState(() => {
@@ -17,6 +43,7 @@ function App() {
     const handleLogout = () => {
         localStorage.removeItem('user');
         localStorage.removeItem('token');
+        localStorage.removeItem('userId');
         setUser(null);
     };
 

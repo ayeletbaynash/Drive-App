@@ -14,24 +14,18 @@ import TopBar from '../components/topbar/TopBar';
 // לא צריך לייבא פה את TopBar או MainLayout כי הם כבר נמצאים ב-App
 function HomePage({ user, onLogout }) {
     const [fullUser, setFullUser] = useState(user); 
+    const [searchResults, setSearchResults] = useState([]);
+    const [items, setItems] = useState([]);
 
     useEffect(() => {
         if (!user || !user.id) return;
 
         const fetchFullUserProfile = async () => {
             try {
-                const token = localStorage.getItem('token');
-                // קריאה לשרת לקבלת פרטי המשתמש המלאים לפי ה-ID
-                const response = await fetch(`http://localhost:8080/api/users/${user.id}`, {
-                    headers: { 
-                        'Authorization': `Bearer ${token}`,
-                        'user-id': user.id.toString() 
-                    }
-                });
-
-                if (response.ok) {
+                const response = await authorizedFetch(`http://localhost:8080/api/users/${user.id}`)
+                if (response && response.ok) {
                     const userData = await response.json();
-                    setFullUser(userData); // עכשיו יש לנו אובייקט עם emailAddress!
+                    setFullUser(userData);
                 }
             } catch (error) {
                 console.error("Failed to fetch full user profile", error);
@@ -41,22 +35,24 @@ function HomePage({ user, onLogout }) {
         fetchFullUserProfile();
     }, [user]);
 
-    const [searchResults, setSearchResults] = useState([]);
-    const [items, setItems] = useState([]);
 //talk with the server- and update the files
     
-        const fetchFilesFromServer = () => {
-        const token = localStorage.getItem('token');
-        fetch('http://localhost:8080/api/files', {
-            headers: { 
-                'user-id': user.id.toString(),
-                'Authorization': `Bearer ${token}`
+    const fetchFilesFromServer = async () => {
+        try{
+            const response = await authorizedFetch('http://localhost:8080/api/files');
+            if (!response) return;
+            const data = await response.json();
+            if (response.ok) {
+            // ודאי שאת מעדכנת את הסטייט רק אם data הוא באמת מערך
+            setItems(Array.isArray(data) ? data : []); 
+            } else {
+            console.error("Server error:", data.error);
             }
-        })
-            .then(response => response.json())
-            .then(data => setItems(data))
-            .catch(error => console.error("Error:", error));
+        } catch (error) {
+            console.error("Error fetching files:", error);
+        }
     };
+
 //load the item in the firs
     useEffect(() => {
         fetchFilesFromServer();

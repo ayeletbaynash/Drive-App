@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Modal, Spinner } from 'react-bootstrap';
+import { authorizedFetch } from '../../App';
 
 const FileViewer = ({ file, show, onHide }) => {
     const [content, setContent] = useState('');
@@ -15,15 +16,9 @@ const FileViewer = ({ file, show, onHide }) => {
     const fetchFileContent = async () => {
         setLoading(true);
         try {
-            const token = localStorage.getItem('token');
-            const userId = localStorage.getItem('userId');
             // Sending a GET request to the server based on the file ID
-            const response = await fetch(`http://localhost:8080/api/files/${file.id}`, {
-                headers: {
-                    'user-id': userId,
-                    'Authorization': `Bearer ${token}`
-                }
-            });
+            const response = await authorizedFetch(`http://localhost:8080/api/files/${file.id}`);
+            if (!response) return;
 
             const data = await response.json();
             if (response.ok) {
