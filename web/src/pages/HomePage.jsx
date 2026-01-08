@@ -89,7 +89,8 @@ function HomePage({ user, onLogout }) {
             <Route path="starred" element={<div>Starred files content</div>} />
             <Route path="trash" element={<div>Trash content</div>} />
 
-            <Route path="/" element={<Navigate to="/home" replace />} />          </Routes>
+            <Route path="/" element={<Navigate to="/home" replace />} />
+          </Routes>
         </div>
       </div>      
         </div>
