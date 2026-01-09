@@ -6,12 +6,14 @@ import { authorizedFetch } from '../../App'
 import { useFileActions } from '../FileContext';
 
 const HomeFiles = () => {
-    const [files, setFiles] = useState([]);
+    const [files, setFiles] = useState([])
+    const [isLoading, setIsLoading] = useState(true)
     const { folderId } = useParams();
     const [currentFolderName, setCurrentFolderName] = useState('');
     const { deletedFiles } = useFileActions();
 
     const onRefresh = async () => {
+        setIsLoading(true)
         try {
             let url
             if (folderId) {
@@ -32,6 +34,8 @@ const HomeFiles = () => {
             }
         } catch (error) {
             console.error(error);
+        } finally {
+            setIsLoading(false)
         }
     }
 
@@ -57,10 +61,14 @@ const HomeFiles = () => {
 return (
         <div>
             <h1>{currentFolderName}</h1>
-             {visibleFiles.length > 0 ? (
+            {isLoading ? (
+                <div className="loader-container">
+                    <p>Loading files...</p> 
+                </div>
+            ) : visibleFiles.length > 0 ? (
                 <FileViewList items={visibleFiles} />
-             ) : (
-             <p>Your drive is empty.</p>
+            ) : (
+                <p>Your drive is empty.</p>
             )}
         </div>
     );

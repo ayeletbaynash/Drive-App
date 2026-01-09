@@ -10,8 +10,10 @@ const MyDriveFiles = () => {
     const { folderId } = useParams();
     const [currentFolderName, setCurrentFolderName] = useState('');
     const { deletedFiles } = useFileActions()
+    const [isLoading, setIsLoading] = useState(true);
 const currentUserId = JSON.parse(localStorage.getItem('user') || '{}').id;
     const onRefresh = async () => {
+        setIsLoading(true)
         try {
             let url
             if (folderId) {
@@ -32,6 +34,8 @@ const currentUserId = JSON.parse(localStorage.getItem('user') || '{}').id;
             }
         } catch (error) {
             console.error(error);
+        } finally {
+        setIsLoading(false)
         }
     }
 
@@ -58,12 +62,16 @@ const currentUserId = JSON.parse(localStorage.getItem('user') || '{}').id;
 return (
         <div>
             <h1>{currentFolderName}</h1>
-             {myVisibleFiles.length > 0 ? (
-                <FileViewList items={myVisibleFiles} />
-             ) : (
-             <p>Your drive is empty.</p>
-            )}
-        </div>
+             {isLoading ? (
+            <div className="loader-container">
+                    <p>Loading files...</p> 
+                </div>
+        ) : myVisibleFiles.length > 0 ? (
+            <FileViewList items={myVisibleFiles} />
+        ) : (
+            <p>Your drive is empty.</p>
+        )}
+    </div>
     );
 }
 

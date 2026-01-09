@@ -11,7 +11,7 @@ const StarredFiles = () => {
     return (
         <div>
             <h1>Starred Files</h1>
-            {starredFiles.length > 0 ? (
+            {visibleStarFiles.length > 0 ? (
                 <FileViewList items={visibleStarFiles} />
             ) : (
                 <div>
