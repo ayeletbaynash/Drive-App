@@ -3,23 +3,28 @@ import React, { createContext, useState, useContext, useEffect } from 'react';
 const FileContext = createContext();
 
 export const FileProvider = ({ children }) => {
-    const userId = localStorage.getItem('userId');
-    const trashKey = `deletedFiles_${userId}`;
-    const starredKey = `starredFiles_${userId}`;
+    const userId = JSON.parse(localStorage.getItem('user') || '{}').id;
+    const getKeys = () => ({
+        trash: `deletedFiles_${userId}`,
+        starred: `starredFiles_${userId}`
+    });
 
     const [deletedFiles, setDeletedFiles] = useState(() => {
-        const saved = localStorage.getItem(trashKey);
+        const { trash } = getKeys()
+        const saved = localStorage.getItem(trash);
         return saved ? JSON.parse(saved) : [];
     });
 
     const [starredFiles, setStarredFiles] = useState(() => {
-        const saved = localStorage.getItem(starredKey);
+        const { starred } = getKeys();
+        const saved = localStorage.getItem(starred);
         return saved ? JSON.parse(saved) : [];
     });
 
     useEffect(() => {
-        const savedTrash = localStorage.getItem(trashKey);
-        const savedStarred = localStorage.getItem(starredKey);
+        const { trash, starred } = getKeys()
+        const savedTrash = localStorage.getItem(trash);
+        const savedStarred = localStorage.getItem(starred);
         setDeletedFiles(savedTrash ? JSON.parse(savedTrash) : []);
         setStarredFiles(savedStarred ? JSON.parse(savedStarred) : []);
     }, [userId]);
@@ -29,8 +34,9 @@ export const FileProvider = ({ children }) => {
             const isAlreadyDeleted = prev.some(f => f.id === file.id);
             if (isAlreadyDeleted) return prev;
 
-            const newState = [...prev, file];
-            localStorage.setItem(trashKey, JSON.stringify(newState));
+            const newState = [...prev, file]
+            const { trash } = getKeys()
+            localStorage.setItem(trash, JSON.stringify(newState));
             return newState;
         });
         window.dispatchEvent(new Event('somthingChange'));
@@ -39,7 +45,8 @@ export const FileProvider = ({ children }) => {
     const restoreFromFileDeletionList = (fileId) => {
         setDeletedFiles((prev) => {
             const newState = prev.filter(f => f.id !== fileId);
-            localStorage.setItem(trashKey, JSON.stringify(newState));
+            const { trash } = getKeys()
+            localStorage.setItem(trash, JSON.stringify(newState));
             return newState;
         });
         window.dispatchEvent(new Event('somthingChange'));
@@ -55,8 +62,8 @@ export const FileProvider = ({ children }) => {
             } else {
                 newState = [...prev, file];
             }
-
-            localStorage.setItem(starredKey, JSON.stringify(newState));
+            const { starred } = getKeys()
+            localStorage.setItem(starred, JSON.stringify(newState));
             return newState;
         });
         window.dispatchEvent(new Event('somthingChange'));

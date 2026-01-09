@@ -5,12 +5,12 @@ import { useParams } from 'react-router-dom'
 import { authorizedFetch } from '../../App'
 import { useFileActions } from '../FileContext';
 
-const HomeFiles = () => {
+const MyDriveFiles = () => {
     const [files, setFiles] = useState([]);
     const { folderId } = useParams();
     const [currentFolderName, setCurrentFolderName] = useState('');
-    const { deletedFiles } = useFileActions();
-
+    const { deletedFiles } = useFileActions()
+const currentUserId = JSON.parse(localStorage.getItem('user') || '{}').id;
     const onRefresh = async () => {
         try {
             let url
@@ -28,7 +28,7 @@ const HomeFiles = () => {
                 setCurrentFolderName(data.name)
             } else {
                 setFiles(data.files || data)
-                setCurrentFolderName('Home')
+                setCurrentFolderName('My Drive')
             }
         } catch (error) {
             console.error(error);
@@ -51,14 +51,15 @@ const HomeFiles = () => {
 }, [folderId]);
 
 
-    const visibleFiles = files.filter(file => 
-    !deletedFiles.some(deletedFile => deletedFile.id === file.id))
+    const myVisibleFiles = files.filter(file =>
+        file.user_id == currentUserId && !deletedFiles.some(d => d.id === file.id))
+
 
 return (
         <div>
             <h1>{currentFolderName}</h1>
-             {visibleFiles.length > 0 ? (
-                <FileViewList items={visibleFiles} />
+             {myVisibleFiles.length > 0 ? (
+                <FileViewList items={myVisibleFiles} />
              ) : (
              <p>Your drive is empty.</p>
             )}
@@ -66,6 +67,6 @@ return (
     );
 }
 
-export default HomeFiles;
+export default MyDriveFiles;
 
 

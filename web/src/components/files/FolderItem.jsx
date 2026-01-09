@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import FloatingMenu from '../FloatingMenu';
 import { useNavigate } from 'react-router-dom'
 import SoftDelete from '../operations/SoftDelete'
+import Star from '../operations/Star'
 
 
 const FolderItem = ({ folder }) => {
@@ -29,6 +30,7 @@ const FolderItem = ({ folder }) => {
             <FloatingMenu onClose={() => setIsMenuOpen(false)}>
               <div className="dropdown-content">
                 <SoftDelete file={folder} />
+                <Star file={folder} onAction={() => setIsMenuOpen(false)}/>
                 <button onClick={() => alert("Renaming...")}>Rename</button>
               </div>
             </FloatingMenu>

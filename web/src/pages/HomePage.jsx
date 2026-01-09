@@ -5,6 +5,9 @@ import HomeFiles from '../components/main content/HomeFiles';
 import SearchFiles from '../components/main content/SearchFiles'; // הייבוא החדש
 import TopBar from '../components/topbar/TopBar';
 import TrashFiles from '../components/main content/TrashFiles';
+import StarredFiles from '../components/main content/StarredFiles';
+import MyDriveFiles from '../components/main content/MyDriveFiles';
+
 //import DriveFiles from '../components/DriveFiles';
 //import SharedFiles from '../components/SharedFiles';
 //import RecentFiles from '../components/RecentFiles';
@@ -84,10 +87,10 @@ function HomePage({ user, onLogout }) {
                 <SearchFiles results={searchResults} onRefresh={fetchFilesFromServer} />
             } />
             
-            <Route path="my-drive" element={<div>my drive</div>} />
+            <Route path="my-drive" element={<MyDriveFiles />} />
             <Route path="shared" element={<div>Shared with me content</div>} />
             <Route path="recent" element={<div>Recent files content</div>} />
-            <Route path="starred" element={<div>Starred files content</div>} />
+            <Route path="starred" element={<StarredFiles/>} />
             <Route path="trash" element={<TrashFiles/>} />
 
             <Route path="/" element={<Navigate to="/home" replace />} />

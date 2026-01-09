@@ -2,11 +2,15 @@
 import { useFileActions } from '../FileContext';
 
 
-const SoftDelete = ({file}) =>{
+const SoftDelete = ({file, onAction}) =>{
     const { addToFileDeletionList} = useFileActions()
 
-    const handleClick= () => {
+    const handleClick= (e) => {
+        e.stopPropagation()
         addToFileDeletionList(file)
+        if (onAction) {
+            onAction();
+        }
     }
 
     return(
