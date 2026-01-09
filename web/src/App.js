@@ -6,6 +6,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import Register from './pages/registration'; 
 import Login from './pages/login';
 import HomePage from './pages/HomePage';
+import { FileProvider } from './components/FileContext';
 
   // One function that centralizes all server calls
   export const authorizedFetch = async (url, options = {}) => {
@@ -53,7 +54,7 @@ function App() {
     }, []);
 
   return (
-    
+    <FileProvider>
       <Router>
         <Routes>
           <Route path="/registration" element={<Register />} />
@@ -69,6 +70,7 @@ function App() {
           } />
         </Routes> 
       </Router>
+    </FileProvider>
 
   );
 }

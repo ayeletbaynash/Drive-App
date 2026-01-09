@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import FloatingMenu from '../FloatingMenu';
-
+import SoftDelete from '../operations/SoftDelete'
+import Star from '../operations/Star'
 const FileItem = ({ file, onOpen }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
@@ -28,7 +29,8 @@ const FileItem = ({ file, onOpen }) => {
           {isMenuOpen && (
             <FloatingMenu onClose={() => setIsMenuOpen(false)}>
               <div className="dropdown-content">
-                <button onClick={() => alert("Deleting...")}>Delete</button>
+                <SoftDelete file={file} onAction={() => setIsMenuOpen(false)} />
+                <Star file={file} onAction={() => setIsMenuOpen(false)} />
                 <button onClick={() => alert("Renaming...")}>Rename</button>
               </div>
             </FloatingMenu>

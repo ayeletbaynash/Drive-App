@@ -5,13 +5,13 @@ import { useParams } from 'react-router-dom'
 import { authorizedFetch } from '../../App'
 import { useFileActions } from '../FileContext';
 
-const HomeFiles = () => {
-    const [files, setFiles] = useState([])
-    const [isLoading, setIsLoading] = useState(true)
+const MyDriveFiles = () => {
+    const [files, setFiles] = useState([]);
     const { folderId } = useParams();
     const [currentFolderName, setCurrentFolderName] = useState('');
-    const { deletedFiles } = useFileActions();
-
+    const { deletedFiles } = useFileActions()
+    const [isLoading, setIsLoading] = useState(true);
+const currentUserId = JSON.parse(localStorage.getItem('user') || '{}').id;
     const onRefresh = async () => {
         setIsLoading(true)
         try {
@@ -30,12 +30,12 @@ const HomeFiles = () => {
                 setCurrentFolderName(data.name)
             } else {
                 setFiles(data.files || data)
-                setCurrentFolderName('Home')
+                setCurrentFolderName('My Drive')
             }
         } catch (error) {
             console.error(error);
         } finally {
-            setIsLoading(false)
+        setIsLoading(false)
         }
     }
 
@@ -55,25 +55,26 @@ const HomeFiles = () => {
 }, [folderId]);
 
 
-    const visibleFiles = files.filter(file => 
-    !deletedFiles.some(deletedFile => deletedFile.id === file.id))
+    const myVisibleFiles = files.filter(file =>
+        file.user_id == currentUserId && !deletedFiles.some(d => d.id === file.id))
+
 
 return (
         <div>
             <h1>{currentFolderName}</h1>
-            {isLoading ? (
-                <div className="loader-container">
+             {isLoading ? (
+            <div className="loader-container">
                     <p>Loading files...</p> 
                 </div>
-            ) : visibleFiles.length > 0 ? (
-                <FileViewList items={visibleFiles} />
-            ) : (
-                <p>Your drive is empty.</p>
-            )}
-        </div>
+        ) : myVisibleFiles.length > 0 ? (
+            <FileViewList items={myVisibleFiles} />
+        ) : (
+            <p>Your drive is empty.</p>
+        )}
+    </div>
     );
 }
 
-export default HomeFiles;
+export default MyDriveFiles;
 
 
