@@ -3,6 +3,7 @@ import FloatingMenu from '../FloatingMenu';
 import SoftDelete from '../operations/SoftDelete'
 import Star from '../operations/Star'
 import EditContent from '../operations/EditContent'
+import Rename from '../operations/Rename'
 
 
 const FileItem = ({ file, onOpen }) => {
@@ -35,7 +36,7 @@ const FileItem = ({ file, onOpen }) => {
                 <SoftDelete file={file} onAction={() => setIsMenuOpen(false)} />
                 <Star file={file} onAction={() => setIsMenuOpen(false)} />
                 <EditContent file={file} onAction={() => setIsMenuOpen(false)}/>
-                <button onClick={() => alert("Renaming...")}>Rename</button>
+                <Rename file={file} onAction={() => setIsMenuOpen(false)}/>
               </div>
             </FloatingMenu>
           )}

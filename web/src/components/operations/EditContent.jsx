@@ -13,7 +13,6 @@ const EditContent = ({ file, onAction }) => {
                 method: 'GET'
             });
             const data = await response.json();
-            console.log("What the server returned:", data);
             setContent(data.content || ''); 
         } catch (error) {
             console.error(error);
