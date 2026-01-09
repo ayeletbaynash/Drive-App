@@ -49,10 +49,11 @@
     --transition-normal: 0.3s ease-in-out;
 
     /* --- Default Light Mode Colors --- */
-    --primary: #0d6efd;
-    --primary-hover: #073f93;
+    --primary: #146841;
+    --primary-rgb: 20, 104, 65;
+    --primary-hover: #0ba05b;
     --secondary: #6c757d;
-    --success: #198754;
+    --success: #00ff62;
     --error: #dc3545;
     --warning: #ffc107;
     --background: #f4f7f6;

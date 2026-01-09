@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Form, Button, Card, Container, Alert } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import '../styles/authentication.css'
+import AppLogo from '../components/topbar/AppLogo';
 
 const Login = ({ onLogin }) => {
     // State to manage input fields
@@ -77,8 +78,13 @@ const Login = ({ onLogin }) => {
         <Container className="auth-page-container">
             <Card className="auth-card shadow-sm">
                 <Card.Body>
-                    <h1 className="auth-title">Login</h1>
-                    
+                    <div className="logo-wrapper">
+                        <AppLogo />
+                    </div>
+
+                    <h4 className="auth-title text-center">
+                        Login
+                    </h4>
                     {error && <Alert variant="danger">{error}</Alert>}
                     
                     <Form onSubmit={handleSubmit}>
