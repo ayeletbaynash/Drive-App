@@ -34,7 +34,7 @@ const CreateFile = ({ onSuccess }) => {
                 setName('')
                 setContent('')
                 onSuccess()
-                window.dispatchEvent(new Event('fileCreated'))
+                window.dispatchEvent(new Event('somthingChange'))
             } else {
                 const errorData = await response.json().catch(() => ({}));
                 alert(`Error ${response.status}: ${errorData.message || 'Failed to create file'}`);
