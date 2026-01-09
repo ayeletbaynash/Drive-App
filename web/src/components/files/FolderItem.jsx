@@ -5,6 +5,8 @@ import SoftDelete from '../operations/SoftDelete'
 import Star from '../operations/Star'
 
 
+
+
 const FolderItem = ({ folder }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
     const navigate = useNavigate()
@@ -29,7 +31,7 @@ const FolderItem = ({ folder }) => {
           {isMenuOpen && (
             <FloatingMenu onClose={() => setIsMenuOpen(false)}>
               <div className="dropdown-content">
-                <SoftDelete file={folder} />
+                <SoftDelete file={folder} onAction={() => setIsMenuOpen(false)}/>
                 <Star file={folder} onAction={() => setIsMenuOpen(false)}/>
                 <button onClick={() => alert("Renaming...")}>Rename</button>
               </div>
