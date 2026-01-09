@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import FloatingMenu from '../FloatingMenu';
 import CreateFolder from '../operations/CreateFolder';
 import CreateFile from '../operations/CreateFile';
+import FileUpload from '../operations/FileUpload';
 
 const SideMenu = () => {
   const menuItems = [
@@ -22,12 +23,9 @@ const SideMenu = () => {
       </button>
       {isMenuOpen && (
                 <FloatingMenu onClose={() => setIsMenuOpen(false)}>
-                    <CreateFolder 
-                        onSuccess={() => { setIsMenuOpen(false); }} 
-                    />
-                    <CreateFile 
-                        onSuccess={() => { setIsMenuOpen(false); }} 
-                    />
+                    <CreateFolder onSuccess={() => { setIsMenuOpen(false); }} />
+                    <CreateFile onSuccess={() => { setIsMenuOpen(false); }} />
+                    <FileUpload onSuccess={() => setIsMenuOpen(false)} /> 
                 </FloatingMenu>
             )}
       <nav>
