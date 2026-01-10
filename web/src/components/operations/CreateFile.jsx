@@ -14,7 +14,7 @@ const CreateFile = ({ onSuccess }) => {
         console.log("Current URL Params:", folderId);
 
         const bodyData = {
-            name: name,
+            name: `${name}.txt`,
             type: 'file',
             parent_id: folderId,
             content: content || "" 
@@ -53,6 +53,7 @@ const CreateFile = ({ onSuccess }) => {
                 <div>
                     <div>
                         Name: <input value={name} onChange={(e) => setName(e.target.value)} placeholder="Name" />
+                        <span >.txt</span>
                     </div>
                     <div>
                         Content: <textarea value={content} onChange={(e) => setContent(e.target.value)} placeholder="Content" />
