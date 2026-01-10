@@ -4,6 +4,7 @@ import SoftDelete from '../operations/SoftDelete'
 import Star from '../operations/Star'
 import EditContent from '../operations/EditContent'
 import Rename from '../operations/Rename'
+import DownloadFile from '../operations/DownloadFile';
 
 
 const FileItem = ({ file, onOpen }) => {
@@ -37,6 +38,7 @@ const FileItem = ({ file, onOpen }) => {
                 <Star file={file} onAction={() => setIsMenuOpen(false)} />
                 <EditContent file={file} onAction={() => setIsMenuOpen(false)}/>
                 <Rename file={file} onAction={() => setIsMenuOpen(false)}/>
+                <DownloadFile file={file} onAction={() => setIsMenuOpen(false)} />
               </div>
             </FloatingMenu>
           )}
