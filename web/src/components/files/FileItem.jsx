@@ -5,6 +5,7 @@ import Star from '../operations/Star'
 import EditContent from '../operations/EditContent'
 import Rename from '../operations/Rename'
 import Share from '../operations/Share'
+import DownloadFile from '../operations/DownloadFile';
 
 
 const FileItem = ({ file, onOpen }) => {
@@ -39,7 +40,7 @@ const FileItem = ({ file, onOpen }) => {
                 <EditContent file={file} onAction={() => setIsMenuOpen(false)}/>
                 <Rename file={file} onAction={() => setIsMenuOpen(false)}/>
                 <Share file={file} onAction={() => setIsMenuOpen(false)}/>
-
+                <DownloadFile file={file} onAction={() => setIsMenuOpen(false)} />
               </div>
             </FloatingMenu>
           )}

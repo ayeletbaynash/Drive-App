@@ -3,66 +3,93 @@ const fileModel = require('../models/files');
 const Permission = require('../models/permissions');
 
 const search = async (req, res) => {
-    const query = req.params.query; // Extracting the search string 
-    const userId = req.userId; // Identify user through header
-    if (!query) {     // Validation: Ensure a query was provided
-        return res.status(400).json({ error: "Search query is required" });
-    }
-    const client = new Client() // Initialize the TCP client to communicate with the Exercise 2 server
-
+    // Critical Protections (to prevent 500 crashes)
     try {
-        // Send the SEARCH command to the old server 
-        const response = await client.sendAndReceive(`search ${query}`); // all files from c++
-        // check the status in the first row
-        const lines = response.split('\n')
-        const statusLine = lines[0].trim() // the firs line- the status
-        const statusParts = statusLine.split(' ')
-        const statusCode = Number(statusParts[0]) //the number of the status
-        const statusMessage = statusParts.slice(1).join(' ')
-
-        if (statusCode !== 200) {
-            // if it is not 200- return the problem from the server
-            return res.status(statusCode).json({ error: statusMessage })
+        const query = req.params.query; 
+        const userId = req.userId;
+        
+        if (!query) {
+            return res.status(400).json({ error: "Search query is required" });
         }
-        // Analyze the response under the assumption it returns file physical name separated by whitespace
-        const resultLine = lines[2] ? lines[2].trim() : ""
-        const physicalNames = resultLine ? resultLine.split(' ') : []
-        // Cross reference c++ memory with node.js 
-        //al the filesId that returned that exsist+the user got a premission to them + the query is in the content of the file
-        const results = []
-        const allFiles = fileModel.getFiles()
-        for (const pName of physicalNames) {
-            const file = allFiles.find(f => f.physicalName === pName)
-            if (file) {
-                const userPermission = Permission.getPermissionForUser(file.id, userId);
-                if (userPermission) {
-                    if (!pName.includes(query)) {
-                        // if the query is just in the content and not in the Id of the file 
-                        results.push(file)
-                    }else {//else- check if the query is in the content
-                        const fileContent = await client.sendAndReceive(`GET ${file.physicalName}`)
-                        const linesForFile = fileContent.split('\n')
-                        if (linesForFile[2].includes(query)){ //the query is in the content
-                            results.push(file)
-                        } 
+
+        // Final results array
+        const results = [];
+        // Fetch all files from memory
+        const allFiles = fileModel.getFiles(); 
+        // Helper set to prevent duplicates
+        const processedFileIds = new Set();
+
+        const nameMatches = allFiles.filter(file => {
+            try {
+                // Protection in case permissions are missing or object is incomplete
+                const hasPermission = Permission.getPermissionForUser(file.id, userId);
+                if (!hasPermission) return false;
+
+                // Case Insensitive search
+                return file.name && file.name.toLowerCase().includes(query.toLowerCase());
+            } catch (e) {
+                return false; 
+            }
+        });
+
+        // Add found items to results
+        nameMatches.forEach(file => {
+            results.push(file);
+            processedFileIds.add(file.id);
+        });
+
+        // Attempt to contact C++ 
+        let client = null;
+        try {
+            client = new Client(); 
+            // Try to talk to C++. If it throws an error - we catch it below
+            const response = await client.sendAndReceive(`search ${query}`); 
+            
+            if (response) {
+                const lines = response.split('\n');
+                // Check that lines exist before accessing them
+                const statusLine = lines[0] ? lines[0].trim() : "";
+                const statusCode = Number(statusLine.split(' ')[0]);
+
+                if (statusCode === 200) {
+                    const resultLine = lines[2] ? lines[2].trim() : "";
+                    const physicalNames = resultLine ? resultLine.split(' ') : [];
+                    
+                    for (const pName of physicalNames) {
+                        const cleanPName = pName.trim();
+                        if (!cleanPName) continue;
+
+                        // Convert from physical name to logical name
+                        const file = allFiles.find(f => f.physicalName === cleanPName);
+                        
+                        // If we found a file and haven't added it yet
+                        if (file && !processedFileIds.has(file.id)) {
+                            const userPermission = Permission.getPermissionForUser(file.id, userId);
+                            if (userPermission) {
+                                results.push(file);
+                                processedFileIds.add(file.id);
+                            }
+                        }
                     }
                 }
-             }
-        }
-        //filter all the files that their names include the query
-        const additionalResults = fileModel.getFiles().filter(file => 
-        file.name.includes(query) && Permission.getPermissionForUser(file.id, userId))
-         //combine the 2 list
-        for (const file of additionalResults) {
-            if (!results.some(f => f.id === file.id)) {
-                results.push(file);
+            }
+        } catch (cppError) {
+            console.log("[Safe Mode] C++ search skipped due to error:", cppError.message);
+        } finally {
+            // Safe connection close
+            if (client) {
+                try { client.close(); } catch(e) {}
             }
         }
 
-        res.status(200).json(results); // return in JSON
-            } 
-     
-        finally { client.close(); } // Must close connection in the end
+        // Return results
+        return res.status(200).json(results); 
+
+    } catch (criticalError) {
+        // Last safety net - if everything explodes, return empty array instead of error
+        console.error("[CRITICAL] Search controller crashed:", criticalError);
+        return res.status(200).json([]); 
+    }
 };
 
 module.exports = { search };

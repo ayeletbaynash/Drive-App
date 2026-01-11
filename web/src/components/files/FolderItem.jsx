@@ -5,6 +5,7 @@ import SoftDelete from '../operations/SoftDelete'
 import Star from '../operations/Star'
 import Rename from '../operations/Rename'
 import Share from '../operations/Share'
+import DownloadFolder from '../operations/DownloadFolder';
 
 
 
@@ -36,6 +37,7 @@ const FolderItem = ({ folder }) => {
                 <Star file={folder} onAction={() => setIsMenuOpen(false)}/>
                 <Rename file={folder} onAction={() => setIsMenuOpen(false)}/>
                 <Share file={folder} onAction={() => setIsMenuOpen(false)}/>
+                <DownloadFolder folder={folder} onAction={() => setIsMenuOpen(false)} />
               </div>
             </FloatingMenu>
           )}
