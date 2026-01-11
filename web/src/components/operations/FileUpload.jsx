@@ -39,7 +39,7 @@ const FileUpload = ({ onSuccess }) => {
             if (response.ok) {
                 alert('File uploaded successfully!');
                 onSuccess(); // Closes the floating menu
-                window.dispatchEvent(new Event('fileCreated')); // Refreshes the list
+                window.dispatchEvent(new Event('somthingChange')); // Refreshes the list 
             } else {
                 alert('Upload failed');
             }
