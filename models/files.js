@@ -40,7 +40,8 @@ const postFile = (fileData) => {
         physicalName, // Unique identifier
         type, // "file" or "folder"
         parent_id, // parent folder ID, null if root
-        created_at: new Date().toISOString() // timestamp
+        created_at: new Date().toISOString(), // timestamp
+        updated_at: new Date().toISOString()
     }
 
     all_files.push(newFile) // save to memory

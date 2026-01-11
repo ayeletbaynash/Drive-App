@@ -31,9 +31,6 @@ exports.getPermissionByFileId = (req, res) => {
     if (!permissionForUser) {
         return res.status(403).json({ error: 'User has no permission' })
 }
-    if (permissionForUser.permission !== 'owner') {
-        return res.status(403).json({ error: 'Only owner can view permissions' })
-}
     const permissions = Permission.getPermissions(fileID)
     const permissionsWithNames = permissions.map(p => {
         const user = User.getUserById(p.userID);

@@ -7,7 +7,12 @@ import Rename from '../operations/Rename'
 import Share from '../operations/Share'
 import Restore from '../operations/Restore'
 import HardDelete from '../operations/HardDelete'
-import DownloadFolder from '../operations/DownloadFolder';
+import DownloadFolder from '../operations/DownloadFolder'
+import MoveFile from '../operations/MoveFile'
+
+
+
+
 
 const FolderItem = ({ folder, isTrash }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
@@ -43,10 +48,12 @@ const FolderItem = ({ folder, isTrash }) => {
                   <>
                     <Star file={folder} onAction={closeMenu}/>
                     <DownloadFolder folder={folder} onAction={closeMenu} />
+                    <MoveFile file={folder} onAction={() => setIsMenuOpen(false)}/>
 
                     {isOwner && <SoftDelete file={folder} onAction={closeMenu}/>}
                     {isOwner && <Rename file={folder} onAction={closeMenu}/>}
                     {canWrite && <Share file={folder} onAction={closeMenu}/>}
+
                   </>
                 )}
               </div>

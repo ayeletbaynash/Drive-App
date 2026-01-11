@@ -226,7 +226,8 @@ exports.patchFile = async (req, res) => {
         client.close() 
     }
 }
-    if(data.name || data.parent_id){
+    if(data.name || data.parent_id || data.content !== undefined){
+        data.updated_at = new Date().toISOString()
         // Update local model details
         const updated = File.patchFile(fileId, data)
         if (!updated) {

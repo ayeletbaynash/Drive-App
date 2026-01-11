@@ -9,10 +9,10 @@ const FileUpload = ({ onSuccess }) => {
         if (!file) return;
 
         const reader = new FileReader();
-
+        const isTextFile = file.name.endsWith('.txt')//check if the file is text
         // Runs when the browser finishes reading the file
         reader.onload = async (event) => {
-            const base64String = event.target.result; // the file as text
+            const fileContent = event.target.result; // the file as text
 
             // Extract the folderId from the URL (just like in CreateFile)
             const pathArray = window.location.pathname.split('/');
@@ -24,7 +24,7 @@ const FileUpload = ({ onSuccess }) => {
             name: file.name,
             type: 'file',
             parent_id: folderId,
-            content: base64String // sending the image as text
+            content: fileContent // sending the image as text
         };
 
         try {
@@ -48,7 +48,11 @@ const FileUpload = ({ onSuccess }) => {
             alert('Error during upload');
         }
     };
-    reader.readAsDataURL(file); // Reads the file and converts it to Base64 format
+    if (isTextFile) {
+        reader.readAsText(file)//if the file is text save the content normal
+    } else {
+        reader.readAsDataURL(file); // Reads the file and converts it to Base64 format
+    }
 };
 
     return (
