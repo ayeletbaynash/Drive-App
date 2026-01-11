@@ -9,12 +9,15 @@ import Restore from '../operations/Restore'
 import HardDelete from '../operations/HardDelete'
 import DownloadFolder from '../operations/DownloadFolder';
 
-
-
-
 const FolderItem = ({ folder, isTrash }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
     const navigate = useNavigate()
+
+  const isOwner = folder.permission === 'owner';
+  const canWrite = isOwner || folder.permission === 'write';
+
+  const closeMenu = () => setIsMenuOpen(false);
+
   const handleDoubleClick = () => {
     if (isTrash) return
     navigate(`/home/${folder.id}`)
@@ -25,30 +28,25 @@ const FolderItem = ({ folder, isTrash }) => {
       
       <div className="folder-header">
         <span className="folder-name">{folder.name}</span>
-        
         <div className="menu-wrapper">
-          <button onClick={(e) => {
-            e.stopPropagation(); 
-            setIsMenuOpen(!isMenuOpen)
-          }}>
-            ⋮
-          </button>
+          <button onClick={(e) => { e.stopPropagation(); setIsMenuOpen(!isMenuOpen)}}>⋮</button>
 
           {isMenuOpen && (
-            <FloatingMenu onClose={() => setIsMenuOpen(false)}>
+            <FloatingMenu onClose={closeMenu}>
               <div className="dropdown-content">
                 {isTrash ? (
                   <>
-                    <Restore file={folder} onAction={() => setIsMenuOpen(false)} />
-                    <HardDelete file={folder} onAction={() => setIsMenuOpen(false)} />
+                    {isOwner && <Restore file={folder} onAction={closeMenu} />}
+                    {isOwner && <HardDelete file={folder} onAction={closeMenu} />}
                   </>
                 ) : (
                   <>
-                    <SoftDelete file={folder} onAction={() => setIsMenuOpen(false)}/>
-                    <Star file={folder} onAction={() => setIsMenuOpen(false)}/>
-                    <Rename file={folder} onAction={() => setIsMenuOpen(false)}/>
-                    <DownloadFolder folder={folder} onAction={() => setIsMenuOpen(false)} />
-                    <Share file={folder} onAction={() => setIsMenuOpen(false)}/>
+                    <Star file={folder} onAction={closeMenu}/>
+                    <DownloadFolder folder={folder} onAction={closeMenu} />
+
+                    {isOwner && <SoftDelete file={folder} onAction={closeMenu}/>}
+                    {isOwner && <Rename file={folder} onAction={closeMenu}/>}
+                    {canWrite && <Share file={folder} onAction={closeMenu}/>}
                   </>
                 )}
               </div>
