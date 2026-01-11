@@ -59,6 +59,7 @@ const FileUpload = ({ onSuccess }) => {
                 ref={fileInputRef} 
                 style={{ display: 'none' }} 
                 onChange={handleUpload} 
+                accept=".jpg, .jpeg, .png, .txt, .pdf"
             />
             <button onClick={() => fileInputRef.current.click()}>
                 Upload File
