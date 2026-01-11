@@ -2,6 +2,7 @@ import React, { useState , useEffect } from 'react';
 import { Form, Button, Container, Alert, Image, Card } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import '../styles/authentication.css';
+import AppLogo from '../components/topbar/AppLogo';
 
 const Register = () => {
     // State for form data - matches model/users
@@ -118,7 +119,12 @@ const Register = () => {
     <Container className="auth-page-container">
         <Card className="auth-card shadow-sm">
             <Card.Body>
-                <h1 className="auth-title">Create Account</h1>
+                <div className="logo-wrapper">
+                    <AppLogo />
+                </div>
+                <h4 className="auth-title text-center">
+                    Create Account
+                </h4>
                     <div className="auth-required-container">
                         <span className="required-star">*</span>
                         <span className="required-note"> All marked fields are required</span>
