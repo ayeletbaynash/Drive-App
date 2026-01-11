@@ -4,10 +4,13 @@ import SoftDelete from '../operations/SoftDelete'
 import Star from '../operations/Star'
 import EditContent from '../operations/EditContent'
 import Rename from '../operations/Rename'
-
+import EditImage from '../operations/EditImage';
 
 const FileItem = ({ file, onOpen }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  // differentiate between image and text
+  const isTextFile = file.type === 'file' && file.name.toLowerCase().endsWith('.txt');
+  const isImageFile = file.type === 'file' && /\.(jpg|jpeg|png)$/i.test(file.name);
 
   const handleDoubleClick = () => {
     // Logic for fetching content and opening the white page will go here
@@ -35,8 +38,9 @@ const FileItem = ({ file, onOpen }) => {
               <div className="dropdown-content">
                 <SoftDelete file={file} onAction={() => setIsMenuOpen(false)} />
                 <Star file={file} onAction={() => setIsMenuOpen(false)} />
-                <EditContent file={file} onAction={() => setIsMenuOpen(false)}/>
                 <Rename file={file} onAction={() => setIsMenuOpen(false)}/>
+                {isTextFile && (<EditContent file={file} onAction={() => setIsMenuOpen(false)} />)} {/*Show text editing only for TXT files*/}
+                {isImageFile && (<EditImage file={file} onAction={() => setIsMenuOpen(false)} />)} {/*Show image editing only for image files*/}
               </div>
             </FloatingMenu>
           )}

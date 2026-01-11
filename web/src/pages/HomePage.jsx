@@ -2,11 +2,12 @@ import { useEffect, useState } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import SideMenu from '../components/sideMenu/SideMenu';
 import HomeFiles from '../components/main content/HomeFiles';
-import SearchFiles from '../components/main content/SearchFiles'; // הייבוא החדש
+import SearchFiles from '../components/main content/SearchFiles';
 import TopBar from '../components/topbar/TopBar';
 import TrashFiles from '../components/main content/TrashFiles';
 import StarredFiles from '../components/main content/StarredFiles';
 import MyDriveFiles from '../components/main content/MyDriveFiles';
+import { authorizedFetch } from '../App'
 
 //import DriveFiles from '../components/DriveFiles';
 //import SharedFiles from '../components/SharedFiles';
