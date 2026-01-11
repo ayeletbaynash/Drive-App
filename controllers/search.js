@@ -24,6 +24,7 @@ const search = async (req, res) => {
                 // Protection in case permissions are missing or object is incomplete
                 const hasPermission = Permission.getPermissionForUser(file.id, userId);
                 if (!hasPermission) return false;
+                //if (isFileOrParentDeleted(file, allFiles)) return false;
 
                 // Case Insensitive search
                 return file.name && file.name.toLowerCase().includes(query.toLowerCase());
@@ -66,8 +67,21 @@ const search = async (req, res) => {
                         if (file && !processedFileIds.has(file.id)) {
                             const userPermission = Permission.getPermissionForUser(file.id, userId);
                             if (userPermission) {
-                                results.push(file);
-                                processedFileIds.add(file.id);
+                                try {
+                                    const contentResponse = await client.sendAndReceive(`GET ${cleanPName}`);
+                                    const contentLines = contentResponse.split('\n');
+                                    // Assuming content starts from line 3 (index 2) onwards
+                                    // We join the rest just in case content has newlines
+                                    const content = contentLines.slice(2).join('\n');
+
+                                    // Check if query is truly in the content (Case Insensitive)
+                                    if (content && content.toLowerCase().includes(query.toLowerCase())) {
+                                        results.push(file);
+                                        processedFileIds.add(file.id);
+                                    }
+                                } catch (innerErr) {
+                                    console.log(`[Warning] Failed to verify content for ${cleanPName}`);
+                                }
                             }
                         }
                     }
