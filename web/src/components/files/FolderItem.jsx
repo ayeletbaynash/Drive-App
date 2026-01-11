@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom'
 import SoftDelete from '../operations/SoftDelete'
 import Star from '../operations/Star'
 import Rename from '../operations/Rename'
+import DownloadFolder from '../operations/DownloadFolder';
 
 
 
@@ -34,6 +35,7 @@ const FolderItem = ({ folder }) => {
                 <SoftDelete file={folder} onAction={() => setIsMenuOpen(false)}/>
                 <Star file={folder} onAction={() => setIsMenuOpen(false)}/>
                 <Rename file={folder} onAction={() => setIsMenuOpen(false)}/>
+                <DownloadFolder folder={folder} onAction={() => setIsMenuOpen(false)} />
               </div>
             </FloatingMenu>
           )}
