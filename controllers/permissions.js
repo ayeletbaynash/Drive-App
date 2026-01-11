@@ -35,20 +35,33 @@ exports.getPermissionByFileId = (req, res) => {
         return res.status(403).json({ error: 'Only owner can view permissions' })
 }
     const permissions = Permission.getPermissions(fileID)
-    res.json(permissions)
+    const permissionsWithNames = permissions.map(p => {
+        const user = User.getUserById(p.userID);
+        return {
+            ...p,
+            username: user ? user.username : 'Unknown User'
+        }
+    })
+    res.json(permissionsWithNames)
 }
 
 exports.postPermission = (req, res) => {
-    const { userID, permission } = req.body
+    const { username, permission } = req.body
     const fileID = req.params.id
     if (!fileID) {
     return res.status(400).json({ error: 'Missing file ID in request parameters' })
 }
-    if ( !userID || !permission) {
-        return res.status(400).json({ error: 'Missing fields' })
+    if (!username || !permission) {
+        return res.status(400).json({ error: 'Missing fields (username or permission)' });
 }
     const currentUserId = req.userId;
+    const targetUser = User.getUserByUsername(username); 
+    if (!targetUser) {
+        return res.status(404).json({ error: `User '${username}' not found` });
+    }
     
+    const userID = targetUser.id;
+
     //check if the permission is valid 
     if (!VALID_PERMISSIONS.includes(permission)) {
   return res.status(400).json({ error: 'Invalid permission type' })
@@ -61,9 +74,6 @@ exports.postPermission = (req, res) => {
     if (permissionForUser.permission !== 'owner') {
         return res.status(403).json({ error: 'Only owner can change permissions' })
 }
-
-    const targetUser = User.getUserById(userID)
-    if (!targetUser) return res.status(404).json({ error: 'Target user does not exist' })
 
     //check if there is a permission alredy connected to this file and this user
     const permissionExists = Permission.getPermissionForUser(fileID, userID)
