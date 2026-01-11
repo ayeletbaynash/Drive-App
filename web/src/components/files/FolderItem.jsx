@@ -7,7 +7,9 @@ import Rename from '../operations/Rename'
 import Share from '../operations/Share'
 import Restore from '../operations/Restore'
 import HardDelete from '../operations/HardDelete'
-import DownloadFolder from '../operations/DownloadFolder';
+import DownloadFolder from '../operations/DownloadFolder'
+import MoveFile from '../operations/MoveFile'
+
 
 
 
@@ -49,6 +51,8 @@ const FolderItem = ({ folder, isTrash }) => {
                     <Rename file={folder} onAction={() => setIsMenuOpen(false)}/>
                     <DownloadFolder folder={folder} onAction={() => setIsMenuOpen(false)} />
                     <Share file={folder} onAction={() => setIsMenuOpen(false)}/>
+                    <MoveFile file={folder} onAction={() => setIsMenuOpen(false)}/>
+
                   </>
                 )}
               </div>

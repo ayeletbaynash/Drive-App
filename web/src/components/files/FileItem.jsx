@@ -8,8 +8,9 @@ import EditImage from '../operations/EditImage';
 import Share from '../operations/Share'
 import Restore from '../operations/Restore'
 import HardDelete from '../operations/HardDelete'
-import DownloadFile from '../operations/DownloadFile';
-import CopyFile from '../operations/CopyFile';
+import DownloadFile from '../operations/DownloadFile'
+import MoveFile from '../operations/MoveFile'
+import CopyFile from '../operations/CopyFile'
 
 
 const FileItem = ({ file, onOpen, isTrash }) => {
@@ -56,6 +57,7 @@ const FileItem = ({ file, onOpen, isTrash }) => {
                     <Share file={file} onAction={() => setIsMenuOpen(false)}/>
                     {isTextFile && (<EditContent file={file} onAction={() => setIsMenuOpen(false)} />)} {/*Show text editing only for TXT files*/}
                     {isImageFile && (<EditImage file={file} onAction={() => setIsMenuOpen(false)} />)} {/*Show image editing only for image files*/}
+                    <MoveFile file={file} onAction={() => setIsMenuOpen(false)}/>
                     <CopyFile file={file} onAction={() => setIsMenuOpen(false)} />
                   </>
                 )}
