@@ -6,9 +6,19 @@
 #include <fstream>
 #include <sstream>
 #include <vector>
+#include <algorithm> 
+#include <cctype>
 
 using namespace std;
 namespace fs = std::filesystem;
+
+// Converts a string to lowercase to support case-insensitive search.
+std::string toLowerCase(const std::string& str) {
+    std::string lowerStr = str;
+    std::transform(lowerStr.begin(), lowerStr.end(), lowerStr.begin(),
+                   [](unsigned char c){ return std::tolower(c); });
+    return lowerStr;
+}
 
 // The function is responsible for searching content inside existing project files.
 void SearchCommand::execute(const std::string& content_to_search,
@@ -36,6 +46,8 @@ void SearchCommand::execute(const std::string& content_to_search,
 
     std::vector<std::string> matched_files; // Create dinamic list to hold all matches as strings
 
+    std::string searchLower = toLowerCase(content_to_search); // Prepare the search query in lowercase for case-insensitive comparison
+
     // Iterate over all files in PROJECT_DIR
     for (const auto& entry : fs::directory_iterator(project_path)) {
 
@@ -56,10 +68,14 @@ void SearchCommand::execute(const std::string& content_to_search,
         buffer << file.rdbuf();
         std::string file_content = buffer.str();
 
-        file_content = compressor->decompress(file_content);               // Decompress the content to search inside
-        if (file_content.find(content_to_search) != std::string::npos      // Check if the content appears in file
-            || filename.find(content_to_search) != std::string::npos) {    // or in the file name
-            matched_files.push_back(filename);                             // push only filename, not full path
+        file_content = compressor->decompress(file_content);    // Decompress the content to search inside
+
+        std::string contentLower = toLowerCase(file_content);
+        std::string filenameLower = toLowerCase(filename);
+        
+        if (contentLower.find(searchLower) != std::string::npos 
+            || filenameLower.find(searchLower) != std::string::npos) {
+            matched_files.push_back(filename); 
         }
     }
 

@@ -3,7 +3,7 @@ import FolderItem from './FolderItem';
 import FileItem from './FileItem';
 import FileViewer from './FileViewer';
 
-const FileViewList = ({items}) =>{
+const FileViewList = ({items, isTrash}) =>{
     const folders = items.filter(item => item.type === 'folder');
     const files = items.filter(item => item.type === 'file');
     const [selectedFile, setSelectedFile] = useState(null); // save the entire file object
@@ -18,7 +18,7 @@ const FileViewList = ({items}) =>{
             <h2>folders</h2>
             <div>
                 {folders.map(f => (
-                    <FolderItem key={f.id} folder={f} />
+                    <FolderItem key={f.id} folder={f} isTrash={isTrash} />
                 ))}
             </div>
             <h2>files</h2>
@@ -28,6 +28,7 @@ const FileViewList = ({items}) =>{
                         key={f.id} 
                         file={f} 
                         onOpen={handleOpen}
+                        isTrash={isTrash}
                     />
                 ))}
             </div>
