@@ -51,7 +51,6 @@ const FileItem = ({ file, onOpen, isTrash }) => {
                   <>
                     <SoftDelete file={file} onAction={() => setIsMenuOpen(false)} />
                     <Star file={file} onAction={() => setIsMenuOpen(false)} />
-                    <EditContent file={file} onAction={() => setIsMenuOpen(false)}/>
                     <Rename file={file} onAction={() => setIsMenuOpen(false)}/>
                     <DownloadFile file={file} onAction={() => setIsMenuOpen(false)} />
                     <Share file={file} onAction={() => setIsMenuOpen(false)}/>
