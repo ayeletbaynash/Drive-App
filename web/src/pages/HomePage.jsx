@@ -9,13 +9,6 @@ import StarredFiles from '../components/main content/StarredFiles';
 import MyDriveFiles from '../components/main content/MyDriveFiles';
 import SharedWithMe from '../components/main content/SharedWithMe';
 
-//import DriveFiles from '../components/DriveFiles';
-//import SharedFiles from '../components/SharedFiles';
-//import RecentFiles from '../components/RecentFiles';
-//import StarredFiles from '../components/StarredFiles';
-//import TrashFiles from '../components/TrashFiles';
-
-
 function HomePage({ user, onLogout }) {
     const [searchResults, setSearchResults] = useState([]);
 
