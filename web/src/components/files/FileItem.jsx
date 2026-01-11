@@ -4,6 +4,7 @@ import SoftDelete from '../operations/SoftDelete'
 import Star from '../operations/Star'
 import EditContent from '../operations/EditContent'
 import Rename from '../operations/Rename'
+import Share from '../operations/Share'
 import Restore from '../operations/Restore'
 import HardDelete from '../operations/HardDelete'
 import DownloadFile from '../operations/DownloadFile';
@@ -49,6 +50,7 @@ const FileItem = ({ file, onOpen, isTrash }) => {
                     <EditContent file={file} onAction={() => setIsMenuOpen(false)}/>
                     <Rename file={file} onAction={() => setIsMenuOpen(false)}/>
                     <DownloadFile file={file} onAction={() => setIsMenuOpen(false)} />
+                    <Share file={file} onAction={() => setIsMenuOpen(false)}/>
                   </>
                 )}
               </div>
