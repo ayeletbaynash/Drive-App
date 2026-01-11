@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import UserMenu from './UserMenu';
-import FloatingMenu from '../FloatingMenu'; // ודאי שהנתיב נכון
+import FloatingMenu from '../FloatingMenu'; 
+import { authorizedFetch } from '../../App'; 
 
 function UserAvatar({ user, onLogout }) {
   // 1. State למשתמש המלא (בהתחלה הוא רק המשתמש הבסיסי שהגיע מהלוגין)
@@ -21,21 +22,13 @@ function UserAvatar({ user, onLogout }) {
   // 3. ה-Effect: אם חסר לנו מידע, ניגש לשרת להשלים אותו
   useEffect(() => {
     // אם אין יוזר או שכבר יש לנו אימייל (אולי הגיע מהלוגין?), לא צריך לפנות לשרת
-    if (!user?.id) return;
-    
+    if (!user?.id || (fullUser.emailAddress || fullUser.email)) return;    
     // פונקציה אסינכרונית בתוך ה-Effect
     const fetchFullProfile = async () => {
         try {
-            const token = localStorage.getItem('token');
-            // שימי לב: הנתיב חייב להיות תואם לשרת שלכם
-            const response = await fetch(`http://localhost:8080/api/users/${user.id}`, {
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                    'user-id': user.id.toString()
-                }
-            });
+            const response = await authorizedFetch(`http://localhost:8080/api/users/${user.id}`);
 
-            if (response.ok) {
+            if (response && response.ok) {
                 const data = await response.json();
                 // data מכיל עכשיו את: { id, username, email, image... }
                 setFullUser(data); 
