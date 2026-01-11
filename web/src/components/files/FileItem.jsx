@@ -5,10 +5,13 @@ import Star from '../operations/Star'
 import EditContent from '../operations/EditContent'
 import Rename from '../operations/Rename'
 import Share from '../operations/Share'
+import Restore from '../operations/Restore'
+import HardDelete from '../operations/HardDelete'
 import DownloadFile from '../operations/DownloadFile';
 
 
-const FileItem = ({ file, onOpen }) => {
+
+const FileItem = ({ file, onOpen, isTrash }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const handleDoubleClick = () => {
@@ -35,12 +38,21 @@ const FileItem = ({ file, onOpen }) => {
           {isMenuOpen && (
             <FloatingMenu onClose={() => setIsMenuOpen(false)}>
               <div className="dropdown-content">
-                <SoftDelete file={file} onAction={() => setIsMenuOpen(false)} />
-                <Star file={file} onAction={() => setIsMenuOpen(false)} />
-                <EditContent file={file} onAction={() => setIsMenuOpen(false)}/>
-                <Rename file={file} onAction={() => setIsMenuOpen(false)}/>
-                <Share file={file} onAction={() => setIsMenuOpen(false)}/>
-                <DownloadFile file={file} onAction={() => setIsMenuOpen(false)} />
+                {isTrash ? (
+                  <>
+                    <Restore file={file} onAction={() => setIsMenuOpen(false)} />
+                    <HardDelete file={file} onAction={() => setIsMenuOpen(false)} />
+                  </>
+                ) : (
+                  <>
+                    <SoftDelete file={file} onAction={() => setIsMenuOpen(false)} />
+                    <Star file={file} onAction={() => setIsMenuOpen(false)} />
+                    <EditContent file={file} onAction={() => setIsMenuOpen(false)}/>
+                    <Rename file={file} onAction={() => setIsMenuOpen(false)}/>
+                    <DownloadFile file={file} onAction={() => setIsMenuOpen(false)} />
+                    <Share file={file} onAction={() => setIsMenuOpen(false)}/>
+                  </>
+                )}
               </div>
             </FloatingMenu>
           )}
