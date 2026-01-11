@@ -68,6 +68,19 @@ export const FileProvider = ({ children }) => {
         });
         window.dispatchEvent(new Event('somthingChange'));
     };
+    const updateFileInStarred = (fileId, newData) => {
+    setStarredFiles((prev) => {
+        const isStarred = prev.some(f => f.id === fileId);
+        if (!isStarred) return prev;
+
+        const newState = prev.map(f => f.id === fileId ? { ...f, ...newData } : f);
+        
+        const { starred } = getKeys();
+        localStorage.setItem(starred, JSON.stringify(newState));
+        
+        return newState;
+    });
+};
 
     return (
         <FileContext.Provider value={{ 
@@ -75,7 +88,8 @@ export const FileProvider = ({ children }) => {
             addToFileDeletionList, 
             restoreFromFileDeletionList,
             starredFiles, 
-            toggleStarFile 
+            toggleStarFile,
+            updateFileInStarred
         }}>
             {children}
         </FileContext.Provider>

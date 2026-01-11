@@ -96,6 +96,12 @@ const Register = () => {
             const data = await response.json();
 
             if (response.ok) {
+                //clean the local storage to this ID- for start without any data in the lists
+                const newUserId = data.id
+                if (newUserId) {
+                    localStorage.removeItem(`deletedFiles_${newUserId}`)
+                    localStorage.removeItem(`starredFiles_${newUserId}`)
+                }
                 // Success
                 console.log("Registered successfully!");
                 alert("Your account has been created successfully!");
