@@ -7,6 +7,7 @@ import TopBar from '../components/topbar/TopBar';
 import TrashFiles from '../components/main content/TrashFiles';
 import StarredFiles from '../components/main content/StarredFiles';
 import MyDriveFiles from '../components/main content/MyDriveFiles';
+import SharedWithMe from '../components/main content/SharedWithMe';
 
 //import DriveFiles from '../components/DriveFiles';
 //import SharedFiles from '../components/SharedFiles';
@@ -88,7 +89,7 @@ function HomePage({ user, onLogout }) {
             } />
             
             <Route path="my-drive" element={<MyDriveFiles />} />
-            <Route path="shared" element={<div>Shared with me content</div>} />
+            <Route path="shared" element={<SharedWithMe/>} />
             <Route path="recent" element={<div>Recent files content</div>} />
             <Route path="starred" element={<StarredFiles/>} />
             <Route path="trash" element={<TrashFiles/>} />
