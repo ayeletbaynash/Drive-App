@@ -8,7 +8,7 @@ const TrashFiles = () => {
             <div>
                 <h1>Recycle Bin</h1>
                 {deletedFiles.length > 0 ? (
-                    <FileViewList items={deletedFiles} />
+                    <FileViewList items={deletedFiles} isTrash={true}/>
                 ) : (
                     <p>Your trash is empty.</p>
                 )}

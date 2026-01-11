@@ -4,13 +4,17 @@ import { useNavigate } from 'react-router-dom'
 import SoftDelete from '../operations/SoftDelete'
 import Star from '../operations/Star'
 import Rename from '../operations/Rename'
+import Restore from '../operations/Restore'
+import HardDelete from '../operations/HardDelete'
 
 
 
-const FolderItem = ({ folder }) => {
+
+const FolderItem = ({ folder, isTrash }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
     const navigate = useNavigate()
   const handleDoubleClick = () => {
+    if (isTrash) return
     navigate(`/home/${folder.id}`)
   };
 
@@ -31,9 +35,18 @@ const FolderItem = ({ folder }) => {
           {isMenuOpen && (
             <FloatingMenu onClose={() => setIsMenuOpen(false)}>
               <div className="dropdown-content">
-                <SoftDelete file={folder} onAction={() => setIsMenuOpen(false)}/>
-                <Star file={folder} onAction={() => setIsMenuOpen(false)}/>
-                <Rename file={folder} onAction={() => setIsMenuOpen(false)}/>
+                {isTrash ? (
+                  <>
+                    <Restore file={folder} onAction={() => setIsMenuOpen(false)} />
+                    <HardDelete file={folder} onAction={() => setIsMenuOpen(false)} />
+                  </>
+                ) : (
+                  <>
+                    <SoftDelete file={folder} onAction={() => setIsMenuOpen(false)}/>
+                    <Star file={folder} onAction={() => setIsMenuOpen(false)}/>
+                    <Rename file={folder} onAction={() => setIsMenuOpen(false)}/>
+                  </>
+                )}
               </div>
             </FloatingMenu>
           )}
