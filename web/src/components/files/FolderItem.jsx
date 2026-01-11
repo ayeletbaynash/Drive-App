@@ -6,6 +6,7 @@ import Star from '../operations/Star'
 import Rename from '../operations/Rename'
 import Restore from '../operations/Restore'
 import HardDelete from '../operations/HardDelete'
+import DownloadFolder from '../operations/DownloadFolder';
 
 
 
@@ -45,6 +46,7 @@ const FolderItem = ({ folder, isTrash }) => {
                     <SoftDelete file={folder} onAction={() => setIsMenuOpen(false)}/>
                     <Star file={folder} onAction={() => setIsMenuOpen(false)}/>
                     <Rename file={folder} onAction={() => setIsMenuOpen(false)}/>
+                    <DownloadFolder folder={folder} onAction={() => setIsMenuOpen(false)} />
                   </>
                 )}
               </div>

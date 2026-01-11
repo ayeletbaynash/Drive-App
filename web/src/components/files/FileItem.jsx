@@ -6,6 +6,7 @@ import EditContent from '../operations/EditContent'
 import Rename from '../operations/Rename'
 import Restore from '../operations/Restore'
 import HardDelete from '../operations/HardDelete'
+import DownloadFile from '../operations/DownloadFile';
 
 
 
@@ -47,6 +48,7 @@ const FileItem = ({ file, onOpen, isTrash }) => {
                     <Star file={file} onAction={() => setIsMenuOpen(false)} />
                     <EditContent file={file} onAction={() => setIsMenuOpen(false)}/>
                     <Rename file={file} onAction={() => setIsMenuOpen(false)}/>
+                    <DownloadFile file={file} onAction={() => setIsMenuOpen(false)} />
                   </>
                 )}
               </div>
