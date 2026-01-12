@@ -56,8 +56,6 @@ const Login = ({ onLogin }) => {
                     localStorage.setItem('userEmail', data.emailAddress);
                 }
 
-                alert('Login successful!');
-
                 if (onLogin) {
                 onLogin(data); // This updates the setUser in App.js
                 }

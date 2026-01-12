@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import SideMenu from '../components/sideMenu/SideMenu';
 import HomeFiles from '../components/main content/HomeFiles';
