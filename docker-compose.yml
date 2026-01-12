@@ -37,6 +37,7 @@ services:
       - /usr/src/app/node_modules  # "מגן" על התיקייה הפנימית של הספריות
     environment:
       - CHOKIDAR_USEPOLLING=true   # קריטי לעדכון אוטומטי ב-Windows
+      - WDS_SOCKET_PORT=3001
     depends_on:
       - web-server
 

@@ -1,20 +1,32 @@
 import { useEffect, useState } from 'react';
+import { authorizedFetch } from '../../App'
 
 function FileDetailsPanel({ file, onClose }) {
+    console.log("!!! Panel is Rendering with:", file)
     const [permissions, setPermissions] = useState([]);
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
-        if (file && file.id) {
+       const handleRefreshEvent = () => {
+            fetchPermissions();
+        };
+
+        window.addEventListener('somthingChange', handleRefreshEvent);
+
+        if (file && (file.id !== undefined && file.id !== null)) {
             fetchPermissions();
         }
-    }, [file]);
+
+        return () => {
+            window.removeEventListener('somthingChange', handleRefreshEvent);
+        };
+    }, [file])
 
     const fetchPermissions = async () => {
         setLoading(true);
         try {
-            const response = await fetch(`http://localhost:8080/api/files/${file.id}/permissions`);
-            if (!response.ok) throw new Error('Failed to fetch');
+            const response = await authorizedFetch(`http://localhost:8080/api/files/${file.id}/permissions`);
+            if (!response.ok) throw new Error('Failed to fetch!!!');
             const data = await response.json();
             setPermissions(data);
         } catch (error) {
@@ -25,7 +37,7 @@ function FileDetailsPanel({ file, onClose }) {
         }
     };
 
-    const owner = permissions.find(p => p.permission === 'owner');
+    const owner = permissions.find(p => p.permission == 'owner');
     const collaborators = permissions.filter(p => p.permission !== 'owner');
 
     return (
@@ -61,7 +73,7 @@ function FileDetailsPanel({ file, onClose }) {
                         <ul>
                             {collaborators.map((p, index) => (
                                 <li key={index}>
-                                    {p.userame} ({p.permission})
+                                    {p.username} ({p.permission})
                                 </li>
                             ))}
                         </ul>
