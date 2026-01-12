@@ -3,6 +3,9 @@ import { authorizedFetch } from '../../App';
 import { useFileActions } from '../FileContext';
 import FileItem from '../files/FileItem'
 import FileViewer from '../files/FileViewer'
+import EmptyState from './EmptyState';
+import LoadingState from './LoadingState';
+import '../../styles/emptyPages.css';
 
 
 const RecentFiles = ({ onSelectFile }) => {
@@ -69,19 +72,19 @@ const RecentFiles = ({ onSelectFile }) => {
     });
 
     return (
-        <div className="recent-files-page">
-            <h1>Recent Files</h1>
+        <div className="page-fill-height">
+            <h1 className="mb-4" style={{ color: 'var(--primary)', fontWeight: 'bold' }}>Recent Files</h1>
 
             {isLoading ? (
-                <div className="loader-container">
-                    <p>Loading your recent activity...</p>
-                </div>
+                <LoadingState message="Scanning your recent activity..." />
             ) : sortedFiles.length > 0 ? (
                 <div className="files-container">
                     {sortedFiles.map((file) => (<FileItem key={file.id} file={file} onOpen={handleOpen} onSelectFile={onSelectFile}/> ))}
                 </div>
             ) : (
-                <p>No recent activity found.</p>
+                <div className="centered-content-wrapper">
+                    <EmptyState type="recent" />
+                </div>
             )}
                {/* the modal that will be displayed when there is a file selected */}
             <FileViewer 

@@ -4,8 +4,12 @@ import FileViewList from '../files/FileViewList';
 import { useParams } from 'react-router-dom'
 import { authorizedFetch } from '../../App'
 import { useFileActions } from '../FileContext';
+import EmptyState from './EmptyState';
+import LoadingState from './LoadingState';
+import '../../styles/emptyPages.css';
 
-const HomeFiles = ({ onSelectFile }) => {
+
+const HomeFiles = () => {
     const [files, setFiles] = useState([])
     const [isLoading, setIsLoading] = useState(true)
     const { folderId } = useParams();
@@ -59,16 +63,16 @@ const HomeFiles = ({ onSelectFile }) => {
     !deletedFiles.some(deletedFile => deletedFile.id === file.id))
 
 return (
-        <div>
-            <h1>{currentFolderName}</h1>
+        <div className="page-fill-height">
+            <h1 className="mb-4" style={{ color: 'var(--primary)', fontWeight: 'bold' }}>{currentFolderName}</h1>
             {isLoading ? (
-                <div className="loader-container">
-                    <p>Loading files...</p> 
-                </div>
+                <LoadingState message="Fetching your files..." />
             ) : visibleFiles.length > 0 ? (
-                <FileViewList items={visibleFiles} onSelectFile={onSelectFile}/>
+                <FileViewList items={visibleFiles} />
             ) : (
-                <p>Your drive is empty.</p>
+                <div className="centered-content-wrapper">
+                    <EmptyState type="home" />
+                </div>
             )}
         </div>
     );

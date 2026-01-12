@@ -7,6 +7,21 @@ const EmptyState = ({ type }) => {
     const strokeColor = "var(--primary)";
 
     switch (type) {
+        case 'home':
+        return (
+          <svg width="200" height="200" viewBox="0 0 24 24" fill="none" stroke={strokeColor} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" style={commonStyle}>
+            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+            <polyline points="9 22 9 12 15 12 15 22" />
+          </svg>
+        );
+      case 'recent':
+        return (
+          <svg width="200" height="200" viewBox="0 0 24 24" fill="none" stroke={strokeColor} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" style={commonStyle}>
+            <circle cx="12" cy="12" r="10" />
+            <polyline points="12 6 12 12 16 14" />
+            <path d="M12 2a10 10 0 1 0 10 10" style={{opacity: 0.3}} />
+          </svg>
+        );
       case 'trash':
         return (
           <svg width="200" height="200" viewBox="0 0 24 24" fill="none" stroke={strokeColor} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" style={commonStyle}>
@@ -58,6 +73,8 @@ const EmptyState = ({ type }) => {
   };
 
   const titles = {
+    home: "Welcome to AweSoMe Drive",
+    recent: "No recent files",
     trash: "Trash is empty",
     starred: "No starred files",
     shared: "Shared with me",
@@ -66,6 +83,8 @@ const EmptyState = ({ type }) => {
   };
 
   const subtitles = {
+    home: "Your most important files will appear here.",
+    recent: "Files you've opened recently will show up here.",
     trash: "Items moved to the trash will appear here.",
     starred: "Star items to find them easily later :)",
     shared: "Files shared with you will appear here.",

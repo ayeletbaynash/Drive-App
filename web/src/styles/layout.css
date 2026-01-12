@@ -54,7 +54,7 @@
 }
 
 .search-container:focus-within {
-    background-color: var(--surface);
+    background-color: var(--surface) !important;
     border-color: 2px solid var(--primary) !important; /* מסגרת ירוקה בפוקוס */
     box-shadow: 0 0 0 4px rgba(20, 104, 65, 0.1) !important;
 }
@@ -362,14 +362,12 @@
 
 /* --- פריט פעיל (Active) בסייד-בר ירוק --- */
 .sidebar-item-container.active {
-    background-color: rgba(255, 255, 255, 0.15); 
+    background-color: rgba(255, 255, 255, 0.2) !important; 
     border-left: 4px solid #ffffff;
-    margin-right: 10px;
-    border-radius: 0 20px 20px 0;
 }
 
 .sidebar-item-container.active .sidebar-link,
 .sidebar-item-container.active .sidebar-icon {
-    color: #ffffff;
-    font-weight: var(--weight-bold);
+    color: #ffffff !important;
+    font-weight: bold;
 }
