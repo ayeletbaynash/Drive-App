@@ -39,7 +39,8 @@ const Share = ({ file, onAction }) => {
 
             if (response.ok) {
                 setNewUsername("");
-                fetchPermissions();
+                fetchPermissions()
+                window.dispatchEvent(new Event('somthingChange'))
             } else {
                 const err = await response.json();
                 alert(err.error || "Failed");
@@ -54,7 +55,10 @@ const Share = ({ file, onAction }) => {
             const response = await authorizedFetch(`http://localhost:8080/api/files/${file.id}/permissions/${pId}`, {
                 method: 'DELETE'
             });
-            if (response.ok) fetchPermissions();
+            if (response.ok){
+                 fetchPermissions()
+                 window.dispatchEvent(new Event('somthingChange'))
+            }
         } catch (error) {
             console.error(error);
         }
@@ -67,7 +71,10 @@ const Share = ({ file, onAction }) => {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ permission: role })
             });
-            if (response.ok) fetchPermissions();
+            if (response.ok){ 
+                fetchPermissions()
+                window.dispatchEvent(new Event('somthingChange'))
+            }
         } catch (error) {
             console.error(error);
         }
