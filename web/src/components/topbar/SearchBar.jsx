@@ -2,6 +2,9 @@ import { useState, useEffect, useRef } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { authorizedFetch } from '../../App';
 import { useFileActions } from '../FileContext';
+import 'bootstrap-icons/font/bootstrap-icons.css';
+import '../../styles/theme.css';
+import '../../styles/layout.css';
 
 function SearchBar({ onSearch }) {
   const [text, setText] = useState('');
@@ -177,6 +180,10 @@ function SearchBar({ onSearch }) {
     navigate(`/home/search?q=${encodeURIComponent(text)}`);
   };
 
+  const handleIconClick = (e) => {
+      handleSubmit(e);
+  };
+
   /* ===============================
      Click on suggestion
      =============================== */
@@ -194,31 +201,34 @@ function SearchBar({ onSearch }) {
   };
 
   return (
-    <div style={{ position: 'relative' }}>
-      <form onSubmit={handleSubmit} className="d-flex">
+    <div style={{ position: 'relative', width: '100%' }}>
+      <form onSubmit={handleSubmit} className="search-container">
+
+        <button type="button" className="search-icon-btn" onClick={handleIconClick}>
+             <i className="bi bi-search"></i>
+        </button>
+
         <input
-          className="form-control me-2"
+          className="search-input"
           type="text"
           placeholder="Search in drive"
           value={text}
           onChange={(e) => setText(e.target.value)}
           onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
         />
-        <button className="btn btn-outline-primary" type="submit">🔍</button>
       </form>
 
       {showSuggestions && suggestions.length > 0 && (
-        <div style={{
-            position: 'absolute', top: '100%', left: 0, right: 0,
-            background: 'var(--surface)', border: '1px solid var(--border)', zIndex: 1000,
-        }}>
+        <div className="suggestions-dropdown">
           {suggestions.map((file) => (
             <div
               key={file.id}
               onMouseDown={() => handleSuggestionClick(file)}
-              style={{ padding: '10px', cursor: 'pointer', display: 'flex', gap: '10px' }}
+              className="suggestion-item"
             >
-              <span>{file.type === 'folder' ? '📁' : '📄'}</span>
+              <span style={{fontSize: '1.1rem'}}>
+                  {file.type === 'folder' ? <i className="bi bi-folder-fill text-warning"></i> : <i className="bi bi-file-earmark-text text-primary"></i>}
+              </span>
               <span>{file.name}</span>
             </div>
           ))}

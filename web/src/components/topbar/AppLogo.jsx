@@ -15,9 +15,13 @@ function AppLogo() {
     return (
         <div 
             onClick={handleClick} 
+            className="logo-container"
             style={{ 
                 cursor: 'pointer', 
-                display: 'flex' 
+                display: 'flex', 
+                alignItems: 'center',
+                height: '100%',  
+                userSelect: 'none'
             }}
         >
             {/* הרחבתי קצת את ה-viewBox כדי שיהיה מקום למילה הארוכה יותר */}
@@ -29,7 +33,7 @@ function AppLogo() {
                 <path d="M22.5 22V14M22.5 14L19 17.5M22.5 14L26 17.5" stroke="white" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"/>
                 
                 {/* הטקסט: AweSoMe drive */}
-                <text x="52" y="23" fontFamily="Arial, sans-serif" fontSize="18" fill="var(--text-main)">
+                <text x="52" y="26" fontFamily="Arial, sans-serif" fontSize="18" fill="var(--text-main)">
                     {/* האותיות של AMS מודגשות וגדולות */}
                     <tspan fontWeight="bold">A</tspan>
                     <tspan fontWeight="normal">we</tspan>

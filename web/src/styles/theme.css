@@ -15,6 +15,7 @@
     --radius-md: 8px;
     --radius-lg: 15px;
     --radius-round: 50%;
+    --border-width-focus: 2px;
 
     /* --- Typography --- */
     --font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
@@ -119,4 +120,11 @@ a {
 
 button {
     color: var(--text-main);
+}
+
+.form-control:focus, 
+input:focus, 
+button:focus {
+    border-width: var(--border-width-focus) !important;
+    outline: none;
 }
