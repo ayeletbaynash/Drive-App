@@ -10,7 +10,7 @@ const MoveFile = ({ file, onAction }) => {
     const [selectedFolderId, setSelectedFolderId] = useState(undefined);
 
     const fetchFoldersRecursive = async (folderId) => {
-        const url = folderId === null 
+        const url = (folderId === null) 
             ? 'http://localhost:8080/api/files' 
             : `http://localhost:8080/api/files/${folderId}`;
 

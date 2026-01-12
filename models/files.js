@@ -54,7 +54,7 @@ const patchFile = (id, data) => {
     if (index === -1) return false // file/folder not found
 
     // Only allow updating certain fields
-    const allowedFields = ['name', 'parent_id']
+    const allowedFields = ['name', 'parent_id', 'updated_at']
     for (let key of allowedFields) {
         if (key in data) {
             all_files[index][key] = data[key]
