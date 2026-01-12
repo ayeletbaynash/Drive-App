@@ -10,6 +10,25 @@
 using namespace std;
 namespace fs = std::filesystem;
 
+//function that encode the content to base64
+std::string base64_encode(const std::string& in) {
+    std::string out;
+    int val = 0, valb = -6;
+    for (unsigned char c : in) {
+        val = (val << 8) + c;
+        valb += 8;
+        while (valb >= 0) {
+            out.push_back("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"[(val >> valb) & 0x3F]);
+            valb -= 6;
+        }
+    }
+    if (valb > -6) out.push_back("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"[((val << 8) >> (valb + 8)) & 0x3F]);
+    while (out.size() % 4) out.push_back('=');
+    return out;
+}
+
+
+
 // the function is responsible for returning the decompress content acoording to file name
 void GetCommand::execute(const std::string& file_info, ICompress* compressor, Output* output) {
         //check if ENV VAR exist, if not- return code 500
@@ -51,7 +70,7 @@ void GetCommand::execute(const std::string& file_info, ICompress* compressor, Ou
             return;
         }
         //open the file for reading
-        std::ifstream file(full_path);
+        std::ifstream file(full_path, std::ios::binary);
         if (!file){//if i cant read the file- return code 500
             output->write(status_codes.at(500));
             return;
@@ -63,9 +82,12 @@ void GetCommand::execute(const std::string& file_info, ICompress* compressor, Ou
         file.close();
         //decompress the content
         string full_content = compressor->decompress(content_compress);
+        //encod the content
+        string encoded_content = base64_encode(full_content);
+
         //print the content by using Output
         std::stringstream output_ss;
-        output_ss << status_codes.at(200) << "\x04\x04" << full_content;
+        output_ss << status_codes.at(200) << "\x04\x04" << encoded_content;
         output->write(output_ss.str());
         return;
     }
