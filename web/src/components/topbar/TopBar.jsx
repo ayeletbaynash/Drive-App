@@ -2,23 +2,21 @@ import SearchBar from './SearchBar';
 import ThemeToggler from './ThemeToggler';
 import UserAvatar from './UserAvatar';
 import AppLogo from './AppLogo'; 
+import '../../styles/layout.css';
 
 function TopBar({ onSearch, user, onLogout }) {
   return (
-    <header style={{ 
-            display: 'flex', 
-            justifyContent: 'space-between', 
-            alignItems: 'center',
-            padding: '10px 20px',
-            borderBottom: '1px solid var(--border)',
-            backgroundColor: 'var(--surface)',
-            height: '60px'
-        }}>
-          
+    <header className="top-bar">
+
+          <div className="top-bar-left">
             <AppLogo />
+          </div>
             {/* הרכיבים שיצרנו - כל אחד עם הלוגיקה שלו */}
+            <div className="top-bar-center">
             <SearchBar onSearch={onSearch} user={user} />
-            <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
+            </div>
+
+            <div className="top-bar-right">
                 <ThemeToggler />
                 <UserAvatar user={user} onLogout={onLogout} />
             </div>    

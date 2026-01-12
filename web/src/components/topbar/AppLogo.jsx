@@ -17,11 +17,7 @@ function AppLogo() {
             onClick={handleClick} 
             style={{ 
                 cursor: 'pointer', 
-                display: 'flex', 
-                alignItems: 'center', 
-                gap: '8px',
-                userSelect: 'none',
-                padding: '5px' 
+                display: 'flex' 
             }}
         >
             {/* הרחבתי קצת את ה-viewBox כדי שיהיה מקום למילה הארוכה יותר */}
