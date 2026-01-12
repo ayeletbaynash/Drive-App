@@ -8,9 +8,11 @@ import TrashFiles from '../components/main content/TrashFiles';
 import StarredFiles from '../components/main content/StarredFiles';
 import MyDriveFiles from '../components/main content/MyDriveFiles';
 import SharedWithMe from '../components/main content/SharedWithMe';
+import FileDetailsPanel from '../components/fileDetails/FileDetailsPanel'
 
 function HomePage({ user, onLogout }) {
     const [searchResults, setSearchResults] = useState([]);
+    const [selectedFileDetails, setSelectedFileDetails] = useState(null);
 
     return (
         <div style={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
@@ -19,29 +21,35 @@ function HomePage({ user, onLogout }) {
                 onLogout={onLogout} 
                 onSearch={setSearchResults} 
             />
-      <div style={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
-        <SideMenu />
-
-        <div style={{ flex: 1 }}>
-          <Routes>
-            <Route path="home" element={<HomeFiles/>} />
-            <Route path="home/search" element={
-                <SearchFiles results={searchResults} />
-            } />
-            <Route path="home/:folderId" element={<HomeFiles/>} />
             
-            <Route path="my-drive" element={<MyDriveFiles />} />
-            <Route path="shared" element={<SharedWithMe/>} />
-            <Route path="recent" element={<div>Recent files content</div>} />
-            <Route path="starred" element={<StarredFiles/>} />
-            <Route path="trash" element={<TrashFiles/>} />
+            <div style={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
+                <SideMenu />
 
-            <Route path="/" element={<Navigate to="/home" replace />} />
-          </Routes>
-        </div>
-      </div>      
+                <main style={{ flex: 1, display: 'flex', overflow: 'hidden' }}>
+                    <div style={{ flex: 1, overflowY: 'auto' }}>
+                        <Routes>
+                            <Route path="home" element={<HomeFiles onSelectFile={setSelectedFileDetails}/>} />
+                            <Route path="home/search" element={<SearchFiles results={searchResults} />} />
+                            <Route path="home/:folderId" element={<HomeFiles onSelectFile={setSelectedFileDetails}/>} />
+                            <Route path="my-drive" element={<MyDriveFiles onSelectFile={setSelectedFileDetails}/>} />
+                            <Route path="shared" element={<SharedWithMe onSelectFile={setSelectedFileDetails}/>} />
+                            <Route path="recent" element={<div>Recent files content</div>} />
+                            <Route path="starred" element={<StarredFiles onSelectFile={setSelectedFileDetails}/>} />
+                            <Route path="trash" element={<TrashFiles onSelectFile={setSelectedFileDetails}/>} />
+                            <Route path="/" element={<Navigate to="/home" replace />} />
+                        </Routes>
+                    </div>
+
+                    {selectedFileDetails && (
+                        <FileDetailsPanel 
+                            file={selectedFileDetails} 
+                            onClose={() => setSelectedFileDetails(null)}
+                        />
+                    )}
+                </main>
+            </div>
         </div>
     );
+}
 
-};
 export default HomePage;

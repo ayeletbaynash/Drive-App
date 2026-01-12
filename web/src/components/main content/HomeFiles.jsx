@@ -5,7 +5,7 @@ import { useParams } from 'react-router-dom'
 import { authorizedFetch } from '../../App'
 import { useFileActions } from '../FileContext';
 
-const HomeFiles = () => {
+const HomeFiles = ({ onSelectFile }) => {
     const [files, setFiles] = useState([])
     const [isLoading, setIsLoading] = useState(true)
     const { folderId } = useParams();
@@ -66,7 +66,7 @@ return (
                     <p>Loading files...</p> 
                 </div>
             ) : visibleFiles.length > 0 ? (
-                <FileViewList items={visibleFiles} />
+                <FileViewList items={visibleFiles} onSelectFile={onSelectFile}/>
             ) : (
                 <p>Your drive is empty.</p>
             )}

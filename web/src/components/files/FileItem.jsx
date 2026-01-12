@@ -13,7 +13,7 @@ import MoveFile from '../operations/MoveFile'
 import CopyFile from '../operations/CopyFile'
 import { authorizedFetch } from '../../App';
 
-const FileItem = ({ file, onOpen, isTrash }) => {
+const FileItem = ({ file, onOpen, isTrash, onSelectFile }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   
   // Setting a state for permission - starting from what is in the file (which is currently undefined)

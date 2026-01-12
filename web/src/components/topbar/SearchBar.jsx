@@ -3,7 +3,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { authorizedFetch } from '../../App';
 import { useFileActions } from '../FileContext';
 
-function SearchBar({ user, onSearch }) {
+function SearchBar({ onSearch }) {
   const [text, setText] = useState('');
   const [suggestions, setSuggestions] = useState([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
@@ -15,6 +15,52 @@ function SearchBar({ user, onSearch }) {
   // דגל למניעת לולאות בעת לחיצה ידנית
   const isSelectingSuggestion = useRef(false);
 
+  const parentStatusCache = useRef(new Map());
+
+
+    /* =====================================================
+     🆕 HELPER: check if file is under a deleted folder
+     ===================================================== */
+    const isUnderDeletedFolder = async (file) => {
+    let parentId = file.parent_id;
+
+    while (parentId !== null) {
+      // cache hit
+      if (parentStatusCache.current.has(parentId)) {
+        return parentStatusCache.current.get(parentId);
+      }
+
+      const url =
+        parentId === null
+          ? 'http://localhost:8080/api/files'
+          : `http://localhost:8080/api/files/${parentId}`;
+
+      try {
+        const response = await authorizedFetch(url, { method: 'GET' });
+        if (!response.ok) {
+          parentStatusCache.current.set(parentId, false);
+          return false;
+        }
+
+        const parent = await response.json();
+
+        // אב נמחק?
+        if (deletedFiles.some(df => df.id === parent.id)) {
+          parentStatusCache.current.set(parentId, true);
+          return true;
+        }
+
+        // ממשיכים למעלה
+        parentId = parent.parent_id;
+      } catch (e) {
+        parentStatusCache.current.set(parentId, false);
+        return false;
+      }
+    }
+
+    return false;
+  };
+
   /* ===============================
      Fetch search results (With ABORT Signal)
      =============================== */
@@ -25,22 +71,28 @@ function SearchBar({ user, onSearch }) {
       // אנחנו מעבירים את ה-signal כדי שנוכל לבטל בקשות ישנות אם המשתמש מקליד מהר
       const response = await authorizedFetch(
         `http://localhost:8080/api/search/${encodeURIComponent(query)}`,
-        { method: 'GET', signal: signal }
+        { method: 'GET', signal }
       );
 
       if (!response.ok) return [];
       const data = await response.json();
 
+      const filtered = [];
+
+      for (const file of data) {
+        if (deletedFiles.some(df => df.id === file.id)) continue;
+
+        const underDeleted = await isUnderDeletedFolder(file);
+        if (!underDeleted) {
+          filtered.push(file);
+        }
+      }
+
+      return filtered;
       // סינון קבצים שנמצאים בפח או נמחקו
-      return data.filter(
-        (file) =>
-          !file.isTrash &&
-          file.location !== 'trash' &&
-          !deletedFiles.some((df) => df.id === file.id)
-      );
+      // return data.filter(file => !deletedFiles.some(df => df.id === file.id));
     } catch (err) {
       if (err.name === 'AbortError') {
-        // זה תקין - זה אומר שביטלנו בקשה ישנה לטובת חדשה
         return null; 
       }
       console.error('Search error:', err);
@@ -52,14 +104,13 @@ function SearchBar({ user, onSearch }) {
      Suggestions (Debounced + Abort)
      =============================== */
   useEffect(() => {
+    // יצירת בקר לביטול בקשות
+    const controller = new AbortController();
     // אם התיבה ריקה - מנקים הצעות
     if (!text.trim()) {
       setSuggestions([]);
       return;
     }
-
-    // יצירת בקר לביטול בקשות
-    const controller = new AbortController();
 
     const timeout = setTimeout(async () => {
       // שליחת בקשה לשרת עם יכולת ביטול
@@ -77,14 +128,14 @@ function SearchBar({ user, onSearch }) {
       clearTimeout(timeout);
       controller.abort(); 
     };
-  }, [text]);
+  }, [text, deletedFiles]);
 
   /* ===============================
      Sync with URL (Refresh / Back button)
      =============================== */
   useEffect(() => {
+    const performSearchFromUrl = () => {
     const q = searchParams.get('q');
-    
     // איפוס אם ה-URL ריק
     if (!q) {
         setText('');
@@ -94,14 +145,20 @@ function SearchBar({ user, onSearch }) {
 
     // מניעת ריצה כפולה אם אנחנו אלו ששינינו את ה-URL הרגע
     if (isSelectingSuggestion.current) {
-      isSelectingSuggestion.current = false;
-      return;
+      setText(q);
+      fetchFromServer(q).then(res => res && onSearch(res));
     }
+    isSelectingSuggestion.current = false;
+  };
 
-    // --- התיקון החשוב: השורות האלו היו בהערה בקוד שלך! ---
-    setText(q);
-    // כאן לא צריך AbortController כי זה קורה פעם אחת בטעינה
-    fetchFromServer(q).then(res => res && onSearch(res));
+  performSearchFromUrl();
+
+  // Global Event Listener for refreshing
+    const handleRefresh = () => {
+      performSearchFromUrl();
+    };
+    window.addEventListener('somthingChange', handleRefresh);
+    return () => window.removeEventListener('somthingChange', handleRefresh);
   }, [searchParams]);
 
   /* ===============================
@@ -158,7 +215,6 @@ function SearchBar({ user, onSearch }) {
           {suggestions.map((file) => (
             <div
               key={file.id}
-              // שימוש ב-onMouseDown הוא קריטי כדי שהלחיצה תעבוד לפני ה-Blur
               onMouseDown={() => handleSuggestionClick(file)}
               style={{ padding: '10px', cursor: 'pointer', display: 'flex', gap: '10px' }}
             >
