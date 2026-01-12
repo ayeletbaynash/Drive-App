@@ -1,0 +1,375 @@
+/* src/styles/layout.css */
+@import './theme.css';
+
+/* --- Top Bar Container --- */
+.top-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 var(--spacing-xl); /* ריווח בצדדים */
+    background-color: var(--surface);
+    border-bottom: 1px solid var(--border);
+    height: 64px;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    box-shadow: var(--shadow-sm);
+}
+
+/* --- Sections --- */
+.top-bar-left, .top-bar-right {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    min-width: 200px; /* שומר על איזון */
+    height: 100%;
+    padding-top: 5px;
+}
+
+.top-bar-right {
+    justify-content: flex-end;
+}
+
+.top-bar-center {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    max-width: 720px;
+    margin: 0 var(--spacing-lg);
+}
+
+/* --- Search Bar Styling --- */
+.search-container {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    background-color: var(--background);
+    border: 1px solid var(--border) !important;
+    backdrop-filter: blur(5px);
+    border-radius: 24px;
+    padding: 4px 12px;
+    transition: all 0.2s ease-in-out;
+    outline: none !important;
+    position: all var(--transition-fast); /* בשביל ההצעות */
+}
+
+.search-container:focus-within {
+    background-color: var(--surface);
+    border-color: 2px solid var(--primary) !important; /* מסגרת ירוקה בפוקוס */
+    box-shadow: 0 0 0 4px rgba(20, 104, 65, 0.1) !important;
+}
+
+.search-input {
+    border: none !important;
+    outline: none !important;
+    background: transparent !important;
+    flex: 1;
+    padding: 8px;
+    width: 100%;
+    outline: none;
+    color: var(--text-main);
+    font-size: var(--size-md);
+    box-shadow: none !important; /* ביטול צל ברירת מחדל של input */
+}
+
+.search-icon-btn {
+    background: transparent;
+    border: none !important;
+    color: var(--text-muted);
+    font-size: 1.1rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px;
+    border-radius: 50%;
+    transition: background 0.2s;
+}
+
+.search-icon-btn:hover {
+    background-color: rgba(0,0,0,0.05);
+    color: var(--primary);
+}
+
+/* --- Suggestions Dropdown --- */
+.suggestions-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background-color: var(--surface);
+    border: 1px solid var(--border);
+    border-top: none;
+    border-bottom-left-radius: var(--radius-md);
+    border-bottom-right-radius: var(--radius-md);
+    box-shadow: var(--shadow-md);
+    z-index: 1001;
+    margin-top: 4px;
+    overflow: hidden;
+}
+
+.suggestion-item {
+    padding: 10px 15px;
+    cursor: pointer;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    color: var(--text-main);
+    border-bottom: 1px solid var(--border);
+}
+
+.suggestion-item:last-child {
+    border-bottom: none;
+}
+
+.suggestion-item:hover {
+    background-color: var(--background);
+    color: var(--primary);
+}
+
+/* --- Buttons & Toggles --- */
+.theme-toggle-btn {
+    background-color: transparent;
+    border: 1px solid var(--border);
+    color: var(--text-main);
+    cursor: pointer;
+    padding: 6px 16px;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.3s ease;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.theme-toggle-btn:hover {
+    background-color: var(--background);
+    border-color: var(--primary);
+}
+
+/* --- User Avatar & Profile Card --- */
+
+.user-avatar-trigger {
+    width: 40px;
+    height: 40px;
+    cursor: pointer;
+    transition: transform var(--transition-fast);
+    border-radius: 50%;
+    /* בורדר דק וירוק מסביב לאווטאר להבלטה */
+    border: 2px solid var(--primary); 
+    padding: 2px; /* רווח קטן בין הבורדר לתמונה */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--surface);
+}
+
+.user-avatar-trigger:hover {
+    transform: scale(1.08);
+    box-shadow: 0 0 8px rgba(var(--primary-rgb), 0.3);
+}
+
+.avatar-img, .avatar-initials {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: var(--weight-bold);
+    color: white;
+    border: 2px solid var(--border);
+    object-fit: cover;
+}
+
+.user-menu-wrapper {
+    position: absolute;
+    right: 0;
+    top: 50px;
+    z-index: 1000;
+}
+
+.user-profile-card {
+    padding: var(--spacing-xl);
+    width: 280px;
+    background-color: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-lg);
+    color: var(--text-main);
+}
+
+.profile-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: var(--spacing-lg);
+}
+
+.large-avatar {
+    margin-bottom: var(--spacing-md);
+}
+
+.avatar-img-large, .avatar-initials-large {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    object-fit: cover;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    font-weight: var(--weight-bold);
+    color: white;
+    background-color: var(--primary-hover); 
+    border-color: var(--primary-hover);
+    box-shadow: var(--shadow-md);
+}
+
+.profile-name {
+    margin: 0;
+    font-size: var(--size-lg);
+    font-weight: var(--weight-bold);
+}
+
+.profile-email {
+    margin: var(--spacing-xs) 0 0 0;
+    color: var(--text-muted);
+    font-size: var(--size-sm);
+}
+
+.menu-divider {
+    border: 0;
+    border-top: 1px solid var(--border);
+    margin: var(--spacing-md) 0;
+}
+
+/* כפתור התנתקות מעוצב */
+.logout-action-btn {
+    width: 100%;
+    padding: var(--spacing-sm) var(--spacing-md);
+    background-color: var(--primary);
+    border: 1px solid var(--primary);
+    color: white;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    font-weight: var(--weight-bold);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    transition: all var(--transition-fast);
+}
+
+.logout-action-btn:hover {
+    background-color: var(--primary-hover); 
+    border-color: var(--primary-hover);
+    box-shadow: var(--shadow-md);
+}
+
+/* --- Sidebar Styles --- */
+
+.sidebar-wrapper {
+    width: 240px;
+    height: calc(100vh - 64px);
+    padding: var(--spacing-lg) 0; /* הורדנו פדינג צדדי כדי שהסימון יגיע עד הקצה */
+    display: flex;
+    flex-direction: column;
+    background: linear-gradient(
+        180deg, 
+        var(--primary) 0%, 
+        var(--sidebar-gradient-end, #0a3d26) 100%
+    ); 
+      
+    border-right: none;
+    transition: background 0.3s ease;
+}
+
+.new-button-container {
+    padding: 0 var(--spacing-lg) var(--spacing-lg) var(--spacing-lg);
+}
+
+.btn-new {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 20px;
+    background-color: #ffffff;
+    color: var(--primary);
+    border: none;
+    border-radius: 24px;
+    font-weight: var(--weight-bold);
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    transition: all 0.3s ease;
+    margin-left: 20px;
+}
+
+[data-theme='dark'] .btn-new {
+    background-color: var(--surface); /* במצב לילה ה-surface הוא אפור כהה */
+    color: var(--primary-hover); /* טקסט ירוק בהיר יותר שיהיה קריא */
+    border: 1px solid var(--border);
+}
+
+.btn-new:hover {
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+    transform: translateY(-2px);
+}
+
+.btn-new i {
+    color: var(--primary);
+}
+
+.sidebar-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.sidebar-item-container {
+    margin-right: var(--spacing-md);
+    border-radius: 0 24px 24px 0; /* הפינה המעוגלת של גוגל דרייב */
+    transition: background 0.2s;
+}
+
+.sidebar-item-container:hover {
+    background-color: rgba(255, 255, 255, 0.08);
+}
+
+.sidebar-link {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-lg);
+    padding: 12px 24px;
+    text-decoration: none;
+    color: rgba(255, 255, 255, 0.8);
+    font-weight: var(--weight-medium);
+    transition: all 0.2s ease;
+}
+
+.sidebar-icon {
+    font-size: 1.2rem;
+    color: rgba(255, 255, 255, 0.7);
+    width: 24px;
+    text-align: center;
+}
+
+.sidebar-item-container:hover .sidebar-icon,
+.sidebar-item-container:hover .sidebar-link {
+    color: white;
+}
+
+/* --- פריט פעיל (Active) בסייד-בר ירוק --- */
+.sidebar-item-container.active {
+    background-color: rgba(255, 255, 255, 0.15); 
+    border-left: 4px solid #ffffff;
+    margin-right: 10px;
+    border-radius: 0 20px 20px 0;
+}
+
+.sidebar-item-container.active .sidebar-link,
+.sidebar-item-container.active .sidebar-icon {
+    color: #ffffff;
+    font-weight: var(--weight-bold);
+}

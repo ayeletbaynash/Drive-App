@@ -15,6 +15,7 @@
     --radius-md: 8px;
     --radius-lg: 15px;
     --radius-round: 50%;
+    --border-width-focus: 2px;
 
     /* --- Typography --- */
     --font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
@@ -47,6 +48,7 @@
     /* --- Transitions --- */
     --transition-fast: 0.2s ease-in-out;
     --transition-normal: 0.3s ease-in-out;
+    --sidebar-gradient-end: #0a3d26; 
 
     /* --- Default Light Mode Colors --- */
     --primary: #146841;
@@ -67,18 +69,20 @@
 /* --- Dark Mode Overrides --- */
 /* This will trigger when the body or a parent container has the 'dark' class */
 [data-theme='dark'], .dark-mode {
-    --primary: #3786ff;
-    --primary-hover: #5a9bff;
+    --primary: #427550;
+    --primary-hover: #73b47c;
     --secondary: #a0a0a0;
     --success: #28a745;
     --error: #ff4d4d;
     --warning: #ffc107;
-    --background: #121212;
-    --surface: #1e1e1e;
-    --border: #333333;
-    --text-main: #f8f9fa;
-    --text-muted: #b0b0b0;
+    --background: #0d1117;
+    --surface: #161b22;
+    --border: #30363d;
+    --text-main: #f0f6fc;
+    --text-muted: #8b949e;
     --white: #ffffff; /* Usually stays white even in dark mode */
+    --sidebar-gradient-end: #05070a;
+    --primary: #1b4d36;
 }
 
 /* זה החלק הקריטי שחסר לך */
@@ -119,4 +123,11 @@ a {
 
 button {
     color: var(--text-main);
+}
+
+.form-control:focus, 
+input:focus, 
+button:focus {
+    border-width: var(--border-width-focus) !important;
+    outline: none;
 }

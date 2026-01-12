@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import UserMenu from './UserMenu';
 import FloatingMenu from '../FloatingMenu'; 
 import { authorizedFetch } from '../../App'; 
+import '../../styles/layout.css';
 
 function UserAvatar({ user, onLogout }) {
   // 1. State למשתמש המלא (בהתחלה הוא רק המשתמש הבסיסי שהגיע מהלוגין)
@@ -43,11 +44,11 @@ function UserAvatar({ user, onLogout }) {
 
 
   // 4. לוגיקה מה להציג (תמונה או אות)
-  const avatarStyle = {
-    width: '40px', height: '40px', borderRadius: '50%', cursor: 'pointer',
-    display: 'flex', alignItems: 'center', justifyContent: 'center',
-    fontWeight: 'bold', color: 'white', border: '2px solid var(--border)', userSelect: 'none'
-  };
+  // const avatarStyle = {
+  //   width: '40px', height: '40px', borderRadius: '50%', cursor: 'pointer',
+  //   display: 'flex', alignItems: 'center', justifyContent: 'center',
+  //   fontWeight: 'bold', color: 'white', border: '2px solid var(--border)', userSelect: 'none'
+  // };
 
   const displayName = fullUser?.username || "Guest";
   const bgColor = getAvatarColor(displayName);
@@ -56,11 +57,11 @@ function UserAvatar({ user, onLogout }) {
     <div style={{ position: 'relative' }}>
       
       {/* העיגול עצמו */}
-      <div onClick={() => setIsOpen(!isOpen)}>
+      <div className="user-avatar-trigger" onClick={() => setIsOpen(!isOpen)}>
         {fullUser?.image ? (
-            <img src={fullUser.image} alt="avatar" style={{ ...avatarStyle, objectFit: 'cover' }} />
+            <img src={fullUser.image} alt="avatar" className="avatar-img" />
         ) : (
-            <div style={{ ...avatarStyle, backgroundColor: bgColor }}>
+            <div className="avatar-initials" style={{ backgroundColor: bgColor }}>
                 {displayName.charAt(0).toUpperCase()}
             </div>
         )}
@@ -69,7 +70,7 @@ function UserAvatar({ user, onLogout }) {
       {/* התפריט שנפתח - אנחנו מעבירים לו את fullUser שיש בו את המייל! */}
       {isOpen && (
         <FloatingMenu onClose={() => setIsOpen(false)}>
-            <div style={{ position: 'absolute', right: 0, top: '55px', zIndex: 1000 }}>
+            <div className="user-menu-wrapper">
                 <UserMenu user={fullUser} onLogout={onLogout} avatarColor={bgColor} />
             </div>
         </FloatingMenu>

@@ -76,12 +76,24 @@ function SearchBar({ onSearch }) {
 
       if (!response.ok) return [];
       const data = await response.json();
-
+      
       const filtered = [];
+      const lowerQuery = query.toLowerCase();
 
       for (const file of data) {
         if (deletedFiles.some(df => df.id === file.id)) continue;
 
+        const fileName = (file.name || "").toLowerCase();
+            const isImageOrpdf = fileName.endsWith('.png') || 
+                            fileName.endsWith('.jpg') || 
+                            fileName.endsWith('.jpeg') ||
+                            fileName.endsWith('.pdf');
+        if (isImageOrpdf) {
+                if (!fileName.includes(lowerQuery)) {
+                    continue; 
+                }
+            }
+             
         const underDeleted = await isUnderDeletedFolder(file);
         if (!underDeleted) {
           filtered.push(file);
@@ -89,8 +101,7 @@ function SearchBar({ onSearch }) {
       }
 
       return filtered;
-      // סינון קבצים שנמצאים בפח או נמחקו
-      // return data.filter(file => !deletedFiles.some(df => df.id === file.id));
+
     } catch (err) {
       if (err.name === 'AbortError') {
         return null; 
@@ -212,16 +223,22 @@ function SearchBar({ onSearch }) {
             position: 'absolute', top: '100%', left: 0, right: 0,
             background: 'var(--surface)', border: '1px solid var(--border)', zIndex: 1000,
         }}>
-          {suggestions.map((file) => (
+          {suggestions.map((file) => {
+            let icon = '📄'; // ברירת מחדל
+            if (file.type === 'folder') icon = '📁';
+            else if (file.name.endsWith('.png') || file.name.endsWith('.jpg') || file.name.endsWith('.jpeg')) icon = '🖼️';
+            else if (file.name.endsWith('.pdf')) icon = '📕';
+            return(
             <div
               key={file.id}
               onMouseDown={() => handleSuggestionClick(file)}
               style={{ padding: '10px', cursor: 'pointer', display: 'flex', gap: '10px' }}
             >
-              <span>{file.type === 'folder' ? '📁' : '📄'}</span>
+              <span>{icon}</span>
               <span>{file.name}</span>
             </div>
-          ))}
+            );
+          })}
         </div>
       )}
     </div>
