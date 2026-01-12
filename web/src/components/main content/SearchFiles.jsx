@@ -6,6 +6,7 @@ const SearchFiles = ({results}) =>{
     const { deletedFiles } = useFileActions();
     // Safety check: If results is null/undefined, treat it as an empty array
     const safeResults = results || [];
+    
     // Filter out files that have been deleted in the current session
     const visibleResults = safeResults.filter(file => 
         !deletedFiles.some(deleted => deleted.id === file.id)
