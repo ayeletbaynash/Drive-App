@@ -1,14 +1,20 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
 import { authorizedFetch } from '../../App';
 import { useFileActions } from '../FileContext';
-import FileItem from '../files/FileItem';
-import FolderItem from '../files/FolderItem';
+import FileItem from '../files/FileItem'
+import FileViewer from '../files/FileViewer'
+
 
 const RecentFiles = ({ onSelectFile }) => {
     const [files, setFiles] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const { deletedFiles } = useFileActions();
+    const [selectedFile, setSelectedFile] = useState(null); // save the entire file object
+    
+        // When double click, save the file information.
+        const handleOpen = (file) => {
+            setSelectedFile(file); 
+        };
 
     const fetchAllFilesRecursive = async (folderId = null) => {
         const url = (folderId === null) 
@@ -72,11 +78,17 @@ const RecentFiles = ({ onSelectFile }) => {
                 </div>
             ) : sortedFiles.length > 0 ? (
                 <div className="files-container">
-                    {sortedFiles.map((file) => (<FileItem key={file.id} file={file} onSelectFile={onSelectFile}/> ))}
+                    {sortedFiles.map((file) => (<FileItem key={file.id} file={file} onOpen={handleOpen} onSelectFile={onSelectFile}/> ))}
                 </div>
             ) : (
                 <p>No recent activity found.</p>
             )}
+               {/* the modal that will be displayed when there is a file selected */}
+            <FileViewer 
+                file={selectedFile} 
+                show={selectedFile !== null} 
+                onHide={() => setSelectedFile(null)} 
+            />
         </div>
     );
 };
