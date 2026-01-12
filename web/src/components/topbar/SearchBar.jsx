@@ -2,9 +2,6 @@ import { useState, useEffect, useRef } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { authorizedFetch } from '../../App';
 import { useFileActions } from '../FileContext';
-import 'bootstrap-icons/font/bootstrap-icons.css';
-import '../../styles/theme.css';
-import '../../styles/layout.css';
 
 function SearchBar({ onSearch }) {
   const [text, setText] = useState('');
@@ -79,12 +76,24 @@ function SearchBar({ onSearch }) {
 
       if (!response.ok) return [];
       const data = await response.json();
-
+      
       const filtered = [];
+      const lowerQuery = query.toLowerCase();
 
       for (const file of data) {
         if (deletedFiles.some(df => df.id === file.id)) continue;
 
+        const fileName = (file.name || "").toLowerCase();
+            const isImageOrpdf = fileName.endsWith('.png') || 
+                            fileName.endsWith('.jpg') || 
+                            fileName.endsWith('.jpeg') ||
+                            fileName.endsWith('.pdf');
+        if (isImageOrpdf) {
+                if (!fileName.includes(lowerQuery)) {
+                    continue; 
+                }
+            }
+             
         const underDeleted = await isUnderDeletedFolder(file);
         if (!underDeleted) {
           filtered.push(file);
@@ -92,8 +101,7 @@ function SearchBar({ onSearch }) {
       }
 
       return filtered;
-      // סינון קבצים שנמצאים בפח או נמחקו
-      // return data.filter(file => !deletedFiles.some(df => df.id === file.id));
+
     } catch (err) {
       if (err.name === 'AbortError') {
         return null; 
@@ -180,10 +188,6 @@ function SearchBar({ onSearch }) {
     navigate(`/home/search?q=${encodeURIComponent(text)}`);
   };
 
-  const handleIconClick = (e) => {
-      handleSubmit(e);
-  };
-
   /* ===============================
      Click on suggestion
      =============================== */
@@ -201,37 +205,40 @@ function SearchBar({ onSearch }) {
   };
 
   return (
-    <div style={{ position: 'relative', width: '100%' }}>
-      <form onSubmit={handleSubmit} className="search-container">
-
-        <button type="button" className="search-icon-btn" onClick={handleIconClick}>
-             <i className="bi bi-search"></i>
-        </button>
-
+    <div style={{ position: 'relative' }}>
+      <form onSubmit={handleSubmit} className="d-flex">
         <input
-          className="search-input"
+          className="form-control me-2"
           type="text"
           placeholder="Search in drive"
           value={text}
           onChange={(e) => setText(e.target.value)}
           onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
         />
+        <button className="btn btn-outline-primary" type="submit">🔍</button>
       </form>
 
       {showSuggestions && suggestions.length > 0 && (
-        <div className="suggestions-dropdown">
-          {suggestions.map((file) => (
+        <div style={{
+            position: 'absolute', top: '100%', left: 0, right: 0,
+            background: 'var(--surface)', border: '1px solid var(--border)', zIndex: 1000,
+        }}>
+          {suggestions.map((file) => {
+            let icon = '📄'; // ברירת מחדל
+            if (file.type === 'folder') icon = '📁';
+            else if (file.name.endsWith('.png') || file.name.endsWith('.jpg') || file.name.endsWith('.jpeg')) icon = '🖼️';
+            else if (file.name.endsWith('.pdf')) icon = '📕';
+            return(
             <div
               key={file.id}
               onMouseDown={() => handleSuggestionClick(file)}
-              className="suggestion-item"
+              style={{ padding: '10px', cursor: 'pointer', display: 'flex', gap: '10px' }}
             >
-              <span style={{fontSize: '1.1rem'}}>
-                  {file.type === 'folder' ? <i className="bi bi-folder-fill text-warning"></i> : <i className="bi bi-file-earmark-text text-primary"></i>}
-              </span>
+              <span>{icon}</span>
               <span>{file.name}</span>
             </div>
-          ))}
+            );
+          })}
         </div>
       )}
     </div>

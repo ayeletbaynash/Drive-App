@@ -48,6 +48,7 @@
     /* --- Transitions --- */
     --transition-fast: 0.2s ease-in-out;
     --transition-normal: 0.3s ease-in-out;
+    --sidebar-gradient-end: #0a3d26; 
 
     /* --- Default Light Mode Colors --- */
     --primary: #146841;
@@ -80,6 +81,8 @@
     --text-main: #f0f6fc;
     --text-muted: #8b949e;
     --white: #ffffff; /* Usually stays white even in dark mode */
+    --sidebar-gradient-end: #05070a;
+    --primary: #1b4d36;
 }
 
 /* זה החלק הקריטי שחסר לך */

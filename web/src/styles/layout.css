@@ -44,7 +44,8 @@
     align-items: center;
     width: 100%;
     background-color: var(--background);
-    border: 1px solid var(--border) !important;;
+    border: 1px solid var(--border) !important;
+    backdrop-filter: blur(5px);
     border-radius: 24px;
     padding: 4px 12px;
     transition: all 0.2s ease-in-out;
@@ -265,4 +266,110 @@
     background-color: var(--primary-hover); 
     border-color: var(--primary-hover);
     box-shadow: var(--shadow-md);
+}
+
+/* --- Sidebar Styles --- */
+
+.sidebar-wrapper {
+    width: 240px;
+    height: calc(100vh - 64px);
+    padding: var(--spacing-lg) 0; /* הורדנו פדינג צדדי כדי שהסימון יגיע עד הקצה */
+    display: flex;
+    flex-direction: column;
+    background: linear-gradient(
+        180deg, 
+        var(--primary) 0%, 
+        var(--sidebar-gradient-end, #0a3d26) 100%
+    ); 
+      
+    border-right: none;
+    transition: background 0.3s ease;
+}
+
+.new-button-container {
+    padding: 0 var(--spacing-lg) var(--spacing-lg) var(--spacing-lg);
+}
+
+.btn-new {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 20px;
+    background-color: #ffffff;
+    color: var(--primary);
+    border: none;
+    border-radius: 24px;
+    font-weight: var(--weight-bold);
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    transition: all 0.3s ease;
+    margin-left: 20px;
+}
+
+[data-theme='dark'] .btn-new {
+    background-color: var(--surface); /* במצב לילה ה-surface הוא אפור כהה */
+    color: var(--primary-hover); /* טקסט ירוק בהיר יותר שיהיה קריא */
+    border: 1px solid var(--border);
+}
+
+.btn-new:hover {
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+    transform: translateY(-2px);
+}
+
+.btn-new i {
+    color: var(--primary);
+}
+
+.sidebar-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.sidebar-item-container {
+    margin-right: var(--spacing-md);
+    border-radius: 0 24px 24px 0; /* הפינה המעוגלת של גוגל דרייב */
+    transition: background 0.2s;
+}
+
+.sidebar-item-container:hover {
+    background-color: rgba(255, 255, 255, 0.08);
+}
+
+.sidebar-link {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-lg);
+    padding: 12px 24px;
+    text-decoration: none;
+    color: rgba(255, 255, 255, 0.8);
+    font-weight: var(--weight-medium);
+    transition: all 0.2s ease;
+}
+
+.sidebar-icon {
+    font-size: 1.2rem;
+    color: rgba(255, 255, 255, 0.7);
+    width: 24px;
+    text-align: center;
+}
+
+.sidebar-item-container:hover .sidebar-icon,
+.sidebar-item-container:hover .sidebar-link {
+    color: white;
+}
+
+/* --- פריט פעיל (Active) בסייד-בר ירוק --- */
+.sidebar-item-container.active {
+    background-color: rgba(255, 255, 255, 0.15); 
+    border-left: 4px solid #ffffff;
+    margin-right: 10px;
+    border-radius: 0 20px 20px 0;
+}
+
+.sidebar-item-container.active .sidebar-link,
+.sidebar-item-container.active .sidebar-icon {
+    color: #ffffff;
+    font-weight: var(--weight-bold);
 }
