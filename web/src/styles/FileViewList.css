@@ -1,0 +1,40 @@
+
+@import './theme.css';
+
+/* Space between Folders and Files */
+.section {
+    margin-bottom: var(--spacing-lg);
+}
+
+/* Styling for 'Folders' and 'Files' titles */
+.section-title {
+    font-size: var(--size-lg); /* Smaller, more professional size */
+    font-weight: var(--weight-bold);
+    color: var(--primary); /* Use your green theme color */
+    letter-spacing: 1.5px; /* Adds a "modern" feel */
+    margin-bottom: var(--spacing-md);
+    padding-left: var(--spacing-sm); /* Aligns with the list content */
+    border-left: 6px solid var(--primary); /* A nice colored accent on the left */
+}
+
+/* Header line for Name, Owner, Date */
+.file-list-header {
+    display: flex; /* Makes the columns sit side-by-side */
+    padding: var(--spacing-sm);
+    border-bottom: 2px solid var(--border);
+    font-size: var(--size-sm);
+    color: var(--text-muted);
+}
+
+/* Width control: Name gets 3x more space than Owner/Date */
+.col-name { flex: 3; } 
+.col-owner { flex: 1; }
+.col-date { flex: 1; text-align: right; }
+
+/* Folders: dynamic grid that fits icons automatically */
+.folders-grid {
+    display: grid;
+    /* Fits as many 180px folders as possible in one row */
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: var(--spacing-md);
+}

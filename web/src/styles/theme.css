@@ -64,6 +64,10 @@
     --text-main: #212529;
     --text-muted: #6c757d;
     --white: #ffffff;
+    /* --- New File Row & Design Variables --- */
+    --row-bg: #f7dadd;           
+    --row-hover: #fff0f3;        
+    --row-shadow: rgba(0, 0, 0, 0.08); 
 }
 
 /* --- Dark Mode Overrides --- */
@@ -83,6 +87,10 @@
     --white: #ffffff; /* Usually stays white even in dark mode */
     --sidebar-gradient-end: #05070a;
     --primary: #1b4d36;
+    /* --- Dark Mode File Row Colors --- */
+    --row-bg: #1e161a;           
+    --row-hover: #2d2429;        
+    --row-shadow: rgba(0, 0, 0, 0.5);
 }
 
 /* זה החלק הקריטי שחסר לך */
