@@ -2,6 +2,8 @@ import { useState, useEffect, useRef } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { authorizedFetch } from '../../App';
 import { useFileActions } from '../FileContext';
+import 'bootstrap-icons/font/bootstrap-icons.css'; // ייבוא האייקונים
+import '../../styles/layout.css'; // ייבוא העיצוב
 
 function SearchBar({ onSearch }) {
   const [text, setText] = useState('');
@@ -62,7 +64,7 @@ function SearchBar({ onSearch }) {
   };
 
   /* ===============================
-     Fetch search results (With ABORT Signal)
+     Fetch search results
      =============================== */
   const fetchFromServer = async (query, signal) => {
     if (!query || !query.trim()) return [];
@@ -205,36 +207,44 @@ function SearchBar({ onSearch }) {
   };
 
   return (
-    <div style={{ position: 'relative' }}>
-      <form onSubmit={handleSubmit} className="d-flex">
+    <div style={{ position: 'relative', width: '100%' }}>
+      <form onSubmit={handleSubmit} className="search-container">
+        <button className="search-icon-btn" type="submit">
+            <i className="bi bi-search"></i>
+        </button>
         <input
-          className="form-control me-2"
+          className="search-input"
           type="text"
           placeholder="Search in drive"
           value={text}
           onChange={(e) => setText(e.target.value)}
           onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
         />
-        <button className="btn btn-outline-primary" type="submit">🔍</button>
       </form>
 
       {showSuggestions && suggestions.length > 0 && (
-        <div style={{
-            position: 'absolute', top: '100%', left: 0, right: 0,
-            background: 'var(--surface)', border: '1px solid var(--border)', zIndex: 1000,
-        }}>
+        <div className="suggestions-dropdown">
           {suggestions.map((file) => {
-            let icon = '📄'; // ברירת מחדל
-            if (file.type === 'folder') icon = '📁';
-            else if (file.name.endsWith('.png') || file.name.endsWith('.jpg') || file.name.endsWith('.jpeg')) icon = '🖼️';
-            else if (file.name.endsWith('.pdf')) icon = '📕';
+            let iconClass = 'bi-file-earmark-text'; // ברירת מחדל
+            let iconColor = 'var(--text-muted)';
+
+            if (file.type === 'folder') {
+                iconClass = 'bi-folder-fill';
+                iconColor = '#ffc107'; // צהוב תיקייה
+            } else if (file.name.endsWith('.png') || file.name.endsWith('.jpg') || file.name.endsWith('.jpeg')) {
+                iconClass = 'bi-image';
+                iconColor = 'var(--primary)';
+            } else if (file.name.endsWith('.pdf')) {
+                iconClass = 'bi-file-earmark-pdf-fill';
+                iconColor = '#dc3545'; // אדום PDF
+            }
             return(
             <div
               key={file.id}
               onMouseDown={() => handleSuggestionClick(file)}
-              style={{ padding: '10px', cursor: 'pointer', display: 'flex', gap: '10px' }}
+              className="suggestion-item"
             >
-              <span>{icon}</span>
+              <i className={`bi ${iconClass}`} style={{ color: iconColor, fontSize: '1.2rem' }}></i>
               <span>{file.name}</span>
             </div>
             );
