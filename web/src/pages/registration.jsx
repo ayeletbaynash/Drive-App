@@ -7,6 +7,7 @@ import AppLogo from '../components/topbar/AppLogo';
 const Register = () => {
     // State for form data - matches model/users
     const [formData, setFormData] = useState({
+        firstName: '',
         username: '',
         password: '',
         confirmPassword: '',
@@ -17,6 +18,7 @@ const Register = () => {
     const [imagePreview, setImagePreview] = useState(null); // Saves a temporary address of the image so we can show it to the user immediately after they select it
     const [error, setError] = useState(''); // Saves a text message if there was an error
     const navigate = useNavigate(); // Defining the tool that will navigate between pages
+    const [firstName, setFirstName] = useState(''); // adding first name
 
     // Helper function to convert Image File to Base64 string
     // Since servers accept JSON (text), we need to turn the image file into a long text string
@@ -85,6 +87,7 @@ const Register = () => {
                 },
                 // Sending the same keys the controller expects
                 body: JSON.stringify({
+                    firstName: formData.firstName,
                     username: formData.username,
                     password: formData.password,
                     emailAddress: formData.emailAddress,
@@ -138,6 +141,18 @@ const Register = () => {
                 {error && <Alert variant="danger">{error}</Alert>}
 
                 <Form onSubmit={handleSubmit}>
+                    <Form.Group className="mb-3">
+                        <Form.Label>
+                            Your Name <span className="required-star">*</span>
+                        </Form.Label>
+                        <Form.Control 
+                            type="text" name="firstName" required
+                            onChange={handleChange} 
+                            placeholder="What is your name?"
+                        />
+                    </Form.Group>
+
+                    
                     <Form.Group className="mb-3">
                         <Form.Label>
                             Username <span className="required-star">*</span>

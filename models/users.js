@@ -2,9 +2,10 @@ let uIdCounter = 0; // Start counter for user id index
 const all_users = []; // Keep all users here (in-memory)
 
 // Create new user (Registration)
-const createUser = (username, password, emailAddress, image) => {
+const createUser = (firstName, username, password, emailAddress, image) => {
     const newUser = { 
         id: (uIdCounter++).toString(), // Unique identifier
+        firstName,
         username, 
         password, 
         emailAddress, 
