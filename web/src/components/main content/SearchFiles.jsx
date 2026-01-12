@@ -1,6 +1,10 @@
 import React from 'react';
 import FileViewList from '../files/FileViewList';
 import { useFileActions } from '../FileContext'; 
+import EmptyState from './EmptyState';
+import LoadingState from './LoadingState';
+import '../../styles/emptyPages.css';
+
 
 const SearchFiles = ({results}) =>{
     const { deletedFiles } = useFileActions();
@@ -12,10 +16,12 @@ const SearchFiles = ({results}) =>{
         !deletedFiles.some(deleted => deleted.id === file.id)
     );
     return(
-        <div>
-            <h3>Search Results</h3>
+        <div className="page-fill-height">
+            <h3 className="mb-4" style={{ color: 'var(--primary)', fontWeight: 'bold' }}>Search Results</h3>
             {visibleResults.length === 0 ? (
-                <p>No files found matching your search.</p>
+                <div className="centered-content-wrapper">
+                    <EmptyState type="search" />
+                </div>
             ) : (
                 // Use existing component to display the filtered file list
                 <FileViewList items={visibleResults} />

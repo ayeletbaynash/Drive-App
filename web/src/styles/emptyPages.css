@@ -1,0 +1,92 @@
+/* --- הגדרת העמוד המלא --- */
+.page-fill-height {
+    display: flex;
+    flex-direction: column;
+    /* זה גורם לעמוד לתפוס את כל הגובה האפשרי פחות התפריט העליון */
+    min-height: calc(100vh - 64px); 
+    padding: 1.5rem; /* ה-p-4 שהיה לך בבוטסטראפ */
+}
+
+/* --- הגדרת המרכוז של האזור הריק --- */
+.centered-content-wrapper {
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* מרכז אנכית */
+    align-items: center;     /* מרכז אופקית */
+    flex-grow: 1;            /* הקסם: תופס את כל המקום הלבן שנשאר! */
+    width: 100%;
+    margin-top: -60px;       /* איזון אופטי קטן כלפי מעלה */
+}
+
+/* עיצוב הכרטיס והטקסטים (מותאם ל-EmptyState.jsx שלך) */
+.empty-state-card {
+    text-align: center;
+    animation: fadeInUp 0.6s ease-out;
+}
+
+.illustration-container {
+    margin-bottom: 20px;
+    animation: float 3s ease-in-out infinite;
+}
+
+.empty-title {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--text-main);
+    margin-bottom: 8px;
+}
+
+.empty-subtitle {
+    font-size: 1rem;
+    color: var(--text-muted);
+}
+
+/* אנימציות */
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes float {
+    0% { transform: translateY(0px) rotate(-10deg); }
+    50% { transform: translateY(-10px) rotate(-10deg); }
+    100% { transform: translateY(0px) rotate(-10deg); }
+}
+
+/* --- Loading State --- */
+
+.loader-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    flex-grow: 1; /* תופס את המרכז כמו ה-Empty State */
+    gap: var(--spacing-md);
+}
+
+.spinner {
+    width: 50px;
+    height: 50px;
+    border: 5px solid rgba(20, 104, 65, 0.1); /* צבע ירוק בהיר מאוד ברקע */
+    border-top: 5px solid var(--primary);    /* החלק המסתובב בצבע הירוק הראשי */
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+.loading-text {
+    color: var(--text-muted);
+    font-size: 1.1rem;
+    font-weight: 500;
+    animation: pulse 1.5s ease-in-out infinite; /* טקסט "פועם" בעדינות */
+}
+
+/* הגדרת האנימציות */
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}
