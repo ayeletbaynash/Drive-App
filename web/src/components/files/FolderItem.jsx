@@ -14,7 +14,7 @@ import MoveFile from '../operations/MoveFile'
 
 
 
-const FolderItem = ({ folder, isTrash }) => {
+const FolderItem = ({ folder, isTrash, onSelectFile }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
     const navigate = useNavigate()
   const handleDoubleClick = () => {
@@ -52,6 +52,7 @@ const FolderItem = ({ folder, isTrash }) => {
                     <DownloadFolder folder={folder} onAction={() => setIsMenuOpen(false)} />
                     <Share file={folder} onAction={() => setIsMenuOpen(false)}/>
                     <MoveFile file={folder} onAction={() => setIsMenuOpen(false)}/>
+                    <button onClick={() => onSelectFile(folder)}>Details</button>
 
                   </>
                 )}

@@ -13,7 +13,7 @@ import MoveFile from '../operations/MoveFile'
 import CopyFile from '../operations/CopyFile'
 
 
-const FileItem = ({ file, onOpen, isTrash }) => {
+const FileItem = ({ file, onOpen, isTrash, onSelectFile }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   // differentiate between image and text
   const isTextFile = file.type === 'file' && file.name.toLowerCase().endsWith('.txt');
@@ -59,6 +59,7 @@ const FileItem = ({ file, onOpen, isTrash }) => {
                     {isImageFile && (<EditImage file={file} onAction={() => setIsMenuOpen(false)} />)} {/*Show image editing only for image files*/}
                     <MoveFile file={file} onAction={() => setIsMenuOpen(false)}/>
                     <CopyFile file={file} onAction={() => setIsMenuOpen(false)} />
+                    <button onClick={() => onSelectFile(file)}>Details</button>
                   </>
                 )}
               </div>
