@@ -81,7 +81,8 @@ exports.getFileById = async (req, res) => {
     }
 
     // if 200- content
-    const content = rest.join('')
+    const encodedContent = rest.join('')
+    const content = Buffer.from(encodedContent, 'base64').toString('utf-8');
     res.status(200).json({
         ...file,
         content
@@ -131,8 +132,10 @@ exports.postFile = async (req, res) => {
     // if it's a file – store content in TCP server
     if (type === 'file') {
         const client = new Client()
+        //change to base 64 to allowed a lot of row in a file
+        const encodedContent = Buffer.from(content || '', 'utf-8').toString('base64');
         const response = await client.sendAndReceive(
-            `POST ${newFile.physicalName} ${content}`
+            `POST ${newFile.physicalName} ${encodedContent}`
         )
         client.close()
 
@@ -210,8 +213,11 @@ exports.patchFile = async (req, res) => {
                 return res.status(statusCode).json({ error: statusMessage })
             }
 
+            //change to base64
+            const encodedContent = Buffer.from(data.content, 'utf-8').toString('base64');
+
             // Add file again with new content (if provided)
-            const addResponse = await client.sendAndReceive(`POST ${file.physicalName} ${data.content}`)
+            const addResponse = await client.sendAndReceive(`POST ${file.physicalName} ${encodedContent}`)
             const [addStatusLine] = addResponse.split('\n')
             const [addCodeStr, ...addMsgParts] = addStatusLine.split(' ')
             const addStatusCode = Number(addCodeStr)
