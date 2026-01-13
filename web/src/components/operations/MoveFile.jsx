@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { authorizedFetch } from '../../App'
 import { useFileActions } from '../FileContext'
+import '../../styles/operations.css';
 
 const MoveFile = ({ file, onAction }) => {
     const [isOpen, setIsOpen] = useState(false);
@@ -81,42 +82,55 @@ const MoveFile = ({ file, onAction }) => {
     };
 
     return (
-        <div>
-            <button onClick={handleOpenModal}>Move To</button>
+        <>
+            <button className="operation-button" onClick={handleOpenModal}>
+                <i className="bi bi-folder-symlink"></i>
+                <span>Move To</span>
+            </button>
 
             {isOpen && (
-                <div onClick={(e) => e.stopPropagation()}>
-                    <div>
-                        <h3>Move "{file.name}"</h3>
+                <div className="modal-overlay" onClick={() => setIsOpen(false)}>
+                    <div className="modal-content move-modal" onClick={(e) => e.stopPropagation()}>
+                        <div className="modal-header-confirm">
+                            <h3>Move "{file.name}"</h3>
+                        </div>
 
                         {isLoading ? (
-                            <p>Loading folders...</p>
+                            <div className="loading-spinner">
+                                <p>Scanning folders...</p>
+                            </div>
                         ) : (
                             <>
-                                <div>
+                                <div className="folder-selection-list">
                                     {allFolders.map((folder) => (
-                                        <div key={folder.id}>
-                                            <span>name: {folder.name}</span> 
-                                            <span> ID: {folder.id}</span>
-                                            <button onClick={() => setSelectedFolderId(folder.id)}>
-                                                {selectedFolderId === folder.id ? "V" : "Select"}
-                                            </button>
+                                        <div 
+                                            key={folder.id} 
+                                            className={`folder-option ${selectedFolderId === folder.id ? 'selected' : ''}`}
+                                            onClick={() => setSelectedFolderId(folder.id)}
+                                        >
+                                            <i className={`bi ${folder.id === null ? 'bi-hdd-rack' : 'bi-folder'}`}></i>
+                                            <span className="folder-option-name">{folder.name}</span>
+                                            {selectedFolderId === folder.id && <i className="bi bi-check-circle-fill select-check"></i>}
                                         </div>
                                     ))}
                                 </div>
 
-                                <div>
-                                    <button onClick={handleConfirmClick}>
+                                <div className="modal-actions">
+                                    <button className="btn-secondary" onClick={() => setIsOpen(false)}>Cancel</button>
+                                    <button 
+                                        className="btn-primary" 
+                                        onClick={() => executeMove(selectedFolderId)}
+                                        disabled={selectedFolderId === undefined}
+                                    >
                                         Confirm Move
                                     </button>
-                                    <button onClick={() => setIsOpen(false)}>Cancel</button>
                                 </div>
                             </>
                         )}
                     </div>
                 </div>
             )}
-        </div>
+        </>
     );
 };
 

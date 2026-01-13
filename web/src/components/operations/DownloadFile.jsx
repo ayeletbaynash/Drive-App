@@ -1,5 +1,6 @@
 import React from 'react';
 import { authorizedFetch } from '../../App';
+import '../../styles/operations.css';
 
 const DownloadFile = ({ file, onAction }) => {
 
@@ -47,11 +48,10 @@ const DownloadFile = ({ file, onAction }) => {
     };
 
     return (
-        <div>
-            <button onClick={handleDownload}>
-                Download
-            </button>
-        </div>
+        <button className="operation-button" onClick={handleDownload}>
+            <i className="bi bi-download"></i>
+            <span>Download</span>
+        </button>
     );
 };
 

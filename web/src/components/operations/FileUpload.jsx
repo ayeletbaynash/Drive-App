@@ -56,8 +56,8 @@ const FileUpload = ({ onSuccess }) => {
 };
 
     return (
-        <div>
-            {/* Hidden input that will be activated by pressing the button */}
+        <>
+            {/* The original input is completely hidden */}
             <input 
                 type="file" 
                 ref={fileInputRef} 
@@ -65,10 +65,16 @@ const FileUpload = ({ onSuccess }) => {
                 onChange={handleUpload} 
                 accept=".jpg, .jpeg, .png, .txt, .pdf"
             />
-            <button onClick={() => fileInputRef.current.click()}>
-                Upload File
+
+            {/* The styled button that clicks the hidden input */}
+            <button 
+                className="operation-button" 
+                onClick={() => fileInputRef.current.click()}
+            >
+                <i className="bi bi-cloud-arrow-up"></i>
+                <span>Upload File</span>
             </button>
-        </div>
+        </>
     );
 };
 

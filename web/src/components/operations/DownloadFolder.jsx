@@ -2,6 +2,7 @@ import React, { useState, useRef } from 'react';
 import { authorizedFetch } from '../../App';
 import { Spinner, Button } from 'react-bootstrap';
 import { useFileActions } from '../FileContext';
+import '../../styles/operations.css';
 
 const DownloadFolder = ({ folder, onAction }) => {
     const [isLoading, setIsLoading] = useState(false);
@@ -105,25 +106,23 @@ const DownloadFolder = ({ folder, onAction }) => {
     };
 
     return (
-        <div className="download-folder-btn-wrapper">
-            {!isLoading ? (
-                <button 
-                    onClick={handleFolderDownload} 
-                    className="btn-download"
-                    style={{ cursor: 'pointer' }}
-                >
-                    Download Folder
-                </button>
+        <button 
+            className="operation-button" 
+            onClick={handleFolderDownload}
+            disabled={isLoading}
+        >
+            {isLoading ? (
+                <>
+                    <i className="bi bi-arrow-repeat spin-icon"></i>
+                    <span>Downloading...</span>
+                </>
             ) : (
-                <div className="downloading-indicator">
-                    <Spinner animation="border" size="sm" variant="primary" />
-                    <span style={{ margin: '0 10px' }}>Processing...</span>
-                    <Button variant="outline-danger" size="sm" onClick={handleCancel}>
-                        Stop
-                    </Button>
-                </div>
+                <>
+                    <i className="bi bi-download"></i>
+                    <span>Download Folder</span>
+                </>
             )}
-        </div>
+        </button>
     );
 };
 

@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { authorizedFetch } from '../../App'
+import '../../styles/detailsPanel.css'; 
 
 function FileDetailsPanel({ file, onClose }) {
     console.log("!!! Panel is Rendering with:", file)
@@ -42,46 +43,73 @@ function FileDetailsPanel({ file, onClose }) {
 
     return (
         <aside className="file-details-sidebar">
-            <header>
-                <h2>{file.name} Details</h2>
-                <button onClick={onClose}>X</button>
+            <header className="panel-header">
+                <div className="header-title">
+                    <i className={`bi ${file.type === 'folder' ? 'bi-folder2' : 'bi-file-earmark-text'}`}></i>
+                    <h2>Details</h2>
+                </div>
+                <button className="close-panel-btn" onClick={onClose}>
+                    <i className="bi bi-x-lg"></i>
+                </button>
             </header>
 
-            <section className="basic-info">
-                <p><strong>ID:</strong> {file.id}</p>
-                <p><strong>Type:</strong> {file.type}</p>
-                <p><strong>Parent ID:</strong> {file.parent_id ?? 'Root'}</p>
-                <p><strong>Created:</strong> {file.created_at}</p>
-                <p><strong>Updated:</strong> {file.updated_at}</p>
-            </section>
+            <div className="panel-content">
+                <section className="file-preview-section">
+                    <div className="file-icon-large">
+                         <i className={`bi ${file.type === 'folder' ? 'bi-folder-fill' : 'bi-file-earmark-fill'}`}></i>
+                    </div>
+                    <h3 className="file-name-display">{file.name}</h3>
+                </section>
 
-            <hr />
+                <section className="info-group">
+                    <h4>System Properties</h4>
+                    <div className="info-row">
+                        <span className="info-label">Type</span>
+                        <span className="info-value">{file.type}</span>
+                    </div>
+                    <div className="info-row">
+                        <span className="info-label">Created</span>
+                        <span className="info-value">{new Date(file.created_at).toLocaleDateString()}</span>
+                    </div>
+                    <div className="info-row">
+                        <span className="info-label">Last Modified</span>
+                        <span className="info-value">{new Date(file.updated_at).toLocaleDateString()}</span>
+                    </div>
+                </section>
 
-            <section className="permissions-info">
-                <h3>Access Management</h3>
-                
-                <div className="owner-section">
-                    <p><strong>Owner:</strong></p>
-                    <span>{owner ? owner.username : file.user_id}</span>
-                </div>
+                <hr className="panel-divider" />
 
-                <div className="collaborators-section">
-                    <p><strong>Other Collaborators:</strong></p>
+                <section className="info-group">
+                    <h4>Who has access</h4>
+                    <div className="access-item owner">
+                        <div className="user-avatar-sm">
+                            {owner ? owner.username.charAt(0).toUpperCase() : '?'}
+                        </div>
+                        <div className="user-details">
+                            <span className="user-name">{owner ? owner.username : 'Unknown'}</span>
+                            <span className="user-role">Owner</span>
+                        </div>
+                    </div>
+
                     {loading ? (
-                        <p>Loading permissions...</p>
-                    ) : collaborators.length > 0 ? (
-                        <ul>
-                            {collaborators.map((p, index) => (
-                                <li key={index}>
-                                    {p.username} ({p.permission})
-                                </li>
-                            ))}
-                        </ul>
+                        <div className="panel-loader">Loading access...</div>
                     ) : (
-                        <p>No additional users with access</p>
+                        <div className="collaborators-list">
+                            {collaborators.map((p, index) => (
+                                <div key={index} className="access-item">
+                                    <div className="user-avatar-sm secondary">
+                                        {p.username.charAt(0).toUpperCase()}
+                                    </div>
+                                    <div className="user-details">
+                                        <span className="user-name">{p.username}</span>
+                                        <span className="user-role">{p.permission}</span>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
                     )}
-                </div>
-            </section>
+                </section>
+            </div>
         </aside>
     );
 }

@@ -5,7 +5,9 @@ import '../../styles/layout.css';
 function UserMenu({ user, onLogout, avatarColor }) {
     if (!user) return null;
 
-    const displayName = user.username || "Guest";
+    // שליפת הנתונים להצגה (הכל מגיע מה-props, אין קריאות לשרת כאן!)
+    const displayName = user.firstName || "Guest";
+    // כאן המייל יופיע כי Avatar כבר דאג להביא אותו
     const displayEmail = user.emailAddress || user.email || "No email found"; 
     
     return (

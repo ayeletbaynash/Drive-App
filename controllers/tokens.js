@@ -18,7 +18,8 @@ const loginUser = (req, res) => {
             token: token,
             id: user.id,
             username: user.username, 
-            image: user.image
+            image: user.image,
+            firstName: user.firstName
             });
     } else {
         // If no - return error
