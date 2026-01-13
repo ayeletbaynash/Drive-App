@@ -9,7 +9,6 @@
     border-radius: var(--radius-lg);
     border: 1px solid var(--border);
     box-shadow: var(--shadow-lg);
-    shadow: var(--shadow-lg);
     min-width: 180px;
     overflow: hidden;
     margin: var(--spacing-sm);
