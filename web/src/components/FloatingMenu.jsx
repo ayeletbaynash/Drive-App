@@ -1,5 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 
+// * A wrapper component that detects clicks outside its boundaries to trigger a close action.
 const FloatingMenu = ({ onClose, children }) => {
     const menuRef = useRef();
 
@@ -11,6 +12,8 @@ const FloatingMenu = ({ onClose, children }) => {
         };
 
         document.addEventListener('mousedown', handleClickOutside);
+
+        // Cleanup: Remove the event listener when the component unmounts
         return () => {
             document.removeEventListener('mousedown', handleClickOutside);
         };

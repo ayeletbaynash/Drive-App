@@ -65,34 +65,37 @@
     --text-muted: #6c757d;
     --white: #ffffff;
     /* --- New File Row & Design Variables --- */
-    --row-bg: #f7dadd;           
-    --row-hover: #fff0f3;        
-    --row-shadow: rgba(0, 0, 0, 0.08); 
+    --row-bg: var(--card);           
+    --row-hover: #bddbce;        
+    --row-shadow: rgba(20, 104, 65, 0.08); 
     --card: #9cc59e;
+    /* --card: #e8f2ee; */
 }
 
 /* --- Dark Mode Overrides --- */
-/* This will trigger when the body or a parent container has the 'dark' class */
 [data-theme='dark'], .dark-mode {
-    --primary: #427550;
-    --primary-hover: #73b47c;
-    --secondary: #a0a0a0;
-    --success: #28a745;
-    --error: #ff4d4d;
-    --warning: #ffc107;
-    --background: #0d1117;
-    --surface: #161b22;
-    --border: #30363d;
-    --text-main: #f0f6fc;
-    --text-muted: #8b949e;
-    --white: #ffffff; /* Usually stays white even in dark mode */
-    --sidebar-gradient-end: #05070a;
-    --primary: #1b4d36;
+    --primary: #2ecc71; 
+    --primary-hover: #58d68d;
+    --secondary: #94a3b8;
+    --success: #2ecc71;
+    --error: #ff5f56;
+    --warning: #f1c40f;
+
+    --background: #0f172a; 
+    --surface: #1e293b;   
+    --border: #334155;    
+
+   
+    --text-main: #f8fafc;
+    --text-muted: #94a3b8;
+    
+    --sidebar-gradient-end: #020617;
+
     /* --- Dark Mode File Row Colors --- */
-    --row-bg: #1e161a;           
-    --row-hover: #2d2429;        
-    --row-shadow: rgba(0, 0, 0, 0.5);
-    --card: #2d3b2e;
+    --row-bg: #1e293b;           
+    --row-hover: #334155;        
+    --row-shadow: rgba(0, 0, 0, 0.4);
+    --card: #1e293b;            
 }
 
 
