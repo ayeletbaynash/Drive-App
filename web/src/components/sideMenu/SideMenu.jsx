@@ -7,6 +7,7 @@ import FileUpload from '../operations/FileUpload';
 import '../../styles/layout.css';
 
 const SideMenu = () => {
+  // Navigation menu items configuration
   const menuItems = [
     { id: 1, label: 'Home', to: 'home', icon: 'bi-house-door' },
     { id: 2, label: 'My Drive', to: 'my-drive', icon: 'bi-hdd-network' },
@@ -15,25 +16,32 @@ const SideMenu = () => {
     { id: 5, label: 'Starred', to: 'starred', icon: 'bi-star' },
     { id: 6, label: 'Trash', to: 'trash', icon: 'bi-trash3' },
   ];
+  // State to manage the visibility of the "New" floating menu
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   return (
     <aside className="sidebar-wrapper">
+      {/* Container for the main action button */}
       <div className="new-button-container">
       <button className="btn-new" onClick={() => setIsMenuOpen(!isMenuOpen)}>
         <i className="bi bi-plus-lg"></i>
         <span>New</span>
       </button>
       </div>
+
+      {/* Conditional rendering for the "New" action menu */}
       {isMenuOpen && (
                 <FloatingMenu onClose={() => setIsMenuOpen(false)}>
                   <div className="floating-new-menu">
+                    {/* Action items within the floating menu */}
                     <CreateFolder onSuccess={() => { setIsMenuOpen(false); }} />
                     <CreateFile onSuccess={() => { setIsMenuOpen(false); }} />
                     <FileUpload onSuccess={() => setIsMenuOpen(false)} /> 
                   </div>
                 </FloatingMenu>
             )}
+
+      {/* Main navigation list */}
       <nav className="sidebar-nav">
         <ul className="sidebar-list">
           {menuItems.map((item) => (

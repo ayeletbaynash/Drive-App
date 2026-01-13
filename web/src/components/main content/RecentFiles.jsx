@@ -3,6 +3,9 @@ import { authorizedFetch } from '../../App';
 import { useFileActions } from '../FileContext';
 import FileItem from '../files/FileItem'
 import FileViewer from '../files/FileViewer'
+import EmptyState from './EmptyState';
+import LoadingState from './LoadingState';
+import '../../styles/emptyPages.css';
 
 
 const RecentFiles = ({ onSelectFile }) => {
@@ -16,6 +19,7 @@ const RecentFiles = ({ onSelectFile }) => {
             setSelectedFile(file); 
         };
 
+    // Recursively fetches all files from the server, including those nested in folders.
     const fetchAllFilesRecursive = async (folderId = null) => {
         const url = (folderId === null) 
             ? 'http://localhost:8080/api/files' 
@@ -46,6 +50,7 @@ const RecentFiles = ({ onSelectFile }) => {
         }
     };
 
+    // Refreshes the file list by triggering the recursive fetch
     const onRefresh = async () => {
         setIsLoading(true);
         const allFetchedFiles = await fetchAllFilesRecursive(null);
@@ -64,24 +69,26 @@ const RecentFiles = ({ onSelectFile }) => {
         };
     }, []);
 
+    // Sorts the collected files by their last update timestamp (newest first)
     const sortedFiles = [...files].sort((a, b) => {
         return new Date(b.updated_at) - new Date(a.updated_at);
     });
 
     return (
-        <div className="recent-files-page">
-            <h1>Recent Files</h1>
+        <div className="page-fill-height">
+            <h1 className="mb-4" style={{ color: 'var(--primary)', fontWeight: 'bold' }}>Recent Files</h1>
 
+            {/* Display Loading, List, or Empty state based on the current data status */}
             {isLoading ? (
-                <div className="loader-container">
-                    <p>Loading your recent activity...</p>
-                </div>
+                <LoadingState message="Scanning your recent activity..." />
             ) : sortedFiles.length > 0 ? (
                 <div className="files-container">
                     {sortedFiles.map((file) => (<FileItem key={file.id} file={file} onOpen={handleOpen} onSelectFile={onSelectFile}/> ))}
                 </div>
             ) : (
-                <p>No recent activity found.</p>
+                <div className="centered-content-wrapper">
+                    <EmptyState type="recent" />
+                </div>
             )}
                {/* the modal that will be displayed when there is a file selected */}
             <FileViewer 

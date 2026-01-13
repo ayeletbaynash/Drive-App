@@ -4,7 +4,15 @@ import FileViewList from '../files/FileViewList';
 import { useParams } from 'react-router-dom'
 import { authorizedFetch } from '../../App'
 import { useFileActions } from '../FileContext';
+import EmptyState from './EmptyState';
+import LoadingState from './LoadingState'; // ייבוא של רכיב הטעינה החדש
+import '../../styles/emptyPages.css';
 
+
+/**
+ * MyDriveFiles component manages the main personal storage view.
+ * It handles folder navigation and displays only the current user's active files.
+ */
 const MyDriveFiles = () => {
     const [files, setFiles] = useState([]);
     const { folderId } = useParams();
@@ -39,6 +47,7 @@ const currentUserId = JSON.parse(localStorage.getItem('user') || '{}').id;
         }
     }
 
+    // Re-run fetch whenever the folderId changes or a custom refresh event is triggered
     useEffect(() => {
     onRefresh();
 
@@ -60,16 +69,17 @@ const currentUserId = JSON.parse(localStorage.getItem('user') || '{}').id;
 
 
 return (
-        <div>
-            <h1>{currentFolderName}</h1>
+        <div className="page-fill-height">
+            {/* Page Header showing the current location */}
+            <h1 className="mb-4" style={{ color: 'var(--primary)', fontWeight: 'bold' }}>{currentFolderName}</h1>
              {isLoading ? (
-            <div className="loader-container">
-                    <p>Loading files...</p> 
-                </div>
+            <LoadingState message="Loading your files..." />
         ) : myVisibleFiles.length > 0 ? (
             <FileViewList items={myVisibleFiles} />
         ) : (
-            <p>Your drive is empty.</p>
+            <div className="centered-content-wrapper">
+                    <EmptyState type="drive" />
+                </div>
         )}
     </div>
     );
