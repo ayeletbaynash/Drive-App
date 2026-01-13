@@ -64,6 +64,7 @@
     --text-main: #212529;
     --text-muted: #6c757d;
     --white: #ffffff;
+    --card: #9cc59e;
 }
 
 /* --- Dark Mode Overrides --- */
@@ -83,6 +84,7 @@
     --white: #ffffff; /* Usually stays white even in dark mode */
     --sidebar-gradient-end: #05070a;
     --primary: #1b4d36;
+    --card: #2d3b2e;
 }
 
 /* זה החלק הקריטי שחסר לך */

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { authorizedFetch } from '../../App'
 import { useFileActions } from '../FileContext'
+import '../../styles/operations.css';
 
 const Rename = ({ file, onAction }) => {
     const [isOpen, setIsOpen] = useState(false);
@@ -48,21 +49,37 @@ const Rename = ({ file, onAction }) => {
     }
 
     return (
-        <div>
-            <button onClick={(e) => handleClick(e)}>Rename</button>
+        <>
+            {/* הכפתור שמופיע בתוך ה-Dropdown */}
+            <button className="operation-button" onClick={handleClick}>
+                <i className="bi bi-pencil"></i>
+                <span>Rename</span>
+            </button>
 
+            {/* המודל שנפתח - Overlay גלובלי */}
             {isOpen && (
-                <div onClick={(e) => e.stopPropagation()}>
-                    <strong>Rename:</strong>
-                    <input type="text" value={nameWithoutExt} onChange={(e) => setNameWithoutExt(e.target.value)} autoFocus />
-                    <span>{extension}</span>
-                    <div>
-                        <button onClick={handleRename}>Save</button>
-                        <button onClick={() => setIsOpen(false)}>Cancel</button>
+                <div className="modal-overlay" onClick={() => setIsOpen(false)}>
+                    <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+                        <h3>Rename</h3>
+                        
+                        <div className="input-group">
+                            <input 
+                                type="text" 
+                                className="form-control" 
+                                value={nameWithoutExt} 
+                                onChange={(e) => setNameWithoutExt(e.target.value)} 
+                                autoFocus 
+                            />
+                            <span style={{color: 'var(--text-muted)', fontWeight: 'bold'}}>{extension}</span>                        </div>
+
+                        <div className="modal-actions">
+                            <button className="btn-secondary" onClick={() => setIsOpen(false)}>Cancel</button>
+                            <button className="btn-primary" onClick={handleRename}>Save</button>
+                        </div>
                     </div>
                 </div>
             )}
-        </div>
+        </>
     )
 }
 

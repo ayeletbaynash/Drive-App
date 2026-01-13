@@ -1,0 +1,116 @@
+.file-details-sidebar {
+    width: 320px;
+    height: 100vh;
+    background-color: var(--surface);
+    border-left: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    position: sticky;
+    top: 0;
+    right: 0;
+    animation: slideIn 0.3s ease-out;
+    box-shadow: -4px 0 15px rgba(0,0,0,0.05);
+}
+
+@keyframes slideIn {
+    from { transform: translateX(100%); }
+    to { transform: translateX(0); }
+}
+
+.panel-header {
+    padding: var(--spacing-lg);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--border);
+}
+
+.header-title {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+}
+
+.header-title h2 {
+    font-size: 1.1rem;
+    margin: 0;
+}
+
+.close-panel-btn {
+    background: none;
+    border: none;
+    font-size: 1.2rem;
+    cursor: pointer;
+    color: var(--text-muted);
+}
+
+.panel-content {
+    padding: var(--spacing-lg);
+    overflow-y: auto;
+}
+
+.file-preview-section {
+    text-align: center;
+    margin-bottom: var(--spacing-xl);
+}
+
+.file-icon-large {
+    font-size: 4rem;
+    color: var(--primary);
+    margin-bottom: var(--spacing-sm);
+}
+
+.file-name-display {
+    font-size: 1rem;
+    word-break: break-all;
+}
+
+.info-group h4 {
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    letter-spacing: 1px;
+    margin-bottom: var(--spacing-md);
+}
+
+.info-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: var(--spacing-sm);
+    font-size: 0.9rem;
+}
+
+.info-label { color: var(--text-muted); }
+.info-value { font-weight: 500; }
+
+.panel-divider {
+    margin: var(--spacing-xl) 0;
+    border: 0;
+    border-top: 1px solid var(--border);
+}
+
+.access-item {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    margin-bottom: var(--spacing-md);
+}
+
+.user-avatar-sm {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background-color: var(--primary);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 0.8rem;
+}
+
+.user-avatar-sm.secondary { background-color: var(--text-muted); }
+
+.user-details { display: flex; flex-direction: column; }
+.user-name { font-size: 0.9rem; font-weight: 500; }
+.user-role { font-size: 0.75rem; color: var(--text-muted); text-transform: capitalize; }
