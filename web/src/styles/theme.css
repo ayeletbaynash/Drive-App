@@ -90,6 +90,8 @@
     --text-muted: #94a3b8;
     
     --sidebar-gradient-end: #020617;
+    --modal-bg: var(--surface);
+    --modal-text: var(--text-main);
 
     /* --- Dark Mode File Row Colors --- */
     --row-bg: #1e293b;           
@@ -139,4 +141,13 @@ input:focus,
 button:focus {
     border-width: var(--border-width-focus) !important;
     outline: none;
+}
+
+.modal-content {
+    background-color: var(--modal-bg, white) !important;
+    color: var(--modal-text, black) !important;
+}
+
+pre {
+    color: inherit !important; 
 }
