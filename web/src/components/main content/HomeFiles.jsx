@@ -8,7 +8,7 @@ import EmptyState from './EmptyState';
 import LoadingState from './LoadingState';
 import '../../styles/emptyPages.css';
 
-
+// HomeFiles component serves as the landing view for the file manager.
 const HomeFiles = () => {
     const [files, setFiles] = useState([])
     const [isLoading, setIsLoading] = useState(true)
@@ -46,6 +46,7 @@ const HomeFiles = () => {
     useEffect(() => {
     onRefresh();
 
+    // Listen for external change events to trigger a refresh
     const handleRefreshEvent = () => {
         onRefresh();
     };

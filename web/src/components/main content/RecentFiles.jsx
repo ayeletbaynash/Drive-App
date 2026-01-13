@@ -19,6 +19,7 @@ const RecentFiles = ({ onSelectFile }) => {
             setSelectedFile(file); 
         };
 
+    // Recursively fetches all files from the server, including those nested in folders.
     const fetchAllFilesRecursive = async (folderId = null) => {
         const url = (folderId === null) 
             ? 'http://localhost:8080/api/files' 
@@ -49,6 +50,7 @@ const RecentFiles = ({ onSelectFile }) => {
         }
     };
 
+    // Refreshes the file list by triggering the recursive fetch
     const onRefresh = async () => {
         setIsLoading(true);
         const allFetchedFiles = await fetchAllFilesRecursive(null);
@@ -67,6 +69,7 @@ const RecentFiles = ({ onSelectFile }) => {
         };
     }, []);
 
+    // Sorts the collected files by their last update timestamp (newest first)
     const sortedFiles = [...files].sort((a, b) => {
         return new Date(b.updated_at) - new Date(a.updated_at);
     });
@@ -75,6 +78,7 @@ const RecentFiles = ({ onSelectFile }) => {
         <div className="page-fill-height">
             <h1 className="mb-4" style={{ color: 'var(--primary)', fontWeight: 'bold' }}>Recent Files</h1>
 
+            {/* Display Loading, List, or Empty state based on the current data status */}
             {isLoading ? (
                 <LoadingState message="Scanning your recent activity..." />
             ) : sortedFiles.length > 0 ? (

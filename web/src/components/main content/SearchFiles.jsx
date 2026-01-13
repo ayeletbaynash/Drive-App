@@ -5,7 +5,7 @@ import EmptyState from './EmptyState';
 import LoadingState from './LoadingState';
 import '../../styles/emptyPages.css';
 
-
+// SearchFiles component displays the results of a search query.
 const SearchFiles = ({results}) =>{
     const { deletedFiles } = useFileActions();
     // Safety check: If results is null/undefined, treat it as an empty array

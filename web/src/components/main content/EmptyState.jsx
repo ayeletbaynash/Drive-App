@@ -1,7 +1,7 @@
 import React from 'react';
 
 const EmptyState = ({ type }) => {
-  // פונקציה שמחזירה את ה-SVG המתאים לפי הסוג
+  // Returns the appropriate SVG illustration based on the 'type' prop.
   const getIllustration = () => {
     const commonStyle = { transform: 'rotate(-10deg)', filter: 'drop-shadow(2px 4px 6px rgba(0,0,0,0.1))' };
     const strokeColor = "var(--primary)";
@@ -61,7 +61,7 @@ const EmptyState = ({ type }) => {
 
       case 'drive':
       default:
-        // ענן עם חץ העלאה
+        // Default Cloud Upload illustration
         return (
           <svg width="200" height="200" viewBox="0 0 24 24" fill="none" stroke={strokeColor} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" style={commonStyle}>
             <path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242" />
@@ -72,6 +72,7 @@ const EmptyState = ({ type }) => {
     }
   };
 
+  // Text content mapped to each view type
   const titles = {
     home: "Welcome to AweSoMe Drive",
     recent: "No recent files",
@@ -92,7 +93,7 @@ const EmptyState = ({ type }) => {
     drive: "Upload files or create folders to get started!"
   };
 
-  // אם לא הועבר type, נשתמש ב-drive כברירת מחדל
+  // Fallback to 'drive' if no type is provided
   const currentType = type || 'drive';
 
   return (

@@ -1,12 +1,12 @@
 /* src/styles/layout.css */
 @import './theme.css';
 
-/* --- Top Bar Container --- */
+/* Top Bar Container */
 .top-bar {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 0 var(--spacing-xl); /* ריווח בצדדים */
+    padding: 0 var(--spacing-xl);
     background-color: var(--surface);
     border-bottom: 1px solid var(--border);
     height: 64px;
@@ -16,12 +16,12 @@
     box-shadow: var(--shadow-sm);
 }
 
-/* --- Sections --- */
+/* Sections */
 .top-bar-left, .top-bar-right {
     display: flex;
     align-items: center;
     gap: var(--spacing-md);
-    min-width: 200px; /* שומר על איזון */
+    min-width: 200px; 
     height: 100%;
     padding-top: 5px;
 }
@@ -38,7 +38,7 @@
     margin: 0 var(--spacing-lg);
 }
 
-/* --- Search Bar Styling --- */
+/* Search Bar Styling */
 .search-container {
     display: flex;
     align-items: center;
@@ -50,12 +50,12 @@
     padding: 4px 12px;
     transition: all 0.2s ease-in-out;
     outline: none !important;
-    position: all var(--transition-fast); /* בשביל ההצעות */
+    position: all var(--transition-fast); 
 }
 
 .search-container:focus-within {
     background-color: var(--surface) !important;
-    border-color: 2px solid var(--primary) !important; /* מסגרת ירוקה בפוקוס */
+    border-color: 2px solid var(--primary) !important;
     box-shadow: 0 0 0 4px rgba(20, 104, 65, 0.1) !important;
 }
 
@@ -69,7 +69,7 @@
     outline: none;
     color: var(--text-main);
     font-size: var(--size-md);
-    box-shadow: none !important; /* ביטול צל ברירת מחדל של input */
+    box-shadow: none !important; 
 }
 
 .search-icon-btn {
@@ -91,7 +91,7 @@
     color: var(--primary);
 }
 
-/* --- Suggestions Dropdown --- */
+/* Suggestions Dropdown */
 .suggestions-dropdown {
     position: absolute;
     top: 100%;
@@ -127,7 +127,7 @@
     color: var(--primary);
 }
 
-/* --- Buttons & Toggles --- */
+/* Buttons & Toggles */
 .theme-toggle-btn {
     background-color: transparent;
     border: 1px solid var(--border);
@@ -148,7 +148,7 @@
     border-color: var(--primary);
 }
 
-/* --- User Avatar & Profile Card --- */
+/* User Avatar & Profile Card */
 
 .user-avatar-trigger {
     width: 40px;
@@ -156,9 +156,8 @@
     cursor: pointer;
     transition: transform var(--transition-fast);
     border-radius: 50%;
-    /* בורדר דק וירוק מסביב לאווטאר להבלטה */
     border: 2px solid var(--primary); 
-    padding: 2px; /* רווח קטן בין הבורדר לתמונה */
+    padding: 2px; 
     display: flex;
     align-items: center;
     justify-content: center;
@@ -245,7 +244,6 @@
     margin: var(--spacing-md) 0;
 }
 
-/* כפתור התנתקות מעוצב */
 .logout-action-btn {
     width: 100%;
     padding: var(--spacing-sm) var(--spacing-md);
@@ -268,12 +266,11 @@
     box-shadow: var(--shadow-md);
 }
 
-/* --- Sidebar Styles --- */
-
+/* Sidebar Styles */
 .sidebar-wrapper {
     width: 240px;
     height: calc(100vh - 64px);
-    padding: var(--spacing-lg) 0; /* הורדנו פדינג צדדי כדי שהסימון יגיע עד הקצה */
+    padding: var(--spacing-lg) 0;
     display: flex;
     flex-direction: column;
     background: linear-gradient(
@@ -307,8 +304,8 @@
 }
 
 [data-theme='dark'] .btn-new {
-    background-color: var(--surface); /* במצב לילה ה-surface הוא אפור כהה */
-    color: var(--primary-hover); /* טקסט ירוק בהיר יותר שיהיה קריא */
+    background-color: var(--surface);
+    color: var(--primary-hover);
     border: 1px solid var(--border);
 }
 
@@ -329,7 +326,7 @@
 
 .sidebar-item-container {
     margin-right: var(--spacing-md);
-    border-radius: 0 24px 24px 0; /* הפינה המעוגלת של גוגל דרייב */
+    border-radius: 0 24px 24px 0;
     transition: background 0.2s;
 }
 
@@ -360,7 +357,6 @@
     color: white;
 }
 
-/* --- פריט פעיל (Active) בסייד-בר ירוק --- */
 .sidebar-item-container.active {
     background-color: rgba(255, 255, 255, 0.2) !important; 
     border-left: 4px solid #ffffff;

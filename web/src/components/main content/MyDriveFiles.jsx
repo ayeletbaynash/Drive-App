@@ -9,6 +9,10 @@ import LoadingState from './LoadingState'; // ייבוא של רכיב הטעי�
 import '../../styles/emptyPages.css';
 
 
+/**
+ * MyDriveFiles component manages the main personal storage view.
+ * It handles folder navigation and displays only the current user's active files.
+ */
 const MyDriveFiles = () => {
     const [files, setFiles] = useState([]);
     const { folderId } = useParams();
@@ -43,6 +47,7 @@ const currentUserId = JSON.parse(localStorage.getItem('user') || '{}').id;
         }
     }
 
+    // Re-run fetch whenever the folderId changes or a custom refresh event is triggered
     useEffect(() => {
     onRefresh();
 
@@ -65,6 +70,7 @@ const currentUserId = JSON.parse(localStorage.getItem('user') || '{}').id;
 
 return (
         <div className="page-fill-height">
+            {/* Page Header showing the current location */}
             <h1 className="mb-4" style={{ color: 'var(--primary)', fontWeight: 'bold' }}>{currentFolderName}</h1>
              {isLoading ? (
             <LoadingState message="Loading your files..." />

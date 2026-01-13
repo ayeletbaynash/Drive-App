@@ -15,7 +15,14 @@ const SharedWithMe = () => {
     const [currentFolderName, setCurrentFolderName] = useState('');
     const { deletedFiles } = useFileActions()
     const [isLoading, setIsLoading] = useState(true);
-const currentUserId = JSON.parse(localStorage.getItem('user') || '{}').id;
+
+    // Retrieve current user ID from local storage for filtering purposes
+    const currentUserId = JSON.parse(localStorage.getItem('user') || '{}').id;
+
+    /**
+     * Fetches files from the server.
+     * Handles both the root shared directory and specific folder navigation.
+     */
     const onRefresh = async () => {
         setIsLoading(true)
         try {
@@ -43,6 +50,7 @@ const currentUserId = JSON.parse(localStorage.getItem('user') || '{}').id;
         }
     }
 
+    // Set up lifecycle and custom event listeners for refreshing the file list
     useEffect(() => {
     onRefresh();
 
@@ -66,6 +74,8 @@ const currentUserId = JSON.parse(localStorage.getItem('user') || '{}').id;
 return (
         <div className="page-fill-height">
             <h1 className="mb-4" style={{ color: 'var(--primary)', fontWeight: 'bold' }}>{currentFolderName}</h1>
+
+            {/* View State Management: Loading -> Content -> Empty */}
              {isLoading ? (
                 <LoadingState message="Fetching your shared files..." />
         ) : myVisibleFiles.length > 0 ? (
