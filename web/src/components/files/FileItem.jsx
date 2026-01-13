@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import FloatingMenu from '../FloatingMenu';
 import SoftDelete from '../operations/SoftDelete'
 import Star from '../operations/Star'
@@ -11,46 +11,55 @@ import HardDelete from '../operations/HardDelete'
 import DownloadFile from '../operations/DownloadFile'
 import MoveFile from '../operations/MoveFile'
 import CopyFile from '../operations/CopyFile'
+import { authorizedFetch } from '../../App'
+import '../../styles/FileItem.css';
 import { authorizedFetch } from '../../App';
 import { useFileActions } from '../FileContext';
 
 const FileItem = ({ file, onOpen, isTrash, onSelectFile }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  
-  // Setting a state for permission - starting from what is in the file (which is currently undefined)
   const [userPermission, setUserPermission] = useState(null);
+  const [userName, setUserName] = useState('Loading...');
   const [isFetching, setIsFetching] = useState(false);
   
+
+  const fetchPermissions = async () => {
+    try {
+      const response = await authorizedFetch(`http://localhost:8080/api/files/${file.id}/permissions`);
+      const permissionsList = await response.json();
+
+      const storedUser = JSON.parse(localStorage.getItem('user') || '{}');
+      const currentUserId = storedUser.id;
+
+      const myPermissionEntry = permissionsList.find(p => p.userID === currentUserId);
+      const ownerEntry = permissionsList.find(p => p.permission === 'owner');
+
+      if (myPermissionEntry) {
+          setUserPermission(myPermissionEntry.permission);
+      }
+      
+      if (ownerEntry) {
+          setUserName(ownerEntry.userID === currentUserId ? 'Me' : ownerEntry.username);
+      }
+    } catch (error) {
+      console.error("Error fetching file details:", error);
+      setUserPermission('read');
+    }
+  };
+
+  useEffect(() => {
+    fetchPermissions();
+  }, [file.id]);
+
   const handleMenuClick = async (e) => {
     e.stopPropagation();
     setIsMenuOpen(!isMenuOpen);
 
-    // If the menu opens and we don't have permission yet, we will ask the server
-    if (!isMenuOpen && userPermission === null) {
-      setIsFetching(true);
-      try {
-        const response = await authorizedFetch(`http://localhost:8080/api/files/${file.id}`);
-        const data = await response.json();
-
-        const storedUser = JSON.parse(localStorage.getItem('user') || '{}');
-        const currentUserId = storedUser.id;
-
-        // If the server returned a user ID that is the same as mine - I am the owner
-        if (data.user_id === currentUserId) {
-            setUserPermission('owner');
-        } else if (data.permission) {
-            setUserPermission(data.permission); 
-        } else {
-            setUserPermission('read');
-        } 
-    } catch (error) {
-        console.error("Error fetching file details:", error);
-        setUserPermission('read');
-    } finally {
-        setIsFetching(false);
+    // If the menu opens, we will ask the server for latest permissions
+    if (!isMenuOpen) {
+      fetchPermissions();
     }
-  }
-};
+  };
 
   // Setting permissions from JSON
   const isOwner = userPermission === 'owner';
@@ -66,25 +75,56 @@ const FileItem = ({ file, onOpen, isTrash, onSelectFile }) => {
   const handleDoubleClick = () => {
     // Logic for fetching content and opening the white page will go here
     if (onOpen) {
-      onOpen(file); // Calls the parent function and passes it the file object
+      onOpen(file); 
     }
   };
+ const { starredFiles } = useFileActions();
+ const isStarred = starredFiles.some(f => f.id === file.id);
+  // For design
+  let fileCategory = 'generic'
+  if (isImageFile) {
+      fileCategory = 'image'
+  } else if (isPdfFile) {
+      fileCategory = 'pdf'
+  } else if (isTextFile) {
+      fileCategory = 'text'
+  }
 
-  const { starredFiles } = useFileActions();
-  const isStarred = starredFiles.some(f => f.id === file.id);
-  
   return (
-    <div onDoubleClick={handleDoubleClick} className="file-item-container">
-      <div className="file-header">
-        <div className="file-info-main">
-          {/* The star display next to the name - only appears if the file is marked */}
+    <div onDoubleClick={handleDoubleClick} className="file-item-row">
+      <div className="col-name">
+        <i className={`bi file-icon icon-${fileCategory} ${
+                fileCategory === 'image' ? 'bi-image' : 
+                fileCategory === 'pdf' ? 'bi-file-earmark-pdf-fill' : 
+                'bi-file-earmark-text'
+            }`}></i>
+            {/* The star display next to the name - only appears if the file is marked */}
           {isStarred && (
             <i className="bi bi-star-fill" style={{ color: '#ffc107', marginRight: '8px' }}></i>
           )}
-        <span className="file-name">{file.name}</span>
-        </div>
+        <span className="file-name-text">{file.name}</span>
+      </div>
+
+      <div className="col-owner">
+        <span className="owner-badge">{userName}</span>
+      </div>
+
+      <div className="col-date">
+        <span className="date-text">
+          {file.updated_at 
+              ? new Date(file.updated_at).toLocaleString('he-IL', {
+                  day: '2-digit',
+                  month: '2-digit',
+                  year: 'numeric',
+                  hour: '2-digit',
+                  minute: '2-digit',
+                  hour12: false 
+                }) 
+              : 'Today'}
+        </span>
+        
         <div className="menu-wrapper">
-          <button onClick={handleMenuClick}>⋮</button>
+          <button className="menu-btn" onClick={handleMenuClick}>⋮</button>
 
           {isMenuOpen && (
             <FloatingMenu onClose={closeMenu}>
@@ -103,8 +143,8 @@ const FileItem = ({ file, onOpen, isTrash, onSelectFile }) => {
                 {isTrash ? (
                   <>
                     {/* Only the owner, only in the trash */}
-                    {isOwner &&<Restore file={file} onAction={closeMenu} />}
-                    {isOwner &&<HardDelete file={file} onAction={closeMenu} />}
+                    {isOwner && <Restore file={file} onAction={closeMenu} />}
+                    {isOwner && <HardDelete file={file} onAction={closeMenu} />}
                   </>
                 ) : (
                   <>
@@ -115,16 +155,15 @@ const FileItem = ({ file, onOpen, isTrash, onSelectFile }) => {
                     <MoveFile file={file} onAction={closeMenu}/>
                     
                     {/* Only the owner */}
-                    {isOwner &&<SoftDelete file={file} onAction={closeMenu} />}
-                    {isOwner &&<Share file={file} onAction={closeMenu}/>}
+                    {isOwner && <SoftDelete file={file} onAction={closeMenu} />}
+                    {isOwner && <Share file={file} onAction={closeMenu}/>}
                     
                     {/* Only the owner and writer */}
-                    {canWrite &&<Rename file={file} onAction={closeMenu}/>}
+                    {canWrite && <Rename file={file} onAction={closeMenu}/>}
                   
                     {/* Edit by file type (not PDF) */}
-                    {canWrite && isTextFile && (<EditContent file={file} onAction={closeMenu} />)} {/*Show text editing only for TXT files*/}
-                    {canWrite && isImageFile && (<EditImage file={file} onAction={closeMenu} />)} {/*Show image editing only for image files*/}
-                    
+                    {canWrite && isTextFile && (<EditContent file={file} onAction={closeMenu} />)} 
+                    {canWrite && isImageFile && (<EditImage file={file} onAction={closeMenu} />)}
                   </>
                 )}
               </div>
@@ -132,11 +171,6 @@ const FileItem = ({ file, onOpen, isTrash, onSelectFile }) => {
           )}
         </div>
       </div>
-
-      {/* The content preview area is currently empty/removed */}
-      <div className="file-body">
-      </div>
-
     </div>
   );
 };

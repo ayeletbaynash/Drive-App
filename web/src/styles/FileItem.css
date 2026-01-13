@@ -1,0 +1,106 @@
+@import './theme.css';
+
+.file-item-row {
+    display: flex;
+    align-items: center;
+    padding: var(--spacing-md);
+    background-color: var(--row-bg); 
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 6px;
+    border-radius: var(--radius-md);
+    transition: var(--transition-fast);
+    cursor: pointer;
+    border: 1px solid transparent; /* Corrected 'order' to 'border' */
+}
+
+.file-item-row:hover {
+    background-color: var(--row-hover); 
+    border-color: var(--primary); 
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px var(--row-shadow);
+}
+
+.file-name-text {
+    color: var(--text-main);
+    font-weight: var(--weight-medium);
+}
+
+/* Icon Colors by Type */
+.icon-image { color: var(--primary); }
+.icon-pdf { color: #dc3545; }
+.icon-text { color: var(--text-muted); }
+.icon-generic { color: var(--secondary); }
+
+/* Layout Columns */
+.col-name { 
+    flex: 3; 
+    display: flex; 
+    align-items: center; 
+}
+
+.col-owner { 
+    flex: 1; 
+    color: var(--text-muted); 
+}
+
+.col-date { 
+    flex: 1; 
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center; 
+}
+
+/* Metadata Badges */
+.owner-badge {
+    background: var(--background);
+    padding: 2px 8px;
+    border-radius: var(--radius-lg);
+    font-size: var(--size-xs);
+}
+
+/* Options Menu Button */
+.menu-btn {
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    line-height: 1;
+    cursor: pointer;
+    transition: var(--transition-fast);
+}
+
+.menu-btn:hover {
+    background-color: rgba(var(--primary-rgb), 0.1);
+    color: var(--primary);
+}
+
+.menu-btn:active {
+    transform: scale(0.9);
+    background-color: rgba(var(--primary-rgb), 0.2);
+}
+
+/* --- Folder Specific Styles --- */
+
+.folder-item {
+    min-height: 56px; 
+    border-left: 4px solid var(--secondary); /* Visual indicator for folders */
+}
+
+.folder-icon {
+    font-size: 1.2rem;
+    color: var(--warning); /* Highlight folder with warning/yellow color */
+    margin-right: 12px;
+}
+
+.folder-badge {
+    /* Subtle background for folder-specific metadata */
+    background: rgba(var(--secondary-rgb), 0.1); 
+    color: var(--secondary);
+    border: 1px solid rgba(var(--secondary-rgb), 0.2);
+}

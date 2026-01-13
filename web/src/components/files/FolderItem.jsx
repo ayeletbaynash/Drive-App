@@ -9,6 +9,9 @@ import Restore from '../operations/Restore'
 import HardDelete from '../operations/HardDelete'
 import DownloadFolder from '../operations/DownloadFolder'
 import MoveFile from '../operations/MoveFile'
+import { authorizedFetch } from '../../App';
+import '../../styles/FileItem.css';
+
 import { authorizedFetch } from '../../App'; 
 import '../../styles/operations.css';
 
@@ -25,27 +28,21 @@ const FolderItem = ({ folder, onOpen, isTrash, onSelectFile }) => {
     if (!isMenuOpen && userPermission === null) {
       setIsFetching(true);
       try {
-        const response = await authorizedFetch(`http://localhost:8080/api/files/${folder.id}`);
-        const data = await response.json();
-
+        const response = await authorizedFetch(`http://localhost:8080/api/files/${folder.id}/permissions`);
+        const permissionsList = await response.json();
         const storedUser = JSON.parse(localStorage.getItem('user') || '{}');
         const currentUserId = storedUser.id;
-
-        if (data.user_id === currentUserId) {
-          setUserPermission('owner');
-        } else if (data.permission) {
-          setUserPermission(data.permission);
-        } else {
-          setUserPermission('read');
-        }
-      } catch (error) {
-        console.error("Error fetching folder details:", error);
+        const myPermissionEntry = permissionsList.find(p => p.userID === currentUserId);
+        
+        setUserPermission(myPermissionEntry.permission);
+        } catch (error) {
+        console.error("Error fetching folder permissions:", error);
         setUserPermission('read');
       } finally {
         setIsFetching(false);
       }
     }
-  };
+  }   
 
   const isOwner = userPermission === 'owner';
   const canWrite = isOwner || userPermission === 'write';
@@ -58,15 +55,20 @@ const FolderItem = ({ folder, onOpen, isTrash, onSelectFile }) => {
   };
 
   return (
-    <div onDoubleClick={handleDoubleClick} className="folder-item-container">
-      
-      <div className="folder-header">
-        <span className="folder-name">{folder.name}</span>
-        <div className="menu-wrapper">
-          {/* <button onClick={(e) => { e.stopPropagation(); setIsMenuOpen(!isMenuOpen)}}>⋮</button> */}
-          <button onClick={handleMenuClick} disabled={isFetching}>{isFetching ? '...' : '⋮'}</button>
-          {/* <button onClick={handleMenuClick}>⋮</button> */}
+  <div onDoubleClick={handleDoubleClick} className="file-item-row folder-item">
+    {/* Folder Name & Icon */}
+    <div className="col-name">
+      <i className="bi bi-folder-fill folder-icon"></i>
+      <span className="file-name-text">{folder.name}</span>
+    </div>
 
+    {/* Date & Menu Button */}
+    <div className="col-date">
+      
+      <div className="menu-wrapper">
+        <button className="menu-btn" onClick={handleMenuClick} disabled={isFetching}>
+          {isFetching ? '...' : '⋮'}
+        </button>
           {isMenuOpen && (
             <FloatingMenu onClose={closeMenu}>
               <div className="dropdown-content">
@@ -94,20 +96,34 @@ const FolderItem = ({ folder, onOpen, isTrash, onSelectFile }) => {
                         <DownloadFolder folder={folder} onAction={closeMenu} />
                         <MoveFile file={folder} onAction={closeMenu} />
 
-                        {isOwner && <SoftDelete file={folder} onAction={closeMenu} />}
-                        {isOwner && <Rename file={folder} onAction={closeMenu} />}
-                        {canWrite && <Share file={folder} onAction={closeMenu} />}
-                      </>
-                    )}
-                  </>
-                )}
-              </div>
-            </FloatingMenu>
-          )}
-        </div>
+        {isMenuOpen && (
+          <FloatingMenu onClose={closeMenu}>
+            <div className="dropdown-content">
+              {userPermission && (
+                <>
+                  {isTrash ? (
+                    <>
+                      {isOwner && <Restore file={folder} onAction={closeMenu} />}
+                      {isOwner && <HardDelete file={folder} onAction={closeMenu} />}
+                    </>
+                  ) : (
+                    <>
+                      <Star file={folder} onAction={closeMenu} />
+                      <DownloadFolder folder={folder} onAction={closeMenu} />
+                      <MoveFile file={folder} onAction={closeMenu} />
+                      {isOwner && <SoftDelete file={folder} onAction={closeMenu} />}
+                      {isOwner && <Rename file={folder} onAction={closeMenu} />}
+                      {canWrite && <Share file={folder} onAction={closeMenu} />}
+                    </>
+                  )}
+                </>
+              )}
+            </div>
+          </FloatingMenu>
+        )}
       </div>
     </div>
-  );
-};
-
+  </div>
+);
+}
 export default FolderItem;

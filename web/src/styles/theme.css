@@ -64,6 +64,10 @@
     --text-main: #212529;
     --text-muted: #6c757d;
     --white: #ffffff;
+    /* --- New File Row & Design Variables --- */
+    --row-bg: #f7dadd;           
+    --row-hover: #fff0f3;        
+    --row-shadow: rgba(0, 0, 0, 0.08); 
     --card: #9cc59e;
 }
 
@@ -84,11 +88,14 @@
     --white: #ffffff; /* Usually stays white even in dark mode */
     --sidebar-gradient-end: #05070a;
     --primary: #1b4d36;
+    /* --- Dark Mode File Row Colors --- */
+    --row-bg: #1e161a;           
+    --row-hover: #2d2429;        
+    --row-shadow: rgba(0, 0, 0, 0.5);
     --card: #2d3b2e;
 }
 
-/* זה החלק הקריטי שחסר לך */
-/* הגדרה גלובלית לכל האתר */
+
 body, html, #root {
     background-color: var(--background) !important;
     color: var(--text-main) !important;
@@ -99,13 +106,11 @@ body, html, #root {
     transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-/* מוודא שגם ה-Container של האפליקציה נצבע */
 .app-container {
     background-color: var(--background);
     min-height: 100vh;
 }
 
-/* אם את רוצה שגם הקומפוננטות של ה-Bootstrap ישתנו */
 .navbar, .card, .auth-card {
     background-color: var(--surface) !important;
     color: var(--text-main) !important;
@@ -118,7 +123,6 @@ input, select, textarea {
     border: 1px solid var(--border) !important;
 }
 
-/* וידוא שכל הקישורים והכפתורים יורשים את הצבעים הנכונים */
 a {
     color: var(--primary);
 }
