@@ -46,6 +46,9 @@ const Login = ({ onLogin }) => {
 
                 
                 // Store the username and photo to personalize the UI later
+                if (data.firstName) {
+                    localStorage.setItem('firstName', data.firstName);
+                }
                 if (data.username) {
                     localStorage.setItem('username', data.username);
                 }
