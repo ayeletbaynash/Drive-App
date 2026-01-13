@@ -57,9 +57,9 @@ so welcome to our AweSoMe drive!
 Follow these steps to get the application up and running on your local machine:  
 **1. Run the Application**  
 The entire system is containerized using Docker. To build and start all services (Frontend, Node.js API, and C++ TCP Server), run the following command in your terminal:  
-docker-compose up --build -d  
+docker-compose up --build  
 **2. Access the App**  
-Once the containers are running, open your browser and navigate to: http://localhost:3001  
+Once the containers are running, open your browser and navigate to: http://localhost:8080  
 **3. Registration & Login**    
 You will be greeted by the Login page.    
 If you don't have an account yet, click the "Register here" link at the bottom of the page.  
