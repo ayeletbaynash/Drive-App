@@ -1,7 +1,6 @@
 # Drive-App
 Drive App is a comprehensive file management simulation. 
-The system allows users to register, upload, get, edit and delete files, manage permissions (read/write/owner), and search for files by name or content.
-It features a Node.js/Express REST API gateway that manages users, permissions, and file metadata, communicating with a robust C++ TCP Server for physical file storage and low-level operations.
+Awesome Drive is a user-friendly app for managing and storing your files. With this app, you can easily create or import files, organize them into folders, and manage different user permissions (Read, Write, or Owner). It also features a powerful search tool to find files by their name or content. The system works with a Node.js server that connects to a C++ TCP server, which handles the actual file storage safely.
 
 # API Commands  
 Since the application exposes a RESTful API, operations are performed via HTTP requests.  
