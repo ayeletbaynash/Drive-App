@@ -9,9 +9,10 @@ import Restore from '../operations/Restore'
 import HardDelete from '../operations/HardDelete'
 import DownloadFolder from '../operations/DownloadFolder'
 import MoveFile from '../operations/MoveFile'
-import { authorizedFetch } from '../../App';
+import { authorizedFetch } from '../../App'; 
+import '../../styles/operations.css';
 
-const FolderItem = ({ folder, isTrash }) => {
+const FolderItem = ({ folder, onOpen, isTrash, onSelectFile }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [userPermission, setUserPermission] = useState(null);
   const [isFetching, setIsFetching] = useState(false);
@@ -69,6 +70,17 @@ const FolderItem = ({ folder, isTrash }) => {
           {isMenuOpen && (
             <FloatingMenu onClose={closeMenu}>
               <div className="dropdown-content">
+                <button 
+                  className="operation-button" 
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onSelectFile(folder); 
+                    closeMenu();        
+                  }}
+                >
+                  <i className="bi bi-info-circle"></i>
+                  <span>Details</span>
+                </button>
                 {userPermission && (
                   <>
                     {isTrash ? (

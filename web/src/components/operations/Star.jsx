@@ -1,4 +1,5 @@
 import { useFileActions } from '../FileContext';
+import '../../styles/operations.css';
 
 const Star = ({ file, onAction }) => {
     const { toggleStarFile, starredFiles } = useFileActions();
@@ -15,8 +16,18 @@ const Star = ({ file, onAction }) => {
     }
 
     return (
-        <button onClick={handleClick}>
-            {isStarred ? 'Remove from Starred' : 'Add to Starred'}
+        <button className="operation-button" onClick={handleClick}>
+            {isStarred ? (
+                <>
+                    <i className="bi bi-star-fill" style={{ color: '#ffc107' }}></i>
+                    <span>Remove Star</span>
+                </>
+            ) : (
+                <>
+                    <i className="bi bi-star"></i>
+                    <span>Add to Starred</span>
+                </>
+            )}
         </button>
     );
 };

@@ -1,8 +1,10 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import { authorizedFetch } from '../../App';
+import '../../styles/operations.css';
 
 const EditImage = ({ file, onAction }) => {
     const fileInputRef = useRef(null);
+    const [isUploading, setIsUploading] = useState(false);
 
     const handleFileChange = async (e) => {
         const selectedFile = e.target.files[0];
@@ -39,10 +41,25 @@ const EditImage = ({ file, onAction }) => {
                 ref={fileInputRef} 
                 style={{ display: 'none' }} 
                 onChange={handleFileChange}
-                accept=".jpg, .jpeg, .png" 
+                accept=".jpg, .jpeg, .png, .gif, .webp" 
             />
-            <button onClick={() => fileInputRef.current.click()}>
-                Edit Image
+            
+            <button 
+                className="operation-button" 
+                onClick={() => fileInputRef.current.click()}
+                disabled={isUploading}
+            >
+                {isUploading ? (
+                    <>
+                        <i className="bi bi-arrow-repeat spin-icon"></i>
+                        <span>Uploading...</span>
+                    </>
+                ) : (
+                    <>
+                        <i className="bi bi-image"></i>
+                        <span>Replace Image</span>
+                    </>
+                )}
             </button>
         </div>
     );

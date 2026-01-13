@@ -12,6 +12,7 @@ import DownloadFile from '../operations/DownloadFile'
 import MoveFile from '../operations/MoveFile'
 import CopyFile from '../operations/CopyFile'
 import { authorizedFetch } from '../../App';
+import { useFileActions } from '../FileContext';
 
 const FileItem = ({ file, onOpen, isTrash, onSelectFile }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -69,16 +70,36 @@ const FileItem = ({ file, onOpen, isTrash, onSelectFile }) => {
     }
   };
 
+  const { starredFiles } = useFileActions();
+  const isStarred = starredFiles.some(f => f.id === file.id);
+  
   return (
     <div onDoubleClick={handleDoubleClick} className="file-item-container">
       <div className="file-header">
+        <div className="file-info-main">
+          {/* The star display next to the name - only appears if the file is marked */}
+          {isStarred && (
+            <i className="bi bi-star-fill" style={{ color: '#ffc107', marginRight: '8px' }}></i>
+          )}
         <span className="file-name">{file.name}</span>
+        </div>
         <div className="menu-wrapper">
           <button onClick={handleMenuClick}>⋮</button>
 
           {isMenuOpen && (
             <FloatingMenu onClose={closeMenu}>
               <div className="dropdown-content">
+                <button 
+                    className="operation-button" 
+                    onClick={(e) => {
+                        e.stopPropagation(); 
+                        onSelectFile(file);  
+                        closeMenu();         
+                    }}
+                >
+                    <i className="bi bi-info-circle"></i>
+                    <span>Details</span>
+                </button>
                 {isTrash ? (
                   <>
                     {/* Only the owner, only in the trash */}

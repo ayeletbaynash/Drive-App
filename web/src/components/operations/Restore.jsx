@@ -1,5 +1,6 @@
+import React from 'react';
 import { useFileActions } from '../FileContext';
-
+import '../../styles/operations.css';
 
 const Restore = ({file, onAction}) =>{
     const { restoreFromFileDeletionList} = useFileActions()
@@ -12,10 +13,11 @@ const Restore = ({file, onAction}) =>{
         }
     }
 
-    return(
-      <div>
-        <button onClick={handleClick}>Restore</button>
-      </div>  
+    return (
+        <button className="operation-button restore-success" onClick={handleClick}>
+            <i className="bi bi-arrow-counterclockwise"></i>
+            <span>Restore</span>
+        </button>
     )
 }
 export default Restore
