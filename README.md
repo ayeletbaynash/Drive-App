@@ -1,6 +1,7 @@
 # Drive-App
 Drive App is a comprehensive file management simulation. 
 Awesome Drive is a user-friendly app for managing and storing your files. With this app, you can easily create or import files, organize them into folders, and manage different user permissions (Read, Write, or Owner). It also features a powerful search tool to find files by their name or content. The system works with a Node.js server that connects to a C++ TCP server, which handles the actual file storage safely.    
+so welcome to our AweSoMe drive!
 <img width="1282" height="1008" alt="image" src="https://github.com/user-attachments/assets/5bd43656-0f25-4ca4-b85a-68e3354657bc" />
 
  # File & Folder Operations: 
