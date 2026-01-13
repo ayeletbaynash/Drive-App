@@ -1,31 +1,54 @@
 # Drive-App
 Drive App is a comprehensive file management simulation. 
-Awesome Drive is a user-friendly app for managing and storing your files. With this app, you can easily create or import files, organize them into folders, and manage different user permissions (Read, Write, or Owner). It also features a powerful search tool to find files by their name or content. The system works with a Node.js server that connects to a C++ TCP server, which handles the actual file storage safely.
+Awesome Drive is a user-friendly app for managing and storing your files. With this app, you can easily create or import files, organize them into folders, and manage different user permissions (Read, Write, or Owner). It also features a powerful search tool to find files by their name or content. The system works with a Node.js server that connects to a C++ TCP server, which handles the actual file storage safely.    
+ # File & Folder Operations: 
+    
+**New Folder:** Create a new folder with a custom name to organize your files.
 
-# API Commands  
-Since the application exposes a RESTful API, operations are performed via HTTP requests.  
+**New Text File:** Create a new text file by choosing a name and writing its content.
 
-**Register User:** POST /api/users - Creates a new user in the system.  
-{Requires: username, password, emailAddress, image}  
-**Login:** POST /api/tokens - Authenticates a user and returns their ID.  
-{Requires: username, password}   
-**Get User:** GET /api/users/:id - Retrieves public profile information for a specific user.  
-**Get Root Files:** GET /api/files - Retrieves files and folders in the user's root directory.    
-**Post File:**	POST	/api/files	- Creates a new file with the given name and content.  
-{Requires in body: name, type (folder/file), parent_id (if exist) content (optional)}  
-**Get File:**	GET	/api/files/:id	- Retrieves the content of the file specified by its numeric ID.  
-**Update File:**  PATCH  /api/files/:id - Updates a file's name or content.  
-{Requires in body: content/name/parentID (depending on what type of change you want to make}  
-**Search:**	GET	/api/search/:query	- Searches all files for the given text (in name or content) and returns matching files.  
-**Delete:**	DELETE	/api/files/:id	- Deletes the file and its content recursively by its numeric ID.   
-**Get Permissions:**  GET /api/files/:id/permissions  - Lists all users who have permissions for a specific file.   
-**Post Permission:**  POST /api/files/:id/permissions  - Grants 'read' or 'write' permission to another user.  
-{Requires in body: userID, permission (read, write, owner)}  
-**Edit Permission:**  PATCH /api/files/:id/permissions/:pId  - Updates an existing permission type.  
-{Requires in body: permission (read, write, owner)}  
-**Remove Permission:**  DELETE /api/files/:id/permissions/:pId  - Revokes a specific permission from a user.  
-- Note: The user-id header must be included in every request, regardless of whether a body is present, excluding User Registration & Authentication requests.
+**Upload File:** Upload PDF, text, or image files from your computer directly to the app.
 
+**Search:** Search for specific terms within file names or even inside the file content.
+
+**View Content:** Double-click any item to view its content (view text for files, or see all items inside a folder).
+
+**Add to Favorites (Star):** Mark files as favorites to easily find them in the "Starred" tab.
+
+**Download:** Download a single file or an entire folder (including all its content) to your computer.
+
+**Rename:** Change the name of any file or folder at any time.
+
+**Remove:** Move files or folders to the "Trash." They can be restored later or deleted permanently.
+
+**Permanent Delete:** Fully remove a file or folder from the system (available only for items already in the Trash).
+
+**Restore:** Move an item out of the Trash and back to its original location.
+
+**Edit Content:** Update the text inside an existing text file.
+
+**Edit Image:** Replace an existing image with a new one from your computer.
+
+**File Details:** View metadata such as name, ID, creation time, last update, owner, and permissions.
+
+**Make a Copy:** Create an exact copy of a file with the same content (labeled as "Copy").
+
+**Share:** Owners can manage permissions and share access with other users.
+
+**Move To**: Move a file or folder into a different folder by selecting from a list of available locations.
+ # App Pages:
+
+**Home:** Displays all items you have access to, including your own files and those shared with you.
+
+**My Drive:** Displays only the files and folders that you own.
+
+**Shared with Me:** Displays files and folders that others have given you permission to access.
+
+**Recent:** Shows files sorted by their last update time, with the most recent ones at the top.
+
+**Starred:** A quick view of all items you have marked with a star.
+
+**Trash:** Displays all items that have been deleted but not yet permanently removed
 # How to Run the Application:  
 
 **1st terminal - server:**  
