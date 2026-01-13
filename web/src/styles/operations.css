@@ -1,0 +1,436 @@
+/* src/styles/operations.css */
+
+/* The floating menu container */
+.dropdown-content, .floating-new-menu {
+    display: flex;
+    flex-direction: column;
+    padding: var(--spacing-sm);
+    background-color: var(--background);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow-lg);
+    shadow: var(--shadow-lg);
+    min-width: 180px;
+    overflow: hidden;
+    margin: var(--spacing-sm);
+}
+
+/* Design an operation button within a menu */
+.operation-button {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    width: 100%;
+    padding: var(--spacing-md) var(--spacing-lg);
+    background: transparent;
+    border: none;
+    color: var(--text-main);
+    font-size: var(--size-sm);
+    font-weight: var(--weight-medium);
+    text-align: left;
+    transition: background var(--transition-fast);
+    cursor: pointer;
+    border-radius: var(--radius-md);
+    margin: 2px 0;
+}
+
+.operation-button:hover {
+    background-color: rgba(var(--primary-rgb), 0.1);
+    color: var(--primary);
+}
+
+.operation-button i {
+    font-size: var(--size-md);
+    width: 20px; /* Fixed width for icons so that the text aligns */
+    text-align: center;
+    color: var(--text-muted);
+}
+
+.operation-button:hover i {
+    color: var(--primary);
+}
+
+/* Special buttons (like delete) */
+.operation-button.danger:hover {
+    background-color: rgba(220, 53, 69, 0.1);
+    color: var(--error);
+}
+
+.operation-button.danger:hover i {
+    color: var(--error);
+}
+
+.modal-header-danger {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    color: var(--primary);
+}
+
+.modal-header-danger i {
+    font-size: var(--size-xl);
+}
+
+/* רקע כהה שקוף מאחורי המודל */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+/* קופסת המודל עצמה */
+.modal-content {
+    background-color: var(--card) !important ;
+    padding: var(--spacing-xl);
+    border-radius: var(--radius-lg) !important; 
+    box-shadow: var(--shadow-lg);
+    width: 90%;
+    max-width: 400px;
+    border: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-lg);
+    z-index: 1001;
+}
+
+.modal-content h3 {
+    margin: 0;
+    font-size: var(--size-lg);
+    color: var(--text-main);
+}
+
+/* שורת הכפתורים למטה */
+.modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: var(--spacing-md);
+    margin-top: var(--spacing-md);
+}
+
+/* כפתור אישור/שמירה */
+.btn-primary {
+    background-color: var(--primary);
+    color: var(--white);
+    border: none;
+    padding: var(--spacing-sm) var(--spacing-xl);
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    font-weight: var(--weight-medium);
+}
+
+/* כפתור ביטול */
+.btn-secondary {
+    background-color: transparent;
+    color: var(--white) !important;
+    border: 1px solid var(--border);
+    padding: var(--spacing-sm) var(--spacing-xl);
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    font-weight: var(--weight-medium);
+    transition: opacity var(--transition-fast);
+}
+
+.btn-primary:hover { background-color: var(--primary-hover); }
+.btn-secondary:hover { background-color: var(--secondary); }
+
+.input-group {
+    display: flex;
+    align-items: center;
+    background-color: var(--border);
+    padding: var(--spacing-md);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border);
+    margin-top: var(--spacing-sm);
+}
+
+.input-group input {
+    background: transparent !important;
+    border: none !important;
+    color: var(--text-main);
+    flex: 1;
+    outline: none;
+    font-size: var(--size-md);
+}
+
+.modal-textarea {
+    width: 100%;
+    background-color: var(--background);
+    color: var(--text-main);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: var(--spacing-md);
+    font-family: var(--font-family);
+    font-size: var(--size-sm);
+    resize: vertical; 
+    outline: none;
+    transition: border-color var(--transition-fast);
+}
+
+.modal-textarea:focus {
+    border-color: var(--primary);
+    border-width: var(--border-width-focus);
+}
+
+star-icon-list {
+    margin-right: 8px; 
+    font-size: 1.1rem;
+    color: #ccc; 
+    transition: color 0.2s ease;
+}
+
+.star-icon-list.is-starred {
+    color: #ffc107; 
+}
+
+.move-modal {
+    max-width: 450px;
+}
+
+.folder-selection-list {
+    max-height: 250px; 
+    overflow-y: auto;  
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    background-color: var(--background);
+    margin: var(--spacing-md) 0;
+}
+
+.folder-option {
+    display: flex;
+    align-items: center;
+    padding: var(--spacing-md);
+    cursor: pointer;
+    transition: background 0.2s;
+    border-bottom: 1px solid var(--border);
+    gap: var(--spacing-sm);
+}
+
+.folder-option:last-child {
+    border-bottom: none;
+}
+
+.folder-option:hover {
+    background-color: rgba(var(--primary-rgb), 0.05);
+}
+
+.folder-option.selected {
+    background-color: rgba(var(--primary-rgb), 0.15);
+    color: var(--primary);
+    font-weight: bold;
+}
+
+.folder-option i {
+    font-size: 1.2rem;
+}
+
+.select-check {
+    margin-left: auto;
+    color: var(--primary);
+}
+
+.folder-selection-list::-webkit-scrollbar {
+    width: 6px;
+}
+.folder-selection-list::-webkit-scrollbar-thumb {
+    background: var(--border);
+    border-radius: 10px;
+}
+
+.share-modal {
+    max-width: 480px;
+}
+
+.share-section {
+    margin-bottom: var(--spacing-lg);
+}
+
+.section-title {
+    font-size: var(--size-sm);
+    font-weight: bold;
+    color: var(--text-muted);
+    margin-bottom: var(--spacing-sm);
+}
+
+.share-input-group {
+    display: flex;
+    gap: var(--spacing-sm);
+}
+
+.permissions-list {
+    max-height: 200px;
+    overflow-y: auto;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    background: var(--background);
+}
+
+.permission-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--spacing-sm) var(--spacing-md);
+    border-bottom: 1px solid var(--border);
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+}
+
+.user-avatar {
+    width: 28px;
+    height: 28px;
+    background-color: var(--primary);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+    font-weight: bold;
+}
+
+.user-actions {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+}
+
+.role-select, .role-select-inline {
+    appearance: none; 
+    background-color: var(--background);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 6px 30px 6px 12px; 
+    font-size: var(--size-sm);
+    color: var(--text-main);
+    cursor: pointer;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%23666' class='bi bi-chevron-down' viewBox='0 0 16 16'%3E%3Cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    background-size: 12px;
+    transition: all var(--transition-fast);
+}
+
+.role-select:hover, .role-select-inline:hover {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 2px rgba(var(--primary-rgb), 0.1);
+}
+
+.role-select-inline {
+    border-color: transparent;
+    background-color: transparent;
+    color: var(--primary);
+    font-weight: 500;
+}
+
+.role-select-inline:hover {
+    background-color: var(--background);
+    border-color: var(--border);
+}
+
+select option {
+    background-color: var(--surface);
+    color: var(--text-main);
+    padding: 10px;
+}
+
+.remove-user-btn {
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    font-size: 1.2rem;
+    cursor: pointer;
+}
+
+.remove-user-btn:hover {
+    color: var(--error);
+}
+
+.btn-primary-sm {
+    background-color: var(--primary);
+    color: white;
+    border: none;
+    padding: 0 var(--spacing-md);
+    border-radius: var(--radius-md);
+    cursor: pointer;
+}
+
+.edit-content-modal {
+    max-width: 600px;
+    width: 95%;
+}
+
+.edit-textarea {
+    width: 100%;
+    min-height: 300px;
+    padding: var(--spacing-md);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    background-color: var(--background);
+    color: var(--text-main);
+    font-family: 'Courier New', Courier, monospace; 
+    font-size: 14px;
+    line-height: 1.5;
+    resize: vertical; 
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.edit-textarea:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 2px rgba(var(--primary-rgb), 0.1);
+}
+
+.loading-spinner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: var(--spacing-xl);
+    gap: var(--spacing-md);
+    color: var(--text-muted);
+}
+
+.operation-button.delete-danger:hover {
+    background-color: rgba(220, 53, 69, 0.1);
+    color: #dc3545;
+}
+
+.danger-modal {
+    border-top: 4px solid #dc3545; 
+}
+
+.modal-body-text {
+    margin: var(--spacing-md) 0;
+    line-height: 1.6;
+}
+
+.danger-subtext {
+    color: #dc3545;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.btn-danger {
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    padding: var(--spacing-sm) var(--spacing-lg);
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    font-weight: bold;
+    transition: background 0.2s;
+}
+
+.btn-danger:hover {
+    background-color: #a71d2a;
+}

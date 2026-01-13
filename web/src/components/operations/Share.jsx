@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { authorizedFetch } from '../../App';
+import '../../styles/operations.css';
 
 const Share = ({ file, onAction }) => {
     const [isOpen, setIsOpen] = useState(false)
@@ -81,22 +82,51 @@ const Share = ({ file, onAction }) => {
     };
 
     return (
-        <div>
-            <button onClick={(e) => { e.stopPropagation(); setIsOpen(true)}}>Share</button>
+        <>
+            <button className="operation-button" onClick={(e) => { e.stopPropagation(); setIsOpen(true)}}>
+                <i className="bi bi-person-plus"></i>
+                <span>Share</span>
+            </button>
 
             {isOpen && (
-                <div onClick={(e) => e.stopPropagation()}>
-                    <div>
-                        <h2>Share: {file.name}</h2>
+                <div className="modal-overlay" onClick={() => setIsOpen(false)}>
+                    <div className="modal-content share-modal" onClick={(e) => e.stopPropagation()}>
+                        <div className="modal-header-confirm">
+                            <h3>Share "{file.name}"</h3>
+                        </div>
 
-                        <div>
-                            <h4>Current Access:</h4>
-                            {isLoading ? <p>Loading...</p> : (
-                                permissions.map(p => (
-                                    <div key={p.pId}>
-                                        <span>{p.username} ({p.permission})</span>
-                                        <div>
+                        {/* Adding a new user */}
+                        <div className="share-section">
+                            <p className="section-title">Add people</p>
+                            <div className="share-input-group">
+                                <input 
+                                    type="text" 
+                                    placeholder="Enter username" 
+                                    value={newUsername}
+                                    onChange={(e) => setNewUsername(e.target.value)}
+                                />
+                                <select className="role-select" value={newRole} onChange={(e) => setNewRole(e.target.value)}>
+                                    <option value="read">Viewer</option>
+                                    <option value="write">Editor</option>
+                                    <option value="owner">Owner</option>
+                                </select>
+                                <button className="btn-primary-sm" onClick={handleAddPermission}>Invite</button>
+                            </div>
+                        </div>
+
+                        {/* Managing existing permissions */}
+                        <div className="share-section">
+                            <p className="section-title">People with access</p>
+                            <div className="permissions-list">
+                                {isLoading ? <p>Loading...</p> : permissions.map(p => (
+                                    <div key={p.pId} className="permission-item">
+                                        <div className="user-info">
+                                            <div className="user-avatar">{p.username.charAt(0).toUpperCase()}</div>
+                                            <span>{p.username}</span>
+                                        </div>
+                                        <div className="user-actions">
                                             <select 
+                                                className="role-select-inline"
                                                 value={p.permission} 
                                                 onChange={(e) => handleUpdateRole(p.pId, e.target.value)}
                                             >
@@ -104,36 +134,22 @@ const Share = ({ file, onAction }) => {
                                                 <option value="write">Editor</option>
                                                 <option value="owner">Owner</option>
                                             </select>
-                                            <button onClick={() => handleDelete(p.pId)}>Remove</button>
+                                            <button className="remove-user-btn" onClick={() => handleDelete(p.pId)}>
+                                                <i className="bi bi-x"></i>
+                                            </button>
                                         </div>
                                     </div>
-                                ))
-                            )}
+                                ))}
+                            </div>
                         </div>
 
-                        <hr />
-
-                        <div>
-                            <h4>Add New User:</h4>
-                            <input 
-                                type="text" 
-                                placeholder="Username" 
-                                value={newUsername}
-                                onChange={(e) => setNewUsername(e.target.value)}
-                            />
-                            <select value={newRole} onChange={(e) => setNewRole(e.target.value)}>
-                                <option value="read">Viewer</option>
-                                <option value="write">Editor</option>
-                                <option value="owner">Owner</option>
-                            </select>
-                            <button onClick={handleAddPermission}>Invite</button>
+                        <div className="modal-actions">
+                            <button className="btn-secondary" onClick={() => {setIsOpen(false); if (onAction) onAction()}}>Done</button>
                         </div>
-
-                        <button onClick={() => {setIsOpen(false); if (onAction) onAction()}}>Close</button>
                     </div>
                 </div>
             )}
-        </div>
+        </>
     );
 };
 

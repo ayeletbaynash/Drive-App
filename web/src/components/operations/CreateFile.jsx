@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { authorizedFetch } from '../../App';
 import { useParams } from 'react-router-dom';
+import '../../styles/operations.css';
 
 const CreateFile = ({ onSuccess }) => {
     const [isOpen, setIsOpen] = useState(false);
@@ -45,24 +46,53 @@ const CreateFile = ({ onSuccess }) => {
         }
     };
 
-    return (
-        <div>
-            <button onClick={() => setIsOpen(true)}>New File</button>
+    const closeAndReset = () => {
+        setIsOpen(false);
+        setName('');
+        setContent('');
+    };
 
+    return (
+        <>
+            {/* The button in the New menu */}
+            <button className="operation-button" onClick={() => setIsOpen(true)}>
+                <i className="bi bi-file-earmark-plus"></i>
+                <span>New Text File</span>
+            </button>
+
+            {/* The designed model */}
             {isOpen && (
-                <div>
-                    <div>
-                        Name: <input value={name} onChange={(e) => setName(e.target.value)} placeholder="Name" />
-                        <span >.txt</span>
+                <div className="modal-overlay" onClick={closeAndReset}>
+                    <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+                        <h3>Create New File</h3>
+                        
+                        <div className="input-group">
+                            <input 
+                                type="text" 
+                                value={name} 
+                                onChange={(e) => setName(e.target.value)} 
+                                placeholder="File name" 
+                                autoFocus 
+                            />
+                            <span style={{color: 'var(--text-muted)', fontWeight: 'bold'}}>.txt</span>
+                        </div>
+
+                        <textarea 
+                            className="modal-textarea"
+                            value={content} 
+                            onChange={(e) => setContent(e.target.value)} 
+                            placeholder="File content (optional)..."
+                            rows="5"
+                        />
+
+                        <div className="modal-actions">
+                            <button className="btn-secondary" onClick={closeAndReset}>Cancel</button>
+                            <button className="btn-primary" onClick={handleCreate}>Create</button>
+                        </div>
                     </div>
-                    <div>
-                        Content: <textarea value={content} onChange={(e) => setContent(e.target.value)} placeholder="Content" />
-                    </div>
-                    <button onClick={handleCreate}>OK</button>
-                    <button onClick={() => { setIsOpen(false); setName(''); setContent(''); }}>Cancel</button>
                 </div>
             )}
-        </div>
+        </>
     );
 };
 

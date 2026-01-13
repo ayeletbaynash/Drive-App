@@ -3,10 +3,10 @@ const userModel = require('../models/users'); // import the model
 // Registration - POST /api/users
 const registerUser = (req, res) => {
     // Extract the data sent in the request body
-    const { username, password, emailAddress, image } = req.body;
+    const { firstName, username, password, emailAddress, image } = req.body;
 
     // If one of them is wrong or missing return error
-    if (!username || !password || !emailAddress || !image) { 
+    if (!username || !password || !emailAddress || !image || !firstName) { 
         return res.status(400).json({ error: "All fields are required" });
     }
 
@@ -45,7 +45,7 @@ const registerUser = (req, res) => {
     }
 
     // Calling a function in the Model to register the user in the system and receive the created object.
-    const newUser = userModel.createUser(username, password, emailAddress, image);
+    const newUser = userModel.createUser(firstName, username, password, emailAddress, image);
     // Return the users id
     res.status(201).json({ id: newUser.id });
 };
@@ -58,6 +58,7 @@ const getUserProfile = (req, res) => {
     if (user) {
         // If user exists return all details
         res.status(200).json({
+            firstName: user.firstName,
             username: user.username,
             emailAddress: user.emailAddress,
             image: user.image,

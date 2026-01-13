@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { authorizedFetch } from '../../App';
 import { useParams } from 'react-router-dom';
+import '../../styles/operations.css';
 
 const CreateFolder = ({ onSuccess }) => {
     const [isOpen, setIsOpen] = useState(false);
@@ -42,18 +43,42 @@ const CreateFolder = ({ onSuccess }) => {
     };
 
     return (
-        <div>
-            <button onClick={() => setIsOpen(true)}>New Folder</button>
+        <>
+            {/* The button in the menu */}
+            <button className="operation-button" onClick={() => setIsOpen(true)}>
+                <i className="bi bi-folder-plus"></i>
+                <span>New Folder</span>
+            </button>
+
+            {/* The designed model */}
             {isOpen && (
-                <div>
-                    <div>
-                        Name: <input value={name} onChange={(e) => setName(e.target.value)} placeholder="Name" />
+                <div className="modal-overlay" onClick={() => { setIsOpen(false); setName(''); }}>
+                    <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+                        <h3>New Folder</h3>
+                        
+                        <div className="input-group">
+                            <input 
+                                type="text" 
+                                value={name} 
+                                onChange={(e) => setName(e.target.value)} 
+                                placeholder="Folder Name" 
+                                autoFocus 
+                                onKeyDown={(e) => e.key === 'Enter' && handleCreate()}
+                            />
+                        </div>
+
+                        <div className="modal-actions">
+                            <button className="btn-secondary" onClick={() => { setIsOpen(false); setName(''); }}>
+                                Cancel
+                            </button>
+                            <button className="btn-primary" onClick={handleCreate}>
+                                Create
+                            </button>
+                        </div>
                     </div>
-                    <button onClick={handleCreate}>OK</button>
-                    <button onClick={() => { setIsOpen(false); setName(''); }}>Cancel</button>
                 </div>
             )}
-        </div>
+        </>
     );
 };
 

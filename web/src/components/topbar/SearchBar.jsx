@@ -2,6 +2,8 @@ import { useState, useEffect, useRef } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { authorizedFetch } from '../../App';
 import { useFileActions } from '../FileContext';
+import 'bootstrap-icons/font/bootstrap-icons.css'; // ייבוא האייקונים
+import '../../styles/layout.css'; // ייבוא העיצוב
 
 function SearchBar({ onSearch }) {
   const [text, setText] = useState('');
@@ -12,20 +14,18 @@ function SearchBar({ onSearch }) {
   const [searchParams] = useSearchParams();
   const { deletedFiles } = useFileActions();
 
-  // דגל למניעת לולאות בעת לחיצה ידנית
+  // Flag to prevent redundant search triggers when selecting a suggestion manually
   const isSelectingSuggestion = useRef(false);
 
+  // Cache to store the 'deleted' status of parent folders to avoid repetitive API calls
   const parentStatusCache = useRef(new Map());
 
-
-    /* =====================================================
-     🆕 HELPER: check if file is under a deleted folder
-     ===================================================== */
+    // Helper: Recursively checks if a file is located inside a folder that is in the trash.
     const isUnderDeletedFolder = async (file) => {
     let parentId = file.parent_id;
 
     while (parentId !== null) {
-      // cache hit
+      // Check cache first to speed up the process
       if (parentStatusCache.current.has(parentId)) {
         return parentStatusCache.current.get(parentId);
       }
@@ -44,13 +44,13 @@ function SearchBar({ onSearch }) {
 
         const parent = await response.json();
 
-        // אב נמחק?
+        // If any ancestor folder is in the deletedFiles list, the file is considered deleted
         if (deletedFiles.some(df => df.id === parent.id)) {
           parentStatusCache.current.set(parentId, true);
           return true;
         }
 
-        // ממשיכים למעלה
+        // Move up to the next parent level
         parentId = parent.parent_id;
       } catch (e) {
         parentStatusCache.current.set(parentId, false);
@@ -61,14 +61,12 @@ function SearchBar({ onSearch }) {
     return false;
   };
 
-  /* ===============================
-     Fetch search results (With ABORT Signal)
-     =============================== */
+  // Filters out deleted files and files within deleted folders.
   const fetchFromServer = async (query, signal) => {
     if (!query || !query.trim()) return [];
 
     try {
-      // אנחנו מעבירים את ה-signal כדי שנוכל לבטל בקשות ישנות אם המשתמש מקליד מהר
+      // Pass the AbortController signal to cancel old requests if the user keeps typing
       const response = await authorizedFetch(
         `http://localhost:8080/api/search/${encodeURIComponent(query)}`,
         { method: 'GET', signal }
@@ -83,6 +81,7 @@ function SearchBar({ onSearch }) {
       for (const file of data) {
         if (deletedFiles.some(df => df.id === file.id)) continue;
 
+        // Specific filtering for images and PDFs
         const fileName = (file.name || "").toLowerCase();
             const isImageOrpdf = fileName.endsWith('.png') || 
                             fileName.endsWith('.jpg') || 
@@ -94,6 +93,7 @@ function SearchBar({ onSearch }) {
                 }
             }
              
+        // Check recursive folder deletion status    
         const underDeleted = await isUnderDeletedFolder(file);
         if (!underDeleted) {
           filtered.push(file);
@@ -111,50 +111,41 @@ function SearchBar({ onSearch }) {
     }
   };
 
-  /* ===============================
-     Suggestions (Debounced + Abort)
-     =============================== */
+  // Provides real-time suggestions as the user types, with a 400ms delay.
   useEffect(() => {
-    // יצירת בקר לביטול בקשות
     const controller = new AbortController();
-    // אם התיבה ריקה - מנקים הצעות
+
     if (!text.trim()) {
       setSuggestions([]);
       return;
     }
 
     const timeout = setTimeout(async () => {
-      // שליחת בקשה לשרת עם יכולת ביטול
       const results = await fetchFromServer(text, controller.signal);
       
-      // אם התוצאה היא null זה אומר שהבקשה בוטלה -> לא עושים כלום
       if (results !== null) {
-        setSuggestions(results.slice(0, 5));
+        setSuggestions(results.slice(0, 5)); // Limit to top 5 suggestions
         setShowSuggestions(true);
       }
     }, 400);
 
-    // בפעם הבאה שהמשתמש מקליד, הפונקציה הזו רצה ומבטלת את הקודמת!
     return () => {
       clearTimeout(timeout);
       controller.abort(); 
     };
   }, [text, deletedFiles]);
 
-  /* ===============================
-     Sync with URL (Refresh / Back button)
-     =============================== */
+  // Keeps the search bar text in sync with the 'q' parameter in the URL (for back/forward navigation).
   useEffect(() => {
     const performSearchFromUrl = () => {
     const q = searchParams.get('q');
-    // איפוס אם ה-URL ריק
+
     if (!q) {
         setText('');
         onSearch([]); 
         return;
     }
 
-    // מניעת ריצה כפולה אם אנחנו אלו ששינינו את ה-URL הרגע
     if (isSelectingSuggestion.current) {
       setText(q);
       fetchFromServer(q).then(res => res && onSearch(res));
@@ -172,69 +163,70 @@ function SearchBar({ onSearch }) {
     return () => window.removeEventListener('somthingChange', handleRefresh);
   }, [searchParams]);
 
-  /* ===============================
-     Submit (Enter)
-     =============================== */
+  // Handle Enter key or search button click
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!text.trim()) return;
 
     setShowSuggestions(false);
     
-    // מביאים את כל התוצאות
     const results = await fetchFromServer(text);
     if (results) onSearch(results);
 
     navigate(`/home/search?q=${encodeURIComponent(text)}`);
   };
 
-  /* ===============================
-     Click on suggestion
-     =============================== */
+  // * Handle selecting an item from the suggestion dropdown
   const handleSuggestionClick = (file) => {
-    // מסמנים שבחרנו ידנית כדי שה-URL Effect לא ירוץ שוב
     isSelectingSuggestion.current = true;
     
     setText(file.name);
     setShowSuggestions(false);
 
-    // מציגים מיד את הקובץ שבחרנו (חוסך קריאה לשרת)
     onSearch([file]);
 
     navigate(`/home/search?q=${encodeURIComponent(file.name)}`);
   };
 
   return (
-    <div style={{ position: 'relative' }}>
-      <form onSubmit={handleSubmit} className="d-flex">
+    <div style={{ position: 'relative', width: '100%' }}>
+      <form onSubmit={handleSubmit} className="search-container">
+        <button className="search-icon-btn" type="submit">
+            <i className="bi bi-search"></i>
+        </button>
         <input
-          className="form-control me-2"
+          className="search-input"
           type="text"
           placeholder="Search in drive"
           value={text}
           onChange={(e) => setText(e.target.value)}
           onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
         />
-        <button className="btn btn-outline-primary" type="submit">🔍</button>
       </form>
 
       {showSuggestions && suggestions.length > 0 && (
-        <div style={{
-            position: 'absolute', top: '100%', left: 0, right: 0,
-            background: 'var(--surface)', border: '1px solid var(--border)', zIndex: 1000,
-        }}>
+        <div className="suggestions-dropdown">
           {suggestions.map((file) => {
-            let icon = '📄'; // ברירת מחדל
-            if (file.type === 'folder') icon = '📁';
-            else if (file.name.endsWith('.png') || file.name.endsWith('.jpg') || file.name.endsWith('.jpeg')) icon = '🖼️';
-            else if (file.name.endsWith('.pdf')) icon = '📕';
+            let iconClass = 'bi-file-earmark-text';
+            let iconColor = 'var(--text-muted)';
+
+            if (file.type === 'folder') {
+                iconClass = 'bi-folder-fill';
+                iconColor = '#ffc107'; 
+            } else if (file.name.endsWith('.png') || file.name.endsWith('.jpg') || file.name.endsWith('.jpeg')) {
+                iconClass = 'bi-image';
+                iconColor = 'var(--primary)';
+            } else if (file.name.endsWith('.pdf')) {
+                iconClass = 'bi-file-earmark-pdf-fill';
+                iconColor = '#dc3545'; 
+            }
             return(
             <div
               key={file.id}
               onMouseDown={() => handleSuggestionClick(file)}
-              style={{ padding: '10px', cursor: 'pointer', display: 'flex', gap: '10px' }}
+              className="suggestion-item"
             >
-              <span>{icon}</span>
+              <i className={`bi ${iconClass}`} style={{ color: iconColor, fontSize: '1.2rem' }}></i>
               <span>{file.name}</span>
             </div>
             );

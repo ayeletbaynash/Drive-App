@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { authorizedFetch } from '../../App';
 import { Spinner } from 'react-bootstrap';
+import '../../styles/operations.css';
 
 const CopyFile = ({ file, onAction }) => {
     const [isCopying, setIsCopying] = useState(false);
@@ -41,7 +42,7 @@ const CopyFile = ({ file, onAction }) => {
             });
 
             if (response.ok) {
-                alert('File copied successfully!');
+                //alert('File copied successfully!');
                 if (onAction) onAction(); // close menu
                 //Refresh the list to see the new copy
                 window.dispatchEvent(new Event('somthingChange'));
@@ -57,8 +58,22 @@ const CopyFile = ({ file, onAction }) => {
     };
 
     return (
-        <button onClick={handleCopy} disabled={isCopying} className="menu-item-btn">
-            {isCopying ? <Spinner animation="border" size="sm" /> : "Make a Copy"}
+        <button 
+            onClick={handleCopy} 
+            disabled={isCopying} 
+            className="operation-button"
+        >
+            {isCopying ? (
+                <>
+                    <i className="bi bi-arrow-repeat spin-icon"></i>
+                    <span>Copying...</span>
+                </>
+            ) : (
+                <>
+                    <i className="bi bi-files"></i>
+                    <span>Make a Copy</span>
+                </>
+            )}
         </button>
     );
 };

@@ -13,12 +13,15 @@ import MoveFile from '../operations/MoveFile'
 import CopyFile from '../operations/CopyFile'
 import { authorizedFetch } from '../../App'
 import '../../styles/FileItem.css';
+import { authorizedFetch } from '../../App';
+import { useFileActions } from '../FileContext';
 
 const FileItem = ({ file, onOpen, isTrash, onSelectFile }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [userPermission, setUserPermission] = useState(null);
   const [userName, setUserName] = useState('Loading...');
   const [isFetching, setIsFetching] = useState(false);
+  
 
   const fetchPermissions = async () => {
     try {
@@ -75,7 +78,8 @@ const FileItem = ({ file, onOpen, isTrash, onSelectFile }) => {
       onOpen(file); 
     }
   };
-
+ const { starredFiles } = useFileActions();
+ const isStarred = starredFiles.some(f => f.id === file.id);
   // For design
   let fileCategory = 'generic'
   if (isImageFile) {
@@ -94,6 +98,10 @@ const FileItem = ({ file, onOpen, isTrash, onSelectFile }) => {
                 fileCategory === 'pdf' ? 'bi-file-earmark-pdf-fill' : 
                 'bi-file-earmark-text'
             }`}></i>
+            {/* The star display next to the name - only appears if the file is marked */}
+          {isStarred && (
+            <i className="bi bi-star-fill" style={{ color: '#ffc107', marginRight: '8px' }}></i>
+          )}
         <span className="file-name-text">{file.name}</span>
       </div>
 
@@ -121,6 +129,17 @@ const FileItem = ({ file, onOpen, isTrash, onSelectFile }) => {
           {isMenuOpen && (
             <FloatingMenu onClose={closeMenu}>
               <div className="dropdown-content">
+                <button 
+                    className="operation-button" 
+                    onClick={(e) => {
+                        e.stopPropagation(); 
+                        onSelectFile(file);  
+                        closeMenu();         
+                    }}
+                >
+                    <i className="bi bi-info-circle"></i>
+                    <span>Details</span>
+                </button>
                 {isTrash ? (
                   <>
                     {/* Only the owner, only in the trash */}
