@@ -12,9 +12,6 @@ import MoveFile from '../operations/MoveFile'
 import { authorizedFetch } from '../../App';
 import '../../styles/FileItem.css';
 
-import { authorizedFetch } from '../../App'; 
-import '../../styles/operations.css';
-
 const FolderItem = ({ folder, onOpen, isTrash, onSelectFile }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [userPermission, setUserPermission] = useState(null);
@@ -96,24 +93,9 @@ const FolderItem = ({ folder, onOpen, isTrash, onSelectFile }) => {
                         <DownloadFolder folder={folder} onAction={closeMenu} />
                         <MoveFile file={folder} onAction={closeMenu} />
 
-        {isMenuOpen && (
-          <FloatingMenu onClose={closeMenu}>
-            <div className="dropdown-content">
-              {userPermission && (
-                <>
-                  {isTrash ? (
-                    <>
-                      {isOwner && <Restore file={folder} onAction={closeMenu} />}
-                      {isOwner && <HardDelete file={folder} onAction={closeMenu} />}
-                    </>
-                  ) : (
-                    <>
-                      <Star file={folder} onAction={closeMenu} />
-                      <DownloadFolder folder={folder} onAction={closeMenu} />
-                      <MoveFile file={folder} onAction={closeMenu} />
-                      {isOwner && <SoftDelete file={folder} onAction={closeMenu} />}
-                      {isOwner && <Rename file={folder} onAction={closeMenu} />}
-                      {canWrite && <Share file={folder} onAction={closeMenu} />}
+                        {isOwner && <SoftDelete file={folder} onAction={closeMenu} />}
+                        {isOwner && <Rename file={folder} onAction={closeMenu} />}
+                        {canWrite && <Share file={folder} onAction={closeMenu} />}
                     </>
                   )}
                 </>
