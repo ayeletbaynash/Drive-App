@@ -9,7 +9,6 @@
     border-radius: var(--radius-lg);
     border: 1px solid var(--border);
     box-shadow: var(--shadow-lg);
-    shadow: var(--shadow-lg);
     min-width: 180px;
     overflow: hidden;
     margin: var(--spacing-sm);
@@ -85,7 +84,6 @@
     z-index: 1000;
 }
 
-/* קופסת המודל עצמה */
 .modal-content {
     background-color: var(--card) !important ;
     padding: var(--spacing-xl);
@@ -106,7 +104,6 @@
     color: var(--text-main);
 }
 
-/* שורת הכפתורים למטה */
 .modal-actions {
     display: flex;
     justify-content: flex-end;
@@ -114,7 +111,6 @@
     margin-top: var(--spacing-md);
 }
 
-/* כפתור אישור/שמירה */
 .btn-primary {
     background-color: var(--primary);
     color: var(--white);
@@ -125,7 +121,6 @@
     font-weight: var(--weight-medium);
 }
 
-/* כפתור ביטול */
 .btn-secondary {
     background-color: transparent;
     color: var(--white) !important;

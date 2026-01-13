@@ -11,7 +11,6 @@ function TopBar({ onSearch, user, onLogout }) {
           <div className="top-bar-left">
             <AppLogo />
           </div>
-            {/* הרכיבים שיצרנו - כל אחד עם הלוגיקה שלו */}
             <div className="top-bar-center">
             <SearchBar onSearch={onSearch} user={user} />
             </div>

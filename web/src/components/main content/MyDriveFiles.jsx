@@ -5,7 +5,7 @@ import { useParams } from 'react-router-dom'
 import { authorizedFetch } from '../../App'
 import { useFileActions } from '../FileContext';
 import EmptyState from './EmptyState';
-import LoadingState from './LoadingState'; // ייבוא של רכיב הטעינה החדש
+import LoadingState from './LoadingState'
 import '../../styles/emptyPages.css';
 
 

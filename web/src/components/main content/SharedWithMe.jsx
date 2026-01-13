@@ -41,7 +41,7 @@ const SharedWithMe = ({ onSelectFile }) => {
                 setCurrentFolderName(data.name)
             } else {
                 setFiles(data.files || data)
-                setCurrentFolderName('My Drive')
+                setCurrentFolderName('Shared with me')
             }
         } catch (error) {
             console.error(error);

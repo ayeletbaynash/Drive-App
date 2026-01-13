@@ -50,13 +50,11 @@ const Rename = ({ file, onAction }) => {
 
     return (
         <>
-            {/* הכפתור שמופיע בתוך ה-Dropdown */}
             <button className="operation-button" onClick={handleClick}>
                 <i className="bi bi-pencil"></i>
                 <span>Rename</span>
             </button>
 
-            {/* המודל שנפתח - Overlay גלובלי */}
             {isOpen && (
                 <div className="modal-overlay" onClick={() => setIsOpen(false)}>
                     <div className="modal-content" onClick={(e) => e.stopPropagation()}>
