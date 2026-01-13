@@ -9,7 +9,7 @@ import '../../styles/emptyPages.css';
 import LoadingState from './LoadingState';
 
 
-const SharedWithMe = () => {
+const SharedWithMe = ({ onSelectFile }) => {
     const [files, setFiles] = useState([]);
     const { folderId } = useParams();
     const [currentFolderName, setCurrentFolderName] = useState('');
@@ -41,7 +41,7 @@ const SharedWithMe = () => {
                 setCurrentFolderName(data.name)
             } else {
                 setFiles(data.files || data)
-                setCurrentFolderName('My Drive')
+                setCurrentFolderName('Shared with me')
             }
         } catch (error) {
             console.error(error);
@@ -79,7 +79,7 @@ return (
              {isLoading ? (
                 <LoadingState message="Fetching your shared files..." />
         ) : myVisibleFiles.length > 0 ? (
-            <FileViewList items={myVisibleFiles} />
+            <FileViewList items={myVisibleFiles} onSelectFile={onSelectFile} />
         ) : (
             <div className="centered-content-wrapper">
                     <EmptyState type="shared" />

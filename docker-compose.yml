@@ -23,7 +23,7 @@ services:
     volumes:
       - .:/usr/src/app
       - /usr/src/app/node_modules
-      - /usr/src/app/web          # מונע מהנוד לנסות "לקרוא" את תיקיית הריאקט בטעות
+      - /usr/src/app/web         
 
   # React Frontend
   react-frontend:
@@ -33,11 +33,10 @@ services:
     ports:
       - "3001:3000"
     volumes:
-      - ./web:/usr/src/app         # מקשר את קוד המקור שלך לתוך הקונטיינר
-      - /usr/src/app/node_modules  # "מגן" על התיקייה הפנימית של הספריות
+      - ./web:/usr/src/app        
+      - /usr/src/app/node_modules  
     environment:
-      - CHOKIDAR_USEPOLLING=true   # קריטי לעדכון אוטומטי ב-Windows
-      - WDS_SOCKET_PORT=3001
+      - CHOKIDAR_USEPOLLING=true  
     depends_on:
       - web-server
 

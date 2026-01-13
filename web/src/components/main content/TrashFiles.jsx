@@ -4,7 +4,7 @@ import FileViewList from '../files/FileViewList';
 import EmptyState from './EmptyState';
 import '../../styles/emptyPages.css';
 
-const TrashFiles = () => {
+const TrashFiles = ({ onSelectFile }) => {
     // Access the list of deleted files from the global file context
     const { deletedFiles } = useFileActions();
 
@@ -14,7 +14,7 @@ const TrashFiles = () => {
 
                 {/* Conditional Rendering: Show the list if there are deleted files, otherwise show the empty state */}
                 {deletedFiles.length > 0 ? (
-                    <FileViewList items={deletedFiles} isTrash={true}/>
+                    <FileViewList items={deletedFiles} isTrash={true} onSelectFile={onSelectFile}/>
                 ) : (
                     <div className="centered-content-wrapper">
                     <EmptyState type="trash" />

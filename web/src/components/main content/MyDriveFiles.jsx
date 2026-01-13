@@ -5,7 +5,7 @@ import { useParams } from 'react-router-dom'
 import { authorizedFetch } from '../../App'
 import { useFileActions } from '../FileContext';
 import EmptyState from './EmptyState';
-import LoadingState from './LoadingState'; // ייבוא של רכיב הטעינה החדש
+import LoadingState from './LoadingState'
 import '../../styles/emptyPages.css';
 
 
@@ -13,7 +13,7 @@ import '../../styles/emptyPages.css';
  * MyDriveFiles component manages the main personal storage view.
  * It handles folder navigation and displays only the current user's active files.
  */
-const MyDriveFiles = () => {
+const MyDriveFiles = ({ onSelectFile }) => {
     const [files, setFiles] = useState([]);
     const { folderId } = useParams();
     const [currentFolderName, setCurrentFolderName] = useState('');
@@ -75,7 +75,7 @@ return (
              {isLoading ? (
             <LoadingState message="Loading your files..." />
         ) : myVisibleFiles.length > 0 ? (
-            <FileViewList items={myVisibleFiles} />
+            <FileViewList items={myVisibleFiles} onSelectFile={onSelectFile} />
         ) : (
             <div className="centered-content-wrapper">
                     <EmptyState type="drive" />
