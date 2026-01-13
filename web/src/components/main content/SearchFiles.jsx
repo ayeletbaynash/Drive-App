@@ -6,7 +6,7 @@ import LoadingState from './LoadingState';
 import '../../styles/emptyPages.css';
 
 // SearchFiles component displays the results of a search query.
-const SearchFiles = ({results}) =>{
+const SearchFiles = ({results, onSelectFile }) =>{
     const { deletedFiles } = useFileActions();
     // Safety check: If results is null/undefined, treat it as an empty array
     const safeResults = results || [];
@@ -24,7 +24,7 @@ const SearchFiles = ({results}) =>{
                 </div>
             ) : (
                 // Use existing component to display the filtered file list
-                <FileViewList items={visibleResults} />
+                <FileViewList items={visibleResults} onSelectFile={onSelectFile} />
             )}
         </div>
     );

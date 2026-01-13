@@ -9,7 +9,7 @@ import LoadingState from './LoadingState';
 import '../../styles/emptyPages.css';
 
 // HomeFiles component serves as the landing view for the file manager.
-const HomeFiles = () => {
+const HomeFiles = ({ onSelectFile }) => {
     const [files, setFiles] = useState([])
     const [isLoading, setIsLoading] = useState(true)
     const { folderId } = useParams();
@@ -69,7 +69,7 @@ return (
             {isLoading ? (
                 <LoadingState message="Fetching your files..." />
             ) : visibleFiles.length > 0 ? (
-                <FileViewList items={visibleFiles} />
+                <FileViewList items={visibleFiles} onSelectFile={onSelectFile} />
             ) : (
                 <div className="centered-content-wrapper">
                     <EmptyState type="home" />

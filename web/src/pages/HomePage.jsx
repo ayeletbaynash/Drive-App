@@ -31,7 +31,7 @@ function HomePage({ user, onLogout }) {
                     <div style={{ flex: 1, overflowY: 'auto' }}>
                         <Routes>
                             <Route path="home" element={<HomeFiles onSelectFile={setSelectedFileDetails}/>} />
-                            <Route path="home/search" element={<SearchFiles results={searchResults} />} />
+                            <Route path="home/search" element={<SearchFiles results={searchResults} onSelectFile={setSelectedFileDetails} />} />
                             <Route path="home/:folderId" element={<HomeFiles onSelectFile={setSelectedFileDetails}/>} />
                             <Route path="my-drive" element={<MyDriveFiles onSelectFile={setSelectedFileDetails}/>} />
                             <Route path="shared" element={<SharedWithMe onSelectFile={setSelectedFileDetails}/>} />

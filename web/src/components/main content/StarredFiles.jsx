@@ -4,7 +4,7 @@ import FileViewList from '../files/FileViewList';
 import EmptyState from './EmptyState';
 import '../../styles/emptyPages.css';
 
-const StarredFiles = () => {
+const StarredFiles = ({ onSelectFile }) => {
     // Access starred and deleted files from the file context
     const { starredFiles } = useFileActions()
     const { deletedFiles } = useFileActions();
@@ -21,7 +21,7 @@ const StarredFiles = () => {
 
             {/* Render the list if filtered results exist, otherwise show the empty state centered on screen */}
             {visibleStarFiles.length > 0 ? (
-                <FileViewList items={visibleStarFiles} />
+                <FileViewList items={visibleStarFiles} onSelectFile={onSelectFile}/>
             ) : (
                 <div className="centered-content-wrapper">
                     <EmptyState type="starred" />
