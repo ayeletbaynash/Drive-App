@@ -1,17 +1,16 @@
 import React from 'react';
 import '../../styles/layout.css';
 
+// Displays an expanded profile card with user details and a logout action.
 function UserMenu({ user, onLogout, avatarColor }) {
     if (!user) return null;
 
-    // שליפת הנתונים להצגה (הכל מגיע מה-props, אין קריאות לשרת כאן!)
     const displayName = user.username || "Guest";
-    // כאן המייל יופיע כי Avatar כבר דאג להביא אותו
     const displayEmail = user.emailAddress || user.email || "No email found"; 
     
     return (
         <div className="user-profile-card">
-            {/* פרטי משתמש */}
+            {/* Profile Header Section: Contains avatar, name, and email */}
             <div className="profile-header">
                 <div className="large-avatar">
                     {user.image ? (
@@ -22,16 +21,17 @@ function UserMenu({ user, onLogout, avatarColor }) {
                         </div>
                     )}
                 </div>
-            {/* כותרת */}
+            {/* Greeting with the username */}
             <h3 className="profile-name">Hi, {displayName}!</h3>
             
-            {/* אימייל */}
+            {/* User email address for identification */}
             <p className="profile-email">{displayEmail}</p>
             </div>
 
+            {/* Visual separator between user info and action buttons */}
             <hr className="menu-divider" />
 
-            {/* כפתור יציאה */}
+            {/* Logout Action: Triggers the global logout */}
             <button className="logout-action-btn" onClick={onLogout}>
                 <i className="bi bi-box-arrow-right"></i>
                 Logout
