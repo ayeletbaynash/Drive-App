@@ -13,7 +13,6 @@ import MoveFile from '../operations/MoveFile'
 import CopyFile from '../operations/CopyFile'
 import { authorizedFetch } from '../../App'
 import '../../styles/FileItem.css';
-import { authorizedFetch } from '../../App';
 import { useFileActions } from '../FileContext';
 
 const FileItem = ({ file, onOpen, isTrash, onSelectFile }) => {

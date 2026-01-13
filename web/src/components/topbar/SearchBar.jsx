@@ -2,13 +2,15 @@ import { useState, useEffect, useRef } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { authorizedFetch } from '../../App';
 import { useFileActions } from '../FileContext';
-import 'bootstrap-icons/font/bootstrap-icons.css'; // ייבוא האייקונים
-import '../../styles/layout.css'; // ייבוא העיצוב
+import 'bootstrap-icons/font/bootstrap-icons.css'; 
+import '../../styles/layout.css'; 
 
 function SearchBar({ onSearch }) {
   const [text, setText] = useState('');
   const [suggestions, setSuggestions] = useState([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
+
+  const [isSearching, setIsSearching] = useState(false);
 
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -65,6 +67,8 @@ function SearchBar({ onSearch }) {
   const fetchFromServer = async (query, signal) => {
     if (!query || !query.trim()) return [];
 
+    setIsSearching(true);
+
     try {
       // Pass the AbortController signal to cancel old requests if the user keeps typing
       const response = await authorizedFetch(
@@ -108,6 +112,8 @@ function SearchBar({ onSearch }) {
       }
       console.error('Search error:', err);
       return [];
+    } finally {
+      setIsSearching(false);
     }
   };
 
@@ -117,6 +123,7 @@ function SearchBar({ onSearch }) {
 
     if (!text.trim()) {
       setSuggestions([]);
+      setIsSearching(false);
       return;
     }
 
@@ -191,8 +198,14 @@ function SearchBar({ onSearch }) {
   return (
     <div style={{ position: 'relative', width: '100%' }}>
       <form onSubmit={handleSubmit} className="search-container">
-        <button className="search-icon-btn" type="submit">
-            <i className="bi bi-search"></i>
+        <button className="search-icon-btn" type="submit" disabled={isSearching}>
+            {isSearching ? (
+                <div className="spinner-border spinner-border-sm text-success" role="status">
+                    <span className="visually-hidden">Loading...</span>
+                </div>
+            ) : (
+                <i className="bi bi-search"></i>
+            )}
         </button>
         <input
           className="search-input"
