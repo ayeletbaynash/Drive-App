@@ -72,8 +72,8 @@ const search = async (req, res) => {
                                     const contentLines = contentResponse.split('\n');
                                     // Assuming content starts from line 3 (index 2) onwards
                                     // We join the rest just in case content has newlines
-                                    const content = contentLines.slice(2).join('\n');
-
+                                    const encodedContent = contentLines.slice(2).join('\n');
+                                    const content = Buffer.from(encodedContent, 'base64').toString('utf-8');
                                     // Check if query is truly in the content (Case Insensitive)
                                     if (content && content.toLowerCase().includes(query.toLowerCase())) {
                                         results.push(file);
