@@ -1,9 +1,27 @@
 const Client = require('../client');
-const fileModel = require('../models/files'); 
-const Permission = require('../models/permissions');
+const fileService = require('../services/files'); // Use File Service
+const permissionService = require('../services/permissions'); // Use Permission Service
+
+// Helper: Check permissions recursively (Copied from files controller for consistency)
+const getPermissionRecursive = async (fileId, userId) => {
+    const permissionForUser = await permissionService.getPermissionForUser(fileId, userId);
+    if (permissionForUser) {
+        return permissionForUser;
+    }
+    const file = await fileService.getFileById(fileId);
+    if (!file) {
+        return null; 
+    }
+    if (file.user_id.toString() === userId) {
+        return { permission: 'owner' }; 
+    }
+    if (!file.parent_id) {
+        return null; 
+    }
+    return await getPermissionRecursive(file.parent_id, userId);
+};
 
 const search = async (req, res) => {
-    // Critical Protections (to prevent 500 crashes)
     try {
         const query = req.params.query; 
         const userId = req.userId;
@@ -12,32 +30,41 @@ const search = async (req, res) => {
             return res.status(400).json({ error: "Search query is required" });
         }
 
-        // Final results array
-        const results = [];
-        // Fetch all files from memory
-        const allFiles = fileModel.getFiles(); 
-        // Helper set to prevent duplicates
+        const results = []; 
         const processedFileIds = new Set();
 
-        const nameMatches = allFiles.filter(file => {
+        const addToResults = (file, permission) => {
+            const fileObj = file.toObject(); 
+            fileObj.id = fileObj._id;        
+            delete fileObj._id;              
+            fileObj.permission = permission; 
+            
+            results.push(fileObj);
+            processedFileIds.add(fileObj.id.toString());
+        };
+
+        // Fetch files where name matches query (Case Insensitive)
+        const nameMatches = await fileService.getFiles({
+            name: { $regex: query, $options: 'i' } 
+        });
+
+        for (const file of nameMatches) {
             try {
+                // Check if user is owner
+                if (file.user_id.toString() === userId) {
+                    addToResults(file, 'owner'); 
+                    continue;
+                }
+
                 // Protection in case permissions are missing or object is incomplete
-                const hasPermission = Permission.getPermissionForUser(file.id, userId);
-                if (!hasPermission) return false;
-                //if (isFileOrParentDeleted(file, allFiles)) return false;
-
-                // Case Insensitive search
-                return file.name && file.name.toLowerCase().includes(query.toLowerCase());
+                const perm = await getPermissionRecursive(file._id, userId);
+                if (perm) { 
+                     addToResults(file, perm.permission || 'read');
+                }
             } catch (e) {
-                return false; 
+                // Ignore errors for individual files
             }
-        });
-
-        // Add found items to results
-        nameMatches.forEach(file => {
-            results.push(file);
-            processedFileIds.add(file.id);
-        });
+        }
 
         // Attempt to contact C++ 
         let client = null;
@@ -48,9 +75,8 @@ const search = async (req, res) => {
             
             if (response) {
                 const lines = response.split('\n');
-                // Check that lines exist before accessing them
                 const statusLine = lines[0] ? lines[0].trim() : "";
-                const statusCode = Number(statusLine.split(' ')[0]);
+                const statusCode = statusLine ? Number(statusLine.split(' ')[0]) : 500;
 
                 if (statusCode === 200) {
                     const resultLine = lines[2] ? lines[2].trim() : "";
@@ -61,23 +87,34 @@ const search = async (req, res) => {
                         if (!cleanPName) continue;
 
                         // Convert from physical name to logical name
-                        const file = allFiles.find(f => f.physicalName === cleanPName);
+                        const filesFound = await fileService.getFiles({ physicalName: cleanPName });
+                        const file = filesFound[0];
                         
                         // If we found a file and haven't added it yet
-                        if (file && !processedFileIds.has(file.id)) {
-                            const userPermission = Permission.getPermissionForUser(file.id, userId);
-                            if (userPermission) {
+                        if (file && !processedFileIds.has(file._id.toString())) {
+
+                            // Check Permissions
+                            let permissionType = null;
+                            if (file.user_id.toString() === userId) {
+                                permissionType = 'owner';
+                            } else {
+                                const perm = await getPermissionRecursive(file._id, userId);
+                                if (perm) permissionType = perm.permission;
+                            }
+
+                            if (permissionType) {
                                 try {
                                     const contentResponse = await client.sendAndReceive(`GET ${cleanPName}`);
                                     const contentLines = contentResponse.split('\n');
                                     // Assuming content starts from line 3 (index 2) onwards
-                                    // We join the rest just in case content has newlines
                                     const encodedContent = contentLines.slice(2).join('\n');
-                                    const content = Buffer.from(encodedContent, 'base64').toString('utf-8');
-                                    // Check if query is truly in the content (Case Insensitive)
-                                    if (content && content.toLowerCase().includes(query.toLowerCase())) {
-                                        results.push(file);
-                                        processedFileIds.add(file.id);
+
+                                    if (encodedContent) {
+                                        const content = Buffer.from(encodedContent, 'base64').toString('utf-8');
+                                        // Check if query is truly in the content (Case Insensitive)
+                                        if (content && content.toLowerCase().includes(query.toLowerCase())) {
+                                            addToResults(file, permissionType); 
+                                        }
                                     }
                                 } catch (innerErr) {
                                     console.log(`[Warning] Failed to verify content for ${cleanPName}`);
@@ -100,7 +137,7 @@ const search = async (req, res) => {
         return res.status(200).json(results); 
 
     } catch (criticalError) {
-        // Last safety net - if everything explodes, return empty array instead of error
+        // Last safety net
         console.error("[CRITICAL] Search controller crashed:", criticalError);
         return res.status(200).json([]); 
     }

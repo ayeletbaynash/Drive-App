@@ -9,40 +9,21 @@ import Restore from '../operations/Restore'
 import HardDelete from '../operations/HardDelete'
 import DownloadFolder from '../operations/DownloadFolder'
 import MoveFile from '../operations/MoveFile'
-import { authorizedFetch } from '../../App';
 import '../../styles/FileItem.css';
 
 const FolderItem = ({ folder, onOpen, isTrash, onSelectFile }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
-  const [userPermission, setUserPermission] = useState(null);
-  const [isFetching, setIsFetching] = useState(false);
   const navigate = useNavigate()
 
-  const handleMenuClick = async (e) => {
-    e.stopPropagation();
-    setIsMenuOpen(!isMenuOpen);
-    
-    if (!isMenuOpen && userPermission === null) {
-      setIsFetching(true);
-      try {
-        const response = await authorizedFetch(`http://localhost:8080/api/files/${folder.id}/permissions`);
-        const permissionsList = await response.json();
-        const storedUser = JSON.parse(localStorage.getItem('user') || '{}');
-        const currentUserId = storedUser.id;
-        const myPermissionEntry = permissionsList.find(p => p.userID === currentUserId);
-        
-        setUserPermission(myPermissionEntry.permission);
-        } catch (error) {
-        console.error("Error fetching folder permissions:", error);
-        setUserPermission('read');
-      } finally {
-        setIsFetching(false);
-      }
-    }
-  }   
-
+  // Read permission directly from the folder object 
+  const userPermission = folder.permission || 'read'; 
   const isOwner = userPermission === 'owner';
   const canWrite = isOwner || userPermission === 'write';
+
+  const handleMenuClick = (e) => {
+    e.stopPropagation();
+    setIsMenuOpen(!isMenuOpen);
+  }   
 
   const closeMenu = () => setIsMenuOpen(false);
 
@@ -61,10 +42,9 @@ const FolderItem = ({ folder, onOpen, isTrash, onSelectFile }) => {
 
     {/* Date & Menu Button */}
     <div className="col-date">
-      
       <div className="menu-wrapper">
-        <button className="menu-btn" onClick={handleMenuClick} disabled={isFetching}>
-          {isFetching ? '...' : '⋮'}
+        <button className="menu-btn" onClick={handleMenuClick}>
+          ⋮
         </button>
           {isMenuOpen && (
             <FloatingMenu onClose={closeMenu}>
@@ -80,29 +60,27 @@ const FolderItem = ({ folder, onOpen, isTrash, onSelectFile }) => {
                   <i className="bi bi-info-circle"></i>
                   <span>Details</span>
                 </button>
-                {userPermission && (
-                  <>
-                    {isTrash ? (
-                      <>
-                        {isOwner && <Restore file={folder} onAction={closeMenu} />}
-                        {isOwner && <HardDelete file={folder} onAction={closeMenu} />}
-                      </>
-                    ) : (
-                      <>
-                        <Star file={folder} onAction={closeMenu} />
-                        <DownloadFolder folder={folder} onAction={closeMenu} />
-                        <MoveFile file={folder} onAction={closeMenu} />
+                
+                  {isTrash ? (
+                    <>
+                      {isOwner && <Restore file={folder} onAction={closeMenu} />}
+                      {isOwner && <HardDelete file={folder} onAction={closeMenu} />}
+                    </>
+                  ) : (
+                    <>
+                      <Star file={folder} onAction={closeMenu} />
+                      <DownloadFolder folder={folder} onAction={closeMenu} />
+                      <MoveFile file={folder} onAction={closeMenu} />
 
-                        {isOwner && <SoftDelete file={folder} onAction={closeMenu} />}
-                        {isOwner && <Rename file={folder} onAction={closeMenu} />}
-                        {canWrite && <Share file={folder} onAction={closeMenu} />}
+                      {/* --- BUTTONS NOW VISIBLE BASED ON DB --- */}
+                      {isOwner && <SoftDelete file={folder} onAction={closeMenu} />}
+                      {isOwner && <Rename file={folder} onAction={closeMenu} />}
+                      {canWrite && <Share file={folder} onAction={closeMenu} />}
                     </>
                   )}
-                </>
-              )}
-            </div>
-          </FloatingMenu>
-        )}
+              </div>
+            </FloatingMenu>
+          )}
       </div>
     </div>
   </div>

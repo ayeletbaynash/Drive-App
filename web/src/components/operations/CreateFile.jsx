@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { authorizedFetch } from '../../App';
-import { useParams } from 'react-router-dom';
 import '../../styles/operations.css';
 
 const CreateFile = ({ onSuccess }) => {
@@ -9,15 +8,20 @@ const CreateFile = ({ onSuccess }) => {
     const [content, setContent] = useState('');
 
     const handleCreate = async () => {
-        const pathArray = window.location.pathname.split('/');
-        const lastPart = pathArray[pathArray.length - 1];
-        const folderId = (lastPart === "" || isNaN(lastPart)) ? null : Number(lastPart);
-        console.log("Current URL Params:", folderId);
+        const pathParts = window.location.pathname.split('/');
+        const lastPart = pathParts[pathParts.length - 1];
+
+        let parentId = null;
+        if (lastPart && lastPart !== 'files' && lastPart !== 'home') {
+            parentId = lastPart;
+        }
+        
+        console.log("Creating file inside parent ID:", parentId);
 
         const bodyData = {
             name: `${name}.txt`,
             type: 'file',
-            parent_id: folderId,
+            parent_id: parentId,
             content: content || "" 
         };
 

@@ -18,8 +18,11 @@ services:
       - "8080:3000"
     environment:
       - TCP_HOST=tcp-server
+      - CONNECTION_STRING=mongodb://db:27017/googleDriveDB
+      - PORT=3000
     depends_on:
       - tcp-server
+      - db
     volumes:
       - .:/usr/src/app
       - /usr/src/app/node_modules
@@ -36,9 +39,22 @@ services:
       - ./web:/usr/src/app        
       - /usr/src/app/node_modules  
     environment:
-      - CHOKIDAR_USEPOLLING=true  
+      - CHOKIDAR_USEPOLLING=true
+      - GENERATE_SOURCEMAP=false  
+      - WATCHPACK_POLLING=true
+      - WDS_SOCKET_PORT=0
+      - NODE_OPTIONS=--max-old-space-size=4096
     depends_on:
       - web-server
 
+  # MongoDB Database service
+  db:
+    image: mongo:latest
+    ports:
+      - "27017:27017"
+    volumes:
+      - drive-db-data:/data/db
+
 volumes:
   tcp_storage:
+  drive-db-data:
