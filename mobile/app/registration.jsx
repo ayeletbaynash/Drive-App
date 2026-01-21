@@ -102,7 +102,9 @@ const RegisterScreen = () => {
         };
 
     return (
-        <ScrollView contentContainerStyle={styles.container}>
+        <ScrollView
+         contentContainerStyle={[styles.container, { paddingBottom: 60 }]}
+         showsVerticalScrollIndicator={true}>
             <Text style={[styles.title, { marginBottom: -20 }]}>Create Account</Text>
             <View style={{ alignItems: 'center', marginBottom: 10 }}>
                 <AppLogo scale={1.7} />
@@ -168,6 +170,9 @@ const RegisterScreen = () => {
             <TouchableOpacity style={styles.button} onPress={handleSubmit}>
                 <Text style={styles.buttonText}>Register</Text>
             </TouchableOpacity>
+
+            {/* Adding a little extra space at the bottom to ensure the button is clickable */}
+            <View style={{ height: 20 }} />
         </ScrollView>
     );
 };
