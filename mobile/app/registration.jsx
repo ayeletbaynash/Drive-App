@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, Image, ScrollView, StyleSheet } from 'react-native';
+import React, { useState, useRef } from 'react';
+import { View, Text, TextInput, TouchableOpacity, Image, ScrollView, KeyboardAvoidingView, Platform } from 'react-native';
 import { API_URL } from '../config';
 import * as ImagePicker from 'expo-image-picker'; // for image upload
 import AppLogo from '../components/AppLogo';
@@ -13,6 +13,7 @@ const RegisterScreen = () => {
     const [error, setError] = useState('');
 
     const handleSubmit = async () => {
+        console.log("Button clicked! Form data:", formData); /// Debugging line
         setError('');
 
         // Validation - just like in WEB 
@@ -45,6 +46,7 @@ const RegisterScreen = () => {
                 body: JSON.stringify(formData)
             });
             const data = await response.json();
+            console.log("Server Response:", data);
             if (response.ok) {
                 alert("Account created successfully!");
                 router.push('/login');
@@ -93,18 +95,38 @@ const RegisterScreen = () => {
         const result = await ImagePicker.launchCameraAsync({
             allowsEditing: true, 
             aspect: [1, 1],
-            quality: 0.7,
+            quality: 0.5,
+            base64: true,
         });
 
         if (!result.canceled) {
-            setFormData({ ...formData, image: result.assets[0].uri });
-        }
+            const base64Image = `data:image/jpeg;base64,${result.assets[0].base64}`;
+            setFormData({ ...formData, image: base64Image });
+            }
         };
 
+
+    // create refs for inputs to jump between them
+    const usernameRef = useRef();
+    const emailRef = useRef();
+    const passwordRef = useRef();
+    const confirmRef = useRef();
+    // refs for scrolling and input focus
+    const scrollRef = useRef();
+
+
     return (
+        <KeyboardAvoidingView 
+            behavior={Platform.OS === "ios" ? "padding" : "height"}
+            style={{ flex: 1 }}
+            keyboardVerticalOffset={Platform.OS === "ios" ? 64 : 0}
+        >
         <ScrollView
-         contentContainerStyle={[styles.container, { paddingBottom: 60 }]}
-         showsVerticalScrollIndicator={true}>
+         ref={scrollRef}
+         contentContainerStyle={{ padding: 20, paddingTop: 50, paddingBottom: 80 }}
+         keyboardShouldPersistTaps="handled"
+         showsVerticalScrollIndicator={true}
+         >
             <Text style={[styles.title, { marginBottom: -20 }]}>Create Account</Text>
             <View style={{ alignItems: 'center', marginBottom: 10 }}>
                 <AppLogo scale={1.7} />
@@ -118,33 +140,54 @@ const RegisterScreen = () => {
             <TextInput 
                 style={styles.input} 
                 placeholder="Your Name *" 
+                returnKeyType="next"
+                onSubmitEditing={() => usernameRef.current.focus()}
+                onFocus={() => scrollRef.current?.scrollTo({ y: 0, animated: true })}
                 onChangeText={(val) => setFormData({...formData, firstName: val})}
             />
 
             <TextInput 
+                ref={usernameRef}
                 style={styles.input} 
                 placeholder="Username *" 
+                autoCapitalize="none"
+                autoCorrect={false}
+                returnKeyType="next"
+                onSubmitEditing={() => emailRef.current.focus()}
+                onFocus={() => scrollRef.current?.scrollTo({ y: 80, animated: true })}
                 onChangeText={(val) => setFormData({...formData, username: val})}
             />
 
             <TextInput 
+                ref={emailRef}
                 style={styles.input} 
                 placeholder="Email Address *" 
                 keyboardType="email-address"
+                autoCapitalize="none"
+                returnKeyType="next"
+                onSubmitEditing={() => passwordRef.current.focus()}
+                onFocus={() => scrollRef.current?.scrollTo({ y: 160, animated: true })}
                 onChangeText={(val) => setFormData({...formData, emailAddress: val})}
             />
 
             <TextInput 
+                ref={passwordRef}
                 style={styles.input} 
                 placeholder="Password *" 
                 secureTextEntry={true} // hide input
+                returnKeyType="next"
+                onSubmitEditing={() => confirmRef.current.focus()}
+                onFocus={() => scrollRef.current?.scrollTo({ y: 240, animated: true })}
                 onChangeText={(val) => setFormData({...formData, password: val})}
             />
 
             <TextInput 
+                ref={confirmRef}
                 style={styles.input} 
                 placeholder="Confirm Password *" 
                 secureTextEntry={true}
+                returnKeyType="done"
+                onFocus={() => scrollRef.current?.scrollTo({ y: 320, animated: true })}
                 onChangeText={(val) => setFormData({...formData, confirmPassword: val})}
             />
 
@@ -172,9 +215,9 @@ const RegisterScreen = () => {
             </TouchableOpacity>
 
             {/* Adding a little extra space at the bottom to ensure the button is clickable */}
-            <View style={{ height: 20 }} />
+            <View style={{ height: 100 }} />
         </ScrollView>
-    );
+        </KeyboardAvoidingView>);
 };
 
 

@@ -3,7 +3,6 @@ import { theme } from '../constants/theme';
 
 export const styles = StyleSheet.create({
     container: { 
-        flex: 1, 
         padding: theme.spacing.xl, 
         paddingTop: 50,
         backgroundColor: theme.colors.background 

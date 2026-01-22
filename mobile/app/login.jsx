@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, ScrollView, Alert } from 'react-native';
-import { AsyncStorage } from 'react-native'; // for storing token and user info
+//import { AsyncStorage } from 'react-native'; // for storing token and user info
 import { API_URL } from '../config';
 import AppLogo from '../components/AppLogo';
 import { styles } from '../styles/authentication'; // shared styles file
 import { router } from 'expo-router';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const LoginScreen = ({ navigation, onLogin }) => {
     // State to manage input fields (Matches Web structure)
@@ -54,6 +55,7 @@ const LoginScreen = ({ navigation, onLogin }) => {
                 setError(data.message || 'Invalid username or password');
             }
         } catch (err) {
+            console.log("Detailed Error:", err);
             // NETWORK ERROR: The server is down or unreachable
             setError('Connection to server failed. Please try again later.');
         }
