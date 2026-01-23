@@ -47,9 +47,8 @@ const LoginScreen = ({ navigation, onLogin }) => {
                     onLogin(data); // This updates the global user state
                 }
                 
-                // Redirect user to the home page (Using Navigation instead of react-router-dom)
-                // navigation.navigate('Home'); 
-                Alert.alert("Success", `Welcome back, ${data.username || 'User'}!`);
+                // Redirect user to the home page 
+                router.replace('/(tabs)')
             } else {
                 // SERVER ERROR: e.g., Wrong password or user not found
                 setError(data.message || 'Invalid username or password');
