@@ -1,67 +1,89 @@
-// mobile/theme.js
+/**
+ * Below are the colors that are used in the app. The colors are defined in the light and dark mode.
+ * There are many other ways to style your app. For example, [Nativewind](https://www.nativewind.dev/), [Tamagui](https://tamagui.dev/), [unistyles](https://reactnativeunistyles.vercel.app), etc.
+ */
 
-export const theme = {
-    colors: {
-        // Light Mode
-        primary: '#146841',
-        primaryHover: '#0ba05b',
-        secondary: '#6c757d',
-        success: '#00ff62',
-        error: '#dc3545',
-        warning: '#ffc107',
-        
-        // Background and Surface Colors
-        background: '#f4f7f6',
-        surface: '#ffffff',
-        border: '#dee2e6',
-        
-        // Text Colors
-        textMain: '#212529',
-        textMuted: '#6c757d',
-        white: '#ffffff',
+import { Platform } from 'react-native';
 
-        // Card Colors (from the WEB theme)
-        card: '#9cc59e',
-        rowHover: '#bddbce',
-    },
-    
-    spacing: {
-        xs: 4,
-        sm: 8,
-        md: 12,
-        lg: 16,
-        xl: 20,
-        xxl: 40,
-    },
-    
-    radius: {
-        sm: 4,
-        md: 8,
-        lg: 15,
-        round: 50,
-    },
-
-    fontSize: {
-        xs: 12,
-        sm: 14,
-        md: 16,
-        lg: 20,
-        xl: 24,
-        h1: 32,
-    }
+export const Colors = {
+  light: {
+    primary: '#146841',
+    primaryRgb: '20, 104, 65',
+    textMain: '#212529',
+    textMuted: '#6c757d',
+    background: '#f4f7f6',
+    surface: '#ffffff',
+    border: '#dee2e6',
+    rowBackground: '#9cc59e',
+    rowHover: '#bddbce',
+    rowShadow: 'rgba(20, 104, 65, 0.08)',
+    card: '#9cc59e',
+    tabActive: '#146841',
+    tabInactive: '#6c757d',
+  },
+  dark: {
+    primary: '#2ecc71', 
+    primaryHover: '#58d68d',
+    background: '#0f172a',
+    surface: '#1e293b',
+    border: '#334155',
+    textMain: '#f8fafc',
+    textMuted: '#94a3b8',
+    rowBackground: '#1e293b',
+    rowHover: '#334155',
+    rowShadow: 'rgba(0, 0, 0, 0.4)',
+    card: '#1e293b',
+    tabActive: '#2ecc71',
+    tabInactive: '#94a3b8',
+  },
 };
 
-// Dark Mode Theme
-export const darkTheme = {
-    ...theme,
-    colors: {
-        ...theme.colors,
-        primary: '#2ecc71',
-        background: '#0f172a',
-        surface: '#1e293b',
-        border: '#334155',
-        textMain: '#f8fafc',
-        textMuted: '#94a3b8',
-        card: '#1e293b',
-    }
+export const Fonts = Platform.select({
+  ios: {
+    /** iOS `UIFontDescriptorSystemDesignDefault` */
+    sans: 'system-ui',
+    /** iOS `UIFontDescriptorSystemDesignSerif` */
+    serif: 'ui-serif',
+    /** iOS `UIFontDescriptorSystemDesignRounded` */
+    rounded: 'ui-rounded',
+    /** iOS `UIFontDescriptorSystemDesignMonospaced` */
+    mono: 'ui-monospace',
+  },
+  default: {
+    sans: 'normal',
+    serif: 'serif',
+    rounded: 'normal',
+    mono: 'monospace',
+  },
+  web: {
+    sans: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif",
+    serif: "Georgia, 'Times New Roman', serif",
+    rounded: "'SF Pro Rounded', 'Hiragino Maru Gothic ProN', Meiryo, 'MS PGothic', sans-serif",
+    mono: "SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace",
+  },
+});
+export const Spacing = {
+  xs: 4,
+  sm: 8,
+  md: 16,
+  lg: 24,
+  xl: 32,
 };
+
+export const BorderRadius = {
+  sm: 4,
+  md: 8,
+  lg: 12,
+  round: 50,
+};
+
+export const Shadows = {
+  light: {
+    shadowColor: Colors.light.primary,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 4,
+    elevation: 2, // For Android
+  }
+};
+
