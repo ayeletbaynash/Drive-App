@@ -3,11 +3,11 @@ import { router } from 'expo-router';
 
 export const authorizedFetch = async (url, options = {}) => {
     try {
-        // 1. Retrieve stored authentication data from AsyncStorage
+        // retrieve stored authentication data from AsyncStorage
         const token = await AsyncStorage.getItem('token');
         const userId = await AsyncStorage.getItem('userId');
 
-        // 2. Build headers with Authorization and User ID
+        //  Build headers with Authorization and User ID
         const headers = {
             'Content-Type': 'application/json',
             ...options.headers,
@@ -15,13 +15,13 @@ export const authorizedFetch = async (url, options = {}) => {
             'user-id': userId 
         };
 
-        // 3. Execute the fetch request
+        // Execute the fetch request
         const response = await fetch(url, { 
             ...options, 
             headers 
         });
 
-        // 4. Handle Unauthorized access (e.g., expired token)
+        // Handle Unauthorized access (e.g., expired token)
         if (response.status === 401) {
             console.warn("Token expired or invalid, logging out...");
             
