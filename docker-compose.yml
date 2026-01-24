@@ -28,27 +28,6 @@ services:
       - .:/usr/src/app
       - /usr/src/app/node_modules
 
-  # # React Frontend
-  # react-frontend:
-  #   build:
-  #     context: ./web
-  #     dockerfile: Dockerfile.react
-  #   ports:
-  #     - "3001:3000"
-  #   volumes:
-  #     - ./web:/usr/src/app        
-  #     - /usr/src/app/node_modules  
-  #   environment:
-  #     - HOST=0.0.0.0
-  #     - NODE_OPTIONS=--max-old-space-size=4096 # הגדלה ל-4GB עבור הקומפילציה
-  #     - CHOKIDAR_USEPOLLING=true # חיוני למניעת ENOMEM ב-Windows
-  #     - WATCHPACK_POLLING=true   # חיוני למניעת ENOMEM ב-Windows
-  #     - WDS_SOCKET_PORT=0        # מונע שגיאות חיבור בדפדפן
-  #     - FAST_REFRESH=false       # במידת הצורך, מכבה רענון אגרסיבי שצורך זיכרון
-  #   mem_limit: 4096m             # הגבלה פיזית של הקונטיינר
-  #   depends_on:
-  #     - web-server
-
   # Mobile 
   mobile-app:
     build:
@@ -62,8 +41,15 @@ services:
       - WATCHPACK_POLLING=true
       - WDS_SOCKET_PORT=0
       - NODE_OPTIONS=--max-old-space-size=4096
+      - EXPO_DEVTOOLS_LISTEN_ADDRESS=0.0.0.0
+      - REACT_NATIVE_PACKAGER_HOSTNAME=${MY_IP}
+    volumes:
+      - ./mobile:/app
+      - /app/node_modules
     depends_on:
       - web-server
+    tty: true
+    stdin_open: true
 
   # MongoDB Database service
   db:
@@ -72,18 +58,9 @@ services:
       - "27017:27017"
     volumes:
       - drive-db-data:/data/db
-      - EXPO_DEVTOOLS_LISTEN_ADDRESS=0.0.0.0
-      - REACT_NATIVE_PACKAGER_HOSTNAME=${MY_IP}
-      - NODE_OPTIONS=--max-old-space-size=2048
-      - WATCHPACK_POLLING=true
     tty: true #allow to see the barkod in the terminal
     stdin_open: true  #allow interaction with the terminal
-    volumes:
-      - ./mobile:/app
-      - /app/node_modules
     mem_limit: 2048m
-    depends_on:
-      - web-server
 
 
 volumes:
