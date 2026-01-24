@@ -1,53 +1,28 @@
-let pIdCounter = 0
-const all_permissions = []
+const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
 
-const getPermissions = (fileID) => all_permissions.filter(p => p.fileID == fileID)
-const getPermissionsPid = (PId) => all_permissions.find(p => p.pId == PId)
-
-const postPermission = (fileID, userID, permission) => {
-    const newPermission = { pId: pIdCounter++, fileID, userID, permission}
-    all_permissions.push(newPermission)
-    return newPermission
-}
-
-const patchPermission = (pId, newPermission) => {
-    const index = all_permissions.findIndex(p => p.pId == pId)
-    if (index !== -1) {
-        all_permissions[index].permission = newPermission
-        return true
+const PermissionSchema = new Schema({
+    // Link to the File
+    file_id: {
+        type: Schema.Types.ObjectId,
+        ref: 'File',
+        required: true
+    },
+    // Link to the User
+    user_id: {
+        type: Schema.Types.ObjectId,
+        ref: 'User',
+        required: true
+    },
+    // Define allowed permission levels
+    permission: {
+        type: String,
+        enum: ['read', 'write', 'owner'], // Add any other types you use
+        required: true
     }
-    return false
-}
+}, { timestamps: true });
 
-const deletePermission = (pId) => {
-    const index = all_permissions.findIndex(p => p.pId == pId)
-    if (index !== -1) {
-        all_permissions.splice(index, 1) 
-        return true
-    }
-    return false
-}
-const getPermissionForUser = (fileID, userID) => {
-  return all_permissions.find(
-    p => p.fileID == fileID && p.userID == userID
-  )
-}
+// Optional: Ensure a user has only one permission per file (prevents duplicates)
+PermissionSchema.index({ file_id: 1, user_id: 1 }, { unique: true });
 
-const getPermissionForPId = (pId, userID) => {
-  return all_permissions.find(
-    p => p.pId == pId && p.userID == userID
-  )
-}
-
-
-
-
-module.exports = {
-    getPermissions,
-    postPermission,
-    patchPermission,
-    deletePermission,
-    getPermissionForUser,
-    getPermissionForPId,
-    getPermissionsPid
-}
+module.exports = mongoose.model('Permission', PermissionSchema);

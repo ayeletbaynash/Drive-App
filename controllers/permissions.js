@@ -1,146 +1,184 @@
-const Permission = require('../models/permissions')  // Permissions Model
-const User = require('../models/users')   // User Model
-const File = require('../models/files')        // File Model
+const permissionService = require('../services/permissions'); // Updated to use Service
+const userService = require('../services/users'); // Updated to use Service
+const fileService = require('../services/files'); // Updated to use Service
+
 const VALID_PERMISSIONS = ['read', 'write', 'owner']
 
-const getPermissionRecursive = (fileId, userId) => {
-    const permissionForUser = Permission.getPermissionForUser(fileId, userId)
+// Helper function to check permissions up the tree
+const getPermissionRecursive = async (fileId, userId) => {
+    // Check direct permission on this file
+    const permissionForUser = await permissionService.getPermissionForUser(fileId, userId)
     if (permissionForUser){
-        return permissionForUser
+        return permissionForUser;
     }
-    const file = File.getFileById(fileId)
-    if (file.parent_id === null) {
-        return null
+    // Get the file to check parent
+    const file = await fileService.getFileById(fileId)
+    if (!file || !file.parent_id) {
+        return null;  // Root reached or file not found
     }
-    return getPermissionRecursive (file.parent_id, userId)
-}
+    // Recursive call on parent
+    return await getPermissionRecursive(file.parent_id, userId)
+};
 
+exports.getPermissionByFileId = async (req, res) => {
+    try {
+        const userId = req.userId;
+        const fileID = req.params.id;
 
-
-
-
-exports.getPermissionByFileId = (req, res) => {
-    const userId = req.userId;
-    
-    const fileID = req.params.id
-    if (!fileID) {
-    return res.status(400).json({ error: 'Missing file ID in request parameters' })
-}
-    //check if the user is the owner that can update a premission
-    const permissionForUser = getPermissionRecursive(fileID, userId)
-    if (!permissionForUser) {
-        return res.status(403).json({ error: 'User has no permission' })
-}
-    const permissions = Permission.getPermissions(fileID)
-    const permissionsWithNames = permissions.map(p => {
-        const user = User.getUserById(p.userID);
-        return {
-            ...p,
-            username: user ? user.username : 'Unknown User'
+        if (!fileID) {
+        return res.status(400).json({ error: 'Missing file ID in request parameters' })
         }
-    })
-    res.json(permissionsWithNames)
-}
 
-exports.postPermission = (req, res) => {
-    const { username, permission } = req.body
-    const fileID = req.params.id
-    if (!fileID) {
-    return res.status(400).json({ error: 'Missing file ID in request parameters' })
-}
-    if (!username || !permission) {
-        return res.status(400).json({ error: 'Missing fields (username or permission)' });
-}
-    const currentUserId = req.userId;
-    const targetUser = User.getUserByUsername(username); 
-    if (!targetUser) {
-        return res.status(404).json({ error: `User '${username}' not found` });
+        //check if the user is the owner that can update a premission
+        const permissionForUser = await getPermissionRecursive(fileID, userId)
+        if (!permissionForUser) {
+            return res.status(403).json({ error: 'User has no permission' })
+        }
+
+        // Get permissions from DB
+        const permissions = await permissionService.getPermissions(fileID)
+        const permissionsWithNames = await Promise.all(permissions.map(async (p) => {
+            const uid = p.user_id._id || p.user_id || p.userID;
+            
+            let username = 'Unknown User';
+            try {
+                const user = await userService.getUserById(uid);
+                if (user) username = user.username;
+            } catch (err) {
+                console.log("Error fetching user name:", err.message);
+            }
+
+            return {
+                ...p.toObject(),
+                username: username
+            };
+        }));
+
+        res.json(permissionsWithNames);
+    } catch (error) {
+        console.error("Get Permissions Error:", error);
+        res.status(500).json({ error: error.message });
     }
-    
-    const userID = targetUser.id;
+};
 
-    //check if the permission is valid 
-    if (!VALID_PERMISSIONS.includes(permission)) {
-  return res.status(400).json({ error: 'Invalid permission type' })
-}
-    //check if the user is the owner that can create a premission
-    const permissionForUser = Permission.getPermissionForUser(fileID, currentUserId)
-    if (!permissionForUser) {
-        return res.status(403).json({ error: 'User has no permission' })
-}
-    if (permissionForUser.permission !== 'owner') {
-        return res.status(403).json({ error: 'Only owner can change permissions' })
-}
+exports.postPermission = async (req, res) => {
+    try {
+        const { username, permission } = req.body
+        const fileID = req.params.id
 
-    //check if there is a permission alredy connected to this file and this user
-    const permissionExists = Permission.getPermissionForUser(fileID, userID)
-    if (permissionExists) {
-        return res.status(400).json({ error: 'Permission already exists' })
-}
+        if (!fileID) {
+        return res.status(400).json({ error: 'Missing file ID in request parameters' })
+        }
+        if (!username || !permission) {
+            return res.status(400).json({ error: 'Missing fields (username or permission)' });
+        }
 
-    const newPerm = Permission.postPermission(fileID, userID, permission)
-    res.status(201).json({
-    pId: newPerm.pId 
-})
-}
+        const currentUserId = req.userId;
 
-exports.patchPermission = (req, res) => {
-    const { permission } = req.body
-    if (!permission) {
-        return res.status(400).json({ error: 'Missing fields' })
-}
+        // Find user by username using Service
+        const targetUser = await userService.getUserByUsername(username); 
+        if (!targetUser) {
+            return res.status(404).json({ error: `User '${username}' not found` });
+        }
+        
+        const userID = targetUser._id;
 
-    const pId = req.params.pId
-    if (!pId) {
-    return res.status(400).json({ error: 'Missing permission ID in request parameters' })
-}
+        //check if the permission is valid 
+        if (!VALID_PERMISSIONS.includes(permission)) {
+            return res.status(400).json({ error: 'Invalid permission type' })
+        }
 
-    //check if the permission is valid 
-    if (!VALID_PERMISSIONS.includes(permission)) {
-        return res.status(400).json({ error: 'Invalid permission type' })
-}
+        //check if the user is the owner that can create a premission
+        const permissionForUser = await permissionService.getPermissionForUser(fileID, currentUserId)
+        if (!permissionForUser) {
+            return res.status(403).json({ error: 'User has no permission' })
+        }
+        if (permissionForUser.permission !== 'owner') {
+            return res.status(403).json({ error: 'Only owner can change permissions' })
+        }
 
-    const userId = req.userId;
+        //check if there is a permission alredy connected to this file and this user
+        const permissionExists = await permissionService.getPermissionForUser(fileID, userID)
+        if (permissionExists) {
+            return res.status(400).json({ error: 'Permission already exists' })
+        }
 
-   const existingPermission = Permission.getPermissionsPid(pId)
-   if (!existingPermission) {
-        return res.status(404).json({ error: 'Permission not found' })
+        const newPerm = await permissionService.postPermission(fileID, userID, permission)
+        res.status(201).json({
+            pId: newPerm._Id 
+        })
+    } catch (error) {
+        res.status(500).json({ error: error.message });
     }
-    //check if the user is the owner that can update a premission
-    const permissionForUser = Permission.getPermissionForUser(existingPermission.fileID, userId)
-    if (!permissionForUser) {
-        return res.status(403).json({ error: 'User has no permission' })
-}
-    if (permissionForUser.permission !== 'owner') {
-        return res.status(403).json({ error: 'Only owner can change permissions' })
-}
-    const isChanged = Permission.patchPermission(pId, permission)
-    if (!isChanged) {//if pId not exsist
-        return res.status(404).json({ error: 'pId not found' })
+};
+
+exports.patchPermission = async (req, res) => {
+    try {
+        const { permission } = req.body
+        if (!permission) {
+            return res.status(400).json({ error: 'Missing fields' })
+        }
+
+        const pId = req.params.pId
+        if (!pId) {
+        return res.status(400).json({ error: 'Missing permission ID in request parameters' })
+        }
+
+        //check if the permission is valid 
+        if (!VALID_PERMISSIONS.includes(permission)) {
+            return res.status(400).json({ error: 'Invalid permission type' })
+        }
+
+        const userId = req.userId;
+
+    const existingPermission = await permissionService.getPermissionsPid(pId)
+    if (!existingPermission) {
+            return res.status(404).json({ error: 'Permission not found' })
+        }
+        //check if the user is the owner that can update a premission
+        const permissionForUser = await permissionService.getPermissionForUser(existingPermission.file_id, userId)
+        if (!permissionForUser) {
+            return res.status(403).json({ error: 'User has no permission' })
+        }
+        if (permissionForUser.permission !== 'owner') {
+            return res.status(403).json({ error: 'Only owner can change permissions' })
+        }
+
+        const updatedPerm = await permissionService.patchPermission(pId, permission)
+        if (!updatedPerm) {   //if pId not exsist
+            return res.status(404).json({ error: 'Failed to update permission' })
+        }
+        res.status(204).send()
+    } catch (error) {
+        res.status(500).json({ error: error.message });
     }
-    res.status(204).send()
-}
+};
 
-exports.deletePermission = (req, res) => {
-    const userId = req.userId;
-    
-    const pId = req.params.pId
-    if (!pId) return res.status(400).json({ error: 'Missing permission ID in request parameters' })
+exports.deletePermission = async (req, res) => {
+    try {
+        const userId = req.userId;
+        const pId = req.params.pId;
 
-    const existingPermission = Permission.getPermissionsPid(pId)
-    if (!existingPermission) return res.status(404).json({ error: 'Permission not found' })
+        if (!pId) return res.status(400).json({ error: 'Missing permission ID in request parameters' })
 
-    //check if the user is the owner that can delete a premission
-    const permissionForUser = Permission.getPermissionForUser(existingPermission.fileID, userId)
-    if (!permissionForUser) {
-        return res.status(403).json({ error: 'User has no permission' })
-}
-    if (permissionForUser.permission !== 'owner') {
-        return res.status(403).json({ error: 'Only owner can delete permissions' })
-}
-    const isDeleted = Permission.deletePermission(pId)
-    if (!isDeleted) {
-        return res.status(500).json({ error: 'Permission not found' })
+        const existingPermission = await permissionService.getPermissionsPid(pId)
+        if (!existingPermission) return res.status(404).json({ error: 'Permission not found' })
+
+        //check if the user is the owner that can delete a premission
+        const permissionForUser = await permissionService.getPermissionForUser(existingPermission.file_id, userId)
+        if (!permissionForUser) {
+            return res.status(403).json({ error: 'User has no permission' })
+        }
+        if (permissionForUser.permission !== 'owner') {
+            return res.status(403).json({ error: 'Only owner can delete permissions' })
+        }
+
+        const deletedPerm = await permissionService.deletePermission(pId)
+        if (!deletedPerm) {
+            return res.status(500).json({ error: 'Failed to delete permission' })
+        }
+        res.status(204).send()
+    } catch (error) {
+        res.status(500).json({ error: error.message });
     }
-    res.status(204).send()
-}
+};

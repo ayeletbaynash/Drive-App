@@ -107,10 +107,12 @@ button.auth-button.btn:hover {
     align-items: center;
     margin-bottom: 0.5rem; 
     overflow: visible;
+    flex-wrap: wrap;
 }
 
 .logo-wrapper > * {
     transform: scale(1.60); 
     padding: 7px;
     display: block;
+    max-width: 100%;
 }

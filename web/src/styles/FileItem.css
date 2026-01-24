@@ -4,7 +4,7 @@
     display: flex;
     align-items: center;
     padding: var(--spacing-md);
-    background-color:var(--row-bg);    
+    background-color:var(--card);    
     border-bottom: 1px solid var(--border);
     margin-bottom: 6px;
     border-radius: var(--radius-md);
@@ -29,8 +29,8 @@
 /* Icon Colors by Type */
 .icon-image { color: var(--primary); }
 .icon-pdf { color: #dc3545; }
-.icon-text { color: var(--text-muted); }
-.icon-generic { color: var(--secondary); }
+.icon-text { color: #727271; } 
+.icon-generic { color: var(--secondary)s; }
 
 /* Layout Columns */
 .col-name { 

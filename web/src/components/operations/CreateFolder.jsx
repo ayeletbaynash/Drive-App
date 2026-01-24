@@ -1,21 +1,24 @@
 import React, { useState } from 'react';
 import { authorizedFetch } from '../../App';
-import { useParams } from 'react-router-dom';
 import '../../styles/operations.css';
 
 const CreateFolder = ({ onSuccess }) => {
     const [isOpen, setIsOpen] = useState(false);
     const [name, setName] = useState('');
-    
-    const pathArray = window.location.pathname.split('/');
-    const lastPart = pathArray[pathArray.length - 1];
-    const folderId = (lastPart === "" || isNaN(lastPart)) ? null : Number(lastPart);
 
     const handleCreate = async () => {
+        const pathParts = window.location.pathname.split('/');
+        const lastPart = pathParts[pathParts.length - 1]; 
+
+        let parentId = null;
+        if (lastPart && lastPart !== 'files' && lastPart !== 'home') {
+            parentId = lastPart;
+        }
+
         const bodyData = {
             name: name,
             type: 'folder',
-            parent_id: folderId 
+            parent_id: parentId
         };
 
         try {

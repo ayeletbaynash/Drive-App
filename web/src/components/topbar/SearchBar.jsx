@@ -84,6 +84,10 @@ function SearchBar({ onSearch }) {
 
       for (const file of data) {
         if (deletedFiles.some(df => df.id === file.id)) continue;
+        
+        if (file.parent_id && deletedFiles.some(df => df.id === file.parent_id.toString())) {
+            continue;
+        }
 
         // Specific filtering for images and PDFs
         const fileName = (file.name || "").toLowerCase();
