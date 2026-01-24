@@ -4,3 +4,8 @@ node_modules
 .vs
 build
 dist
+
+**/node_modules
+**/.expo
+**/build
+**/dist

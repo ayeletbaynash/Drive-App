@@ -1,0 +1,18 @@
+FROM node:20-alpine
+
+# Set the working directory inside the container
+WORKDIR /app
+
+# Copy package.json and package-lock.json first to leverage Docker cache
+COPY package*.json ./
+
+RUN npm install
+
+# Expose the port
+EXPOSE 8081
+# Copy all remaining project files from the mobile folder
+COPY . .
+
+
+# Start Expo with a clean cache
+CMD ["npx", "expo", "start", "--host", "lan", "--port", "8081"]
