@@ -20,6 +20,8 @@ export const Colors = {
     card: '#9cc59e',
     tabActive: '#146841',
     tabInactive: '#6c757d',
+    error: '#d9534f',
+    white: '#ffffff',
   },
   dark: {
     primary: '#2ecc71', 
@@ -35,6 +37,8 @@ export const Colors = {
     card: '#1e293b',
     tabActive: '#2ecc71',
     tabInactive: '#94a3b8',
+    error: '#d9534f',
+    white: '#ffffff',
   },
 };
 
@@ -86,4 +90,18 @@ export const Shadows = {
     elevation: 2, // For Android
   }
 };
+export const FontSize = {
+  sm: 12,
+  md: 16,
+  lg: 20,
+  xl: 24,
+};
+
+export const theme = {
+  colors: Colors.light,
+  spacing: Spacing,
+  radius: BorderRadius,
+  fontSize: FontSize,
+};
+
 
