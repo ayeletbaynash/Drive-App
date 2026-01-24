@@ -38,6 +38,7 @@ const LoginScreen = ({ navigation, onLogin }) => {
                 await AsyncStorage.setItem('user', JSON.stringify(data));
 
                 // Store the username and photo to personalize the UI later (Matching Web logic)
+                if (data.id) await AsyncStorage.setItem('userId', String(data.id))
                 if (data.firstName) await AsyncStorage.setItem('firstName', data.firstName);
                 if (data.username) await AsyncStorage.setItem('username', data.username);
                 if (data.image) await AsyncStorage.setItem('userImage', data.image);
