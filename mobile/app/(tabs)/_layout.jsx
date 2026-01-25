@@ -8,9 +8,8 @@ import ProfileButton from '../../components/ProfileButton';
 import ThemeToggle from '../../components/ThemeToggle'; // הכפתור החדש
 import { useAppTheme } from '../../context/ThemeContext'; // ה-Hook שלנו
 import SideMenu from '../../components/SideMenu';
-import React, { useState } from 'react'
-import CreateFile from '../../components/operations/CreateFile'
-import CreateFolder from '../../components/operations/CreateFolder'
+import CreateFile from '../../components/operations/CreateFile';
+import CreateFolder from '../../components/operations/CreateFolder';
 import AntDesign from '@expo/vector-icons/AntDesign';
 
 
@@ -75,7 +74,7 @@ export default function TabsLayout() {
             backgroundColor: theme.surface, 
             borderTopColor: theme.border 
           }]
-      }}>
+        }}>
         
         <Tabs.Screen 
           name="index" 
@@ -84,6 +83,7 @@ export default function TabsLayout() {
             tabBarIcon: ({ color, size, focused }) => (
               <Ionicons name={focused ? 'home' : 'home-outline'} size={size} color={color} />
             ),
+            unmountOnBlur: true,
           }} 
         />
         <Tabs screenOptions={{ 
@@ -91,7 +91,7 @@ export default function TabsLayout() {
           tabBarActiveTintColor: layoutStyles.activeColor, 
           tabBarInactiveTintColor: layoutStyles.inactiveColor,
           tabBarStyle: layoutStyles.tabBarCustom 
-        }}>
+          }}>
           
           <Tabs.Screen 
             name="index" 
@@ -128,8 +128,9 @@ export default function TabsLayout() {
               unmountOnBlur: true,
           }} />
 
-        </Tabs>
-      </View>
+      </Tabs>
+      </Tabs>
+    </View>
 
       {/* the options of the + menu */}
       {isOpen && (
