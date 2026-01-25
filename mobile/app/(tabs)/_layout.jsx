@@ -23,7 +23,7 @@ export default function TabsLayout() {
 
   return (
     <View style={layoutStyles.container}>
-      {/* לוגיקה בלבד - לא תופס מקום */}
+      {/* logic only - not taking space */}
       <CreateFile visible={isCreateFileVisible} parentId={folderId || null} onClose={() => setIsCreateFileVisible(false)} />
       <CreateFolder visible={isCreateFolderVisible} parentId={folderId || null} onClose={() => setIsCreateFolderVisible(false)} />
       <FileUpload ref={fileUploadRef} folderId={folderId} />
@@ -35,12 +35,12 @@ export default function TabsLayout() {
       </SafeAreaView>
 
       <View style={{ flex: 1 }}>
-        <Tabs screenOptions={{ /* האופציות שלך */ }}>
-          {/* הטאבים שלך */}
+        <Tabs screenOptions={{ /* my options */ }}>
+          {/* my tabs */}
         </Tabs>
       </View>
 
-      {/* תפריט האופציות - חייב להיות מעל הכל */}
+      {/* options menu - must be above everything */}
       {isOpen && (
         <View style={layoutStyles.optionsContainer}>
           <TouchableOpacity style={layoutStyles.optionItem} onPress={() => { setIsOpen(false); setIsCreateFolderVisible(true); }}>
@@ -60,7 +60,7 @@ export default function TabsLayout() {
         </View>
       )}
 
-      {/* כפתור המצלמה - Always on */}
+      {/* camera button - Always on */}
       <TouchableOpacity 
         style={[layoutStyles.fab, layoutStyles.cameraFab]} 
         onPress={() => cameraUploadRef.current?.handleCamera()}
@@ -68,7 +68,7 @@ export default function TabsLayout() {
         <Ionicons name="camera" size={24} color="white" />
       </TouchableOpacity>
 
-      {/* כפתור הפלוס */}
+      {/* plus button */}
       <TouchableOpacity 
         style={layoutStyles.fab} 
         onPress={() => setIsOpen(!isOpen)}
