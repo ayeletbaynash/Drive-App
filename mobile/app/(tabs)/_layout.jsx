@@ -3,10 +3,12 @@ import { View, Text, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons'; 
 import { layoutStyles } from '../../styles/layoutStyles';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import React, { useState } from 'react'
+import React, { useState, useRef } from 'react'
 import CreateFile from '../../components/operations/CreateFile'
 import CreateFolder from '../../components/operations/CreateFolder'
 import AntDesign from '@expo/vector-icons/AntDesign';
+import FileUpload from '../../components/FileUpload';
+import Entypo from '@expo/vector-icons/Entypo';
 
 
 export default function TabsLayout() {
@@ -14,6 +16,7 @@ export default function TabsLayout() {
   const [isCreateFileVisible, setIsCreateFileVisible] = useState(false)
   const [isCreateFolderVisible, setIsCreateFolderVisible] = useState(false)
   const { folderId } = useGlobalSearchParams();
+  const fileUploadRef = useRef(null);  // ref to access FileUpload methods
 
   return (
     <View style={layoutStyles.container}>
@@ -93,12 +96,16 @@ export default function TabsLayout() {
 
           <TouchableOpacity 
             style={layoutStyles.optionItem} 
-            onPress={() => { console.log("Upload File"); setIsOpen(false); }}
-          >
-
+            onPress={() => { 
+              console.log("Button pressed!"); 
+              console.log("Ref status:", fileUploadRef.current);
+              console.log("Upload File"); 
+              setIsOpen(false);
+              fileUploadRef.current?.handleUpload(); 
+            }}>
             <Text style={layoutStyles.optionText}>Upload File</Text>
             <View style={layoutStyles.iconCircle}>
-              <Ionicons name="folder-add" size={24} color="white" />
+              <Entypo name="upload" size={24} color="white" />
             </View>
           </TouchableOpacity>
 
@@ -128,8 +135,8 @@ export default function TabsLayout() {
       >
         <Ionicons name={isOpen ? "close" : "add"} size={35} color="white" />
       </TouchableOpacity>
-{/* the component of create file */}
-<CreateFile 
+      {/* the component of create file */}
+      <CreateFile 
         visible={isCreateFileVisible}
         parentId={folderId || null} 
         onClose={() => setIsCreateFileVisible(false)} 
@@ -144,6 +151,14 @@ export default function TabsLayout() {
         parentId={folderId || null} 
         onClose={() => setIsCreateFolderVisible(false)} 
         onSuccess={() => setIsCreateFolderVisible(false)}
+      />
+      {/* the component of file upload */}
+      <FileUpload 
+        ref={fileUploadRef} 
+        folderId={folderId} 
+        onSuccess={() => {
+            console.log("Upload finished successfully");
+        }} 
       />
     </View>
   );
