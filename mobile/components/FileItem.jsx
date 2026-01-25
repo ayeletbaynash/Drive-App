@@ -2,7 +2,8 @@ import { View, Text, TouchableOpacity } from 'react-native';
 import { Ionicons, FontAwesome6, AntDesign } from '@expo/vector-icons';
 import { styles } from '../styles/FileItem.styles';
 import  ActionSheet from './ActionSheet'
-import React, { useState } from 'react';
+import React, { useState } from 'react'
+import RemoveFile from './operations/Remove'
 
 const FileItem = ({ file, onOpen, isTrash }) => {
   const [isMenuVisible, setIsMenuVisible] = useState(false);
@@ -65,9 +66,10 @@ const FileItem = ({ file, onOpen, isTrash }) => {
         <Text style={{ fontSize: 16 }}>Share</Text>
       </TouchableOpacity>
       
-      <TouchableOpacity style={styles.simpleButton} onPress={() => alert('To Trash')}>
-        <Text style={{ color: 'red', fontSize: 16 }}>Move to Trash</Text>
-      </TouchableOpacity>
+      <RemoveFile 
+              file={file} 
+              onComplete={() => setIsMenuVisible(false)}
+      />
     </>
   )}
 </ActionSheet>

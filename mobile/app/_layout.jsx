@@ -1,9 +1,11 @@
 import { Stack } from 'expo-router';
-import { theme } from '../constants/theme'; 
+import { theme } from '../constants/theme'
+import { FileProvider } from '../context/FileContext';
 
 export default function RootLayout() {
   return (
     // The Stack manages the stack of screens (like pages in a browser)
+    <FileProvider>
     <Stack
       screenOptions={{
         headerStyle: {
@@ -35,5 +37,6 @@ export default function RootLayout() {
         options={{ title: 'Login' }} 
       />
     </Stack>
+  </FileProvider>
   );
 }

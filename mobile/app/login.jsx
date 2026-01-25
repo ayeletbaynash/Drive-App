@@ -6,8 +6,11 @@ import AppLogo from '../components/AppLogo';
 import { styles } from '../styles/authentication'; // shared styles file
 import { router } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useFileActions } from '../context/FileContext';
+
 
 const LoginScreen = ({ navigation, onLogin }) => {
+    const { setUserId } = useFileActions()
     // State to manage input fields (Matches Web structure)
     const [formData, setFormData] = useState({
         username: '',
@@ -43,7 +46,9 @@ const LoginScreen = ({ navigation, onLogin }) => {
                 if (data.username) await AsyncStorage.setItem('username', data.username);
                 if (data.image) await AsyncStorage.setItem('userImage', data.image);
                 if (data.emailAddress) await AsyncStorage.setItem('userEmail', data.emailAddress);
-
+                if (data.id) {
+                    setUserId(data.id);
+                }
                 if (onLogin) {
                     onLogin(data); // This updates the global user state
                 }

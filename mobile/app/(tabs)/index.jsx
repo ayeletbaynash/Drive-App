@@ -1,15 +1,18 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useMemo } from 'react'
 import { View, Text, ActivityIndicator, DeviceEventEmitter, Alert, TouchableOpacity } from 'react-native';
 import { Colors } from '../../constants/theme';
 import { layoutStyles } from '../../styles/layoutStyles'
 import FileViewList from '../../components/FileViewList'
 import  authorizedFetch  from '../../services/authorizedFetch'
 import { API_URL } from '../../config';
+import { useFileActions } from '../../context/FileContext'
+
 import { useLocalSearchParams, useRouter } from 'expo-router'
 
 export default function HomeScreen() {
     const { folderId } = useLocalSearchParams(); 
-    const router = useRouter();
+    const router = useRouter()
+    const { deletedFiles } = useFileActions();
     
     const [files, setFiles] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
@@ -54,6 +57,12 @@ export default function HomeScreen() {
         };
     }, [folderId]);
 
+    const visibleFiles = useMemo(() => {
+        return files.filter(file => 
+            !deletedFiles.some(deleted => deleted.id === file.id)
+        );
+    }, [files, deletedFiles]);
+
     const handleNavigate = (item) => {
         if (item.type === 'folder') {
             router.push({ pathname: '/', params: { folderId: item.id } });
@@ -90,7 +99,7 @@ export default function HomeScreen() {
                 </View>
             ) : (
                 <FileViewList 
-                    items={files} 
+                    items={visibleFiles} 
                     isTrash={false} 
                     onFolderPress={handleNavigate} 
                 />
