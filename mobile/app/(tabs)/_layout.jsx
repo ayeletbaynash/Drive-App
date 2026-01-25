@@ -1,17 +1,57 @@
-import { Tabs } from 'expo-router';
-import { View, Text } from 'react-native';
+import React, { useState } from 'react';
+import { Tabs, useRouter } from 'expo-router';
+import { View, Text, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons'; 
 import { layoutStyles } from '../../styles/layoutStyles';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import ProfileButton from '../../components/ProfileButton';
+import ThemeToggle from '../../components/ThemeToggle'; // הכפתור החדש
+import { useAppTheme } from '../../context/ThemeContext'; // ה-Hook שלנו
+import SideMenu from '../../components/SideMenu';
 
 export default function TabsLayout() {
+  const { theme } = useAppTheme();
+  const router = useRouter();
+  const [isMenuVisible, setMenuVisible] = useState(false);
+
   return (
-    <View style={layoutStyles.container}>
-      
-      {/* Top Bar */}
-      <SafeAreaView edges={['top']} style={layoutStyles.safeArea}>
-        <View style={layoutStyles.topBar}>
-          <Text style={layoutStyles.topBarText}>top bar</Text>
+    <>
+      {/* 1. התפריט נמצא כאן, מחוץ ל-View הראשי כדי לצוף מעליו */}
+      <SideMenu 
+        visible={isMenuVisible} 
+        onClose={() => setMenuVisible(false)} 
+      />
+    <View style={[layoutStyles.container, { backgroundColor: theme.background }]}>
+
+      <SafeAreaView edges={['top']} style={{ backgroundColor: theme.background }}> 
+        <View style={[layoutStyles.topBarContainer, { backgroundColor: theme.background, borderBottomColor: theme.border }]}>
+          
+          {/* 2. התיקון: הוספנו onPress לכפתור */}
+            <TouchableOpacity 
+              style={layoutStyles.iconButton}
+              onPress={() => setMenuVisible(true)} 
+            >
+              <Ionicons name="menu" size={28} color={theme.textMuted} />
+            </TouchableOpacity>
+
+          {/* Search Bar - שינוי צבע דינמי */}
+          <TouchableOpacity 
+            style={[layoutStyles.searchContainer, { backgroundColor: theme.surface, flex: 1 }]} 
+            onPress={() => router.push('/search')} // Navigate to Search Screen
+            activeOpacity={0.7}
+          >
+            <Ionicons name="search" size={20} color={theme.textMuted} />
+            <Text style={[layoutStyles.searchPlaceholder, { color: theme.textMuted }]}>
+              Search in Drive
+            </Text>
+          </TouchableOpacity>
+
+          {/* Right Actions */}
+          <View style={layoutStyles.rightActions}>
+            <ThemeToggle />
+            <ProfileButton />
+          </View>
+
         </View>
       </SafeAreaView>
 
@@ -19,9 +59,12 @@ export default function TabsLayout() {
       <View style={{ flex: 1 }}>
       <Tabs screenOptions={{ 
         headerShown: false, 
-        tabBarActiveTintColor: layoutStyles.activeColor, 
-        tabBarInactiveTintColor: layoutStyles.inactiveColor,
-        tabBarStyle: layoutStyles.tabBarCustom 
+        tabBarActiveTintColor: theme.tabActive, 
+          tabBarInactiveTintColor: theme.tabInactive,
+          tabBarStyle: [layoutStyles.tabBarCustom, { 
+            backgroundColor: theme.surface, 
+            borderTopColor: theme.border 
+          }]
       }}>
         
         <Tabs.Screen 
@@ -58,5 +101,6 @@ export default function TabsLayout() {
       </Tabs>
     </View>
     </View>
+    </>
   );
 }
