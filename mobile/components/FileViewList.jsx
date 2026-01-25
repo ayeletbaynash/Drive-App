@@ -3,7 +3,7 @@ import { useRouter } from 'expo-router';
 import FolderItem from './FolderItem';
 import FileItem from './FileItem';
 
-const FileViewList = ({ items, isTrash }) => {
+const FileViewList = ({ items, isTrash, onFolderPress }) => {
   const router = useRouter();
   
   // Separate folders and files
@@ -23,7 +23,7 @@ const FileViewList = ({ items, isTrash }) => {
       {/* Folders Section */}
       <View>
           {folders.map(f => (
-            <FolderItem key={f.id} folder={f} isTrash={isTrash}  />
+            <FolderItem key={f.id} folder={f} isTrash={isTrash} onFolderPress={onFolderPress}  />
           ))}
       </View>
 
