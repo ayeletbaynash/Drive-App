@@ -1,7 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { router } from 'expo-router';
 
-export const authorizedFetch = async (url, options = {}) => {
+const authorizedFetch = async (url, options = {}) => {
     try {
         // retrieve stored authentication data from AsyncStorage
         const token = await AsyncStorage.getItem('token');
@@ -46,4 +46,5 @@ export const authorizedFetch = async (url, options = {}) => {
         console.error("AuthorizedFetch Error:", error);
         throw error;
     }
-};
+}
+export default authorizedFetch;
