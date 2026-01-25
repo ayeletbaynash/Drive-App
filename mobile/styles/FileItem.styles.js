@@ -35,6 +35,13 @@ export const styles = StyleSheet.create({
     color: Colors.light.textMuted,
     marginTop: 2,
   },
+  simpleButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    width: '100%',
+},
   menuButton: {
     padding: 8,
     marginLeft: 4,
