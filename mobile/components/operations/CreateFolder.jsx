@@ -5,17 +5,15 @@ import styles from '../../styles/CreateFileStyles';
 import { API_URL } from '../../config';
 
 
-const CreateFile = ({ visible, onClose, onSuccess, parentId }) => {
+const CreateFolder = ({ visible, onClose, onSuccess, parentId }) => {
     const [name, setName] = useState('');
-    const [content, setContent] = useState('');
 
     const handleCreate = async () => {
 
         const bodyData = {
-            name: `${name}.txt`,
-            type: 'file',
+            name: name,
+            type: 'folder',
             parent_id: parentId,
-            content: content || "" 
         };
 
         try {
@@ -44,7 +42,6 @@ const CreateFile = ({ visible, onClose, onSuccess, parentId }) => {
 
     const closeAndReset = () => {
         setName('');
-        setContent('');
         onClose();
     };
 
@@ -57,7 +54,7 @@ const CreateFile = ({ visible, onClose, onSuccess, parentId }) => {
         >
             <View style={styles.modalOverlay}>
                 <View style={styles.modalContent}>
-                    <Text style={styles.modalTitle}>Create New File</Text>
+                    <Text style={styles.modalTitle}>Create New Folder</Text>
                     
                     <View style={styles.inputGroup}>
                         <TextInput 
@@ -67,18 +64,7 @@ const CreateFile = ({ visible, onClose, onSuccess, parentId }) => {
                             placeholder="File name" 
                             autoFocus 
                         />
-                        <Text style={styles.extension}>.txt</Text>
                     </View>
-
-                    <TextInput 
-                        style={[styles.input, styles.textArea]}
-                        value={content} 
-                        onChangeText={setContent} 
-                        placeholder="File content (optional)..."
-                        multiline={true}
-                        numberOfLines={5}
-                        textAlignVertical="top"
-                    />
 
                     <View style={styles.modalActions}>
                         <TouchableOpacity style={styles.btnSecondary} onPress={closeAndReset}>
@@ -94,4 +80,4 @@ const CreateFile = ({ visible, onClose, onSuccess, parentId }) => {
     );
 };
 
-export default CreateFile;
+export default CreateFolder;

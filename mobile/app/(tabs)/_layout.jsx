@@ -1,14 +1,20 @@
-import { Tabs } from 'expo-router';
+import { Tabs, useGlobalSearchParams } from 'expo-router';
 import { View, Text, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons'; 
 import { layoutStyles } from '../../styles/layoutStyles';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import React, { useState } from 'react'
 import CreateFile from '../../components/operations/CreateFile'
+import CreateFolder from '../../components/operations/CreateFolder'
+import AntDesign from '@expo/vector-icons/AntDesign';
+
 
 export default function TabsLayout() {
   const [isOpen, setIsOpen] = useState(false);
   const [isCreateFileVisible, setIsCreateFileVisible] = useState(false)
+  const [isCreateFolderVisible, setIsCreateFolderVisible] = useState(false)
+  const { folderId } = useGlobalSearchParams();
+
   return (
     <View style={layoutStyles.container}>
       
@@ -35,6 +41,7 @@ export default function TabsLayout() {
               tabBarIcon: ({ color, size, focused }) => (
                 <Ionicons name={focused ? 'home' : 'home-outline'} size={size} color={color} />
               ),
+              unmountOnBlur: true,
             }} 
           />
 
@@ -43,6 +50,7 @@ export default function TabsLayout() {
               tabBarIcon: ({ color, size, focused }) => (
                 <Ionicons name={focused ? 'star' : 'star-outline'} size={size} color={color} />
               ),
+              unmountOnBlur: true,
           }} />
 
           <Tabs.Screen name="Shared" options={{
@@ -50,6 +58,7 @@ export default function TabsLayout() {
               tabBarIcon: ({ color, size, focused }) => (
                 <Ionicons name={focused ? 'people' : 'people-outline'} size={size} color={color} />
               ),
+              unmountOnBlur: true,
           }} />
 
           <Tabs.Screen name="Files" options={{
@@ -57,22 +66,28 @@ export default function TabsLayout() {
               tabBarIcon: ({ color, size, focused }) => (
                 <Ionicons name={focused ? 'folder' : 'folder-outline'} size={size} color={color} />
               ),
+              unmountOnBlur: true,
           }} />
 
         </Tabs>
       </View>
 
-      {/* 2. תפריט האופציות (מופיע רק כשהפלוס לחוץ) */}
+      {/* the options of the + menu */}
       {isOpen && (
         <View style={layoutStyles.optionsContainer}>
-          
+
+   {/*the text "new folder".click on him will open the modal for this */}
+
           <TouchableOpacity 
             style={layoutStyles.optionItem} 
-            onPress={() => { console.log("New Folder"); setIsOpen(false); }}
+            onPress={() => { 
+                setIsOpen(false); 
+                setIsCreateFolderVisible(true); 
+            }}
           >
             <Text style={layoutStyles.optionText}>New Folder</Text>
             <View style={layoutStyles.iconCircle}>
-              <Ionicons name="folder-add-outline" size={24} color="white" />
+              <AntDesign name="folder-add" size={24} color="white" /> 
             </View>
           </TouchableOpacity>
 
@@ -81,7 +96,7 @@ export default function TabsLayout() {
             onPress={() => { console.log("Upload File"); setIsOpen(false); }}
           >
 
-            <Text style={layoutStyles.optionText}>New Folder</Text>
+            <Text style={layoutStyles.optionText}>Upload File</Text>
             <View style={layoutStyles.iconCircle}>
               <Ionicons name="folder-add" size={24} color="white" />
             </View>
@@ -105,7 +120,7 @@ export default function TabsLayout() {
         </View>
       )}
 
-      {/* 3. כפתור הפלוס הצף (FAB) */}
+      {/*button + */}
       <TouchableOpacity 
         style={[layoutStyles.fab]} 
         onPress={() => setIsOpen(!isOpen)}
@@ -115,12 +130,20 @@ export default function TabsLayout() {
       </TouchableOpacity>
 {/* the component of create file */}
 <CreateFile 
-        visible={isCreateFileVisible} 
+        visible={isCreateFileVisible}
+        parentId={folderId || null} 
         onClose={() => setIsCreateFileVisible(false)} 
         onSuccess={() => {
             console.log("File created successfully!");
             setIsCreateFileVisible(false);
         }}
+      />
+      {/* the component of create folder */}
+      <CreateFolder 
+        visible={isCreateFolderVisible} 
+        parentId={folderId || null} 
+        onClose={() => setIsCreateFolderVisible(false)} 
+        onSuccess={() => setIsCreateFolderVisible(false)}
       />
     </View>
   );
