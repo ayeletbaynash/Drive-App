@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { View, Text, ActivityIndicator, DeviceEventEmitter, Alert, TouchableOpacity } from 'react-native';
 import { Colors } from '../../constants/theme';
-import { layoutStyles } from '../../styles/layoutStyles'
+import { layoutStyles } from '../../styles/layoutStyles.js';
 import FileViewList from '../../components/FileViewList'
 import  authorizedFetch  from '../../services/authorizedFetch'
 import { API_URL } from '../../config';

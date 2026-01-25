@@ -14,7 +14,9 @@ const FileViewList = ({ items, isTrash, onFolderPress }) => {
   const handleOpen = (file) => {
     router.push({
       pathname: '/file-viewer', 
-      params: { file: file }
+      params: { 
+        id: file._id || file.id,
+        name: file.name }
     });
   };
 

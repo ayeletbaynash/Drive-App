@@ -1,16 +1,140 @@
-import { View, Text, Button } from 'react-native';
-import { useLocalSearchParams, useRouter } from 'expo-router';
+import React, { useState, useEffect } from 'react';
+import { View, Text, Image, ScrollView, ActivityIndicator, Alert, TouchableOpacity } from 'react-native';
+import { useLocalSearchParams } from 'expo-router';
+import * as WebBrowser from 'expo-web-browser';
+import { API_URL } from '../config'; 
+import authorizedFetch from '../services/authorizedFetch'; 
+import { styles } from '../styles/FileViewer.styles';
+import { Colors } from '../constants/theme';
+import { decode as atob } from 'base-64';
+import * as Sharing from 'expo-sharing';
+import * as FileSystem from 'expo-file-system/legacy';
 
 export default function FileViewer() {
-  const { file } = useLocalSearchParams();
-  const router = useRouter();
+    const { id, name } = useLocalSearchParams();
+    const [content, setContent] = useState('');
+    const [loading, setLoading] = useState(true);
 
-  return (
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-      <Text>ID: {file.id}</Text>
-      <Text>Name: {file.name}</Text>
-      
-      <Button title="Go Back" onPress={() => router.back()} />
-    </View>
-  );
+    useEffect(() => {
+        fetchFileContent();
+    }, [id]);
+
+    const fetchFileContent = async () => {
+        try {
+            const response = await authorizedFetch(`${API_URL}/files/${id}`);
+            if (!response) throw new Error("No response");
+            
+            const data = await response.json();
+            if (response.ok) {
+                setContent(data.content || "");
+            } else {
+                Alert.alert("Error", data.error || "Failed to load");
+            }
+        } catch (error) {
+            console.error("View Error:", error);
+            setContent("Could not connect to server");
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const openPdf = async (base64Data, fileName) => {
+    try {
+        const safeFileName = fileName.toLowerCase().endsWith('.pdf') ? fileName : `${fileName}.pdf`;
+        const fileUri = `${FileSystem.cacheDirectory}${safeFileName}`;
+        
+        const base64Code = base64Data.replace(/^data:application\/pdf;base64,/, "");
+
+        // שימוש ב-FileSystem מה-legacy import
+        await FileSystem.writeAsStringAsync(fileUri, base64Code, {
+            encoding: 'base64', 
+        });
+
+        if (await Sharing.isAvailableAsync()) {
+            await Sharing.shareAsync(fileUri, {
+                mimeType: 'application/pdf',
+                dialogTitle: 'Open PDF',
+                UTI: 'com.adobe.pdf'
+            });
+        } else {
+            Alert.alert("Error", "Sharing is not available");
+        }
+        
+    } catch (error) {
+        console.error("Error opening PDF:", error);
+        Alert.alert("Error", "Could not process PDF file");
+    }
+};
+
+    const renderContent = () => {
+        if (!content) return <Text>File is empty</Text>;
+
+        const fileName = name.toLowerCase();
+
+        // 1. Images
+        if (fileName.match(/\.(jpg|jpeg|png|gif|webp)$/)) {
+            const imageUri = content.startsWith('data:') ? content : `data:image/jpeg;base64,${content}`;
+            return (
+                <Image 
+                    source={{ uri: imageUri }} 
+                    style={styles.fullImage} 
+                    resizeMode="contain" 
+                />
+            );
+        }
+
+        // 2. PDF
+        if (fileName.endsWith('.pdf')) {
+            const pdfUri = content.startsWith('data:') ? content : `data:application/pdf;base64,${content}`;
+            return (
+                <View style={styles.centered}>
+                    <Text style={{fontSize: 80}}>📄</Text>
+                    <Text style={styles.fileName}>{name}</Text>
+                    <TouchableOpacity 
+                        style={styles.pdfButton}
+                        onPress={() => openPdf(content, name)}
+                    >
+                        <Text style={styles.pdfLink}>View PDF Document</Text>
+                    </TouchableOpacity>
+                </View>
+            );
+        }
+
+        // 3. txt
+        try {
+            let displayText = content;
+            if (content.includes(',')) displayText = content.split(',')[1];
+            
+            // Decode Base64 to text
+            try {
+                displayText = atob(displayText);
+            } catch(e) {
+                // If decoding fails, keep original
+            }
+
+            return (
+                <ScrollView style={styles.textContainer}>
+                    <Text style={styles.textContent}>{displayText}</Text>
+                </ScrollView>
+            );
+        } catch (e) {
+            return <Text style={styles.textContent}>{content}</Text>;
+        }
+    };
+
+    return (
+        <View style={styles.container}>
+            <View style={styles.header}>
+                <Text style={styles.title}>{name}</Text>
+            </View>
+
+            {loading ? (
+                <ActivityIndicator size="large" color={Colors.light.primary} style={{ flex: 1 }} />
+            ) : (
+                <View style={styles.contentBody}>
+                    {renderContent()}
+                </View>
+            )}
+        </View>
+    );
 }
