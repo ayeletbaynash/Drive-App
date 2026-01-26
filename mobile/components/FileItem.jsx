@@ -10,11 +10,14 @@ import Rename from './operations/Rename'
 import MaterialIcons from '@expo/vector-icons/MaterialIcons'
 import EditContent from './operations/EditContent'
 import Feather from '@expo/vector-icons/Feather';
+import MoveFile from './operations/MoveFile'
+
 
 const FileItem = ({ file, onOpen, isTrash }) => {
   const [isMenuVisible, setIsMenuVisible] = useState(false)
   const [isRenameModalVisible, setIsRenameModalVisible] = useState(false)
   const [isEditModalVisible, setIsEditModalVisible] = useState(false);
+  const [isMoveModalVisible, setIsMoveModalVisible] = useState(false);
   const { starredFiles } = useFileActions();
   const isStarred = starredFiles.some(f => f.id === file.id)
 
@@ -108,7 +111,19 @@ const FileItem = ({ file, onOpen, isTrash }) => {
                 <Text style={{ fontSize: 16 }}>Edit Content</Text>
               </View>
             </TouchableOpacity>
-            
+            <TouchableOpacity 
+                style={styles.simpleButton} 
+                onPress={() => {
+                    setIsMenuVisible(false);
+                    setIsMoveModalVisible(true);
+                }}
+            >
+              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                <Ionicons name="folder-open-outline" size={24} color="black" />
+                <Text style={{ fontSize: 16, marginLeft: 10 }}>Move to...</Text>
+              </View>
+            </TouchableOpacity>
+
             <TouchableOpacity style={styles.simpleButton} onPress={() => alert('Share')}>
               <Text style={{ fontSize: 16 }}>Share</Text>
             </TouchableOpacity>
@@ -129,6 +144,11 @@ const FileItem = ({ file, onOpen, isTrash }) => {
           file={file} 
           visible={isEditModalVisible} 
           onClose={() => setIsEditModalVisible(false)} 
+      />
+      <MoveFile 
+          file={file} 
+          visible={isMoveModalVisible} 
+          onClose={() => setIsMoveModalVisible(false)} 
       />
     </View>
   );
