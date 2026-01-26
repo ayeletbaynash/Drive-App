@@ -41,16 +41,12 @@ const FileUpload = forwardRef(({ folderId, onSuccess }, ref) => {
           return;
         }
 
-        // Extract base64 data
-        const base64Data = resultString.includes(',') 
-          ? resultString.split(',')[1] 
-          : resultString;
-        
+        // preparing data for server upload
         const bodyData = {
           name: fileAsset.name,
           type: 'file',
           parent_id: folderId || null,
-          content: base64Data 
+          content: resultString
         };
 
         const response = await authorizedFetch(`${API_URL}/files`, {
