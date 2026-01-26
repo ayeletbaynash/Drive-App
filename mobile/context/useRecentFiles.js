@@ -1,7 +1,8 @@
 import { useState, useEffect, useCallback } from 'react';
 import { DeviceEventEmitter } from 'react-native';
-import { authorizedFetch } from '../services/authorizedFetch';
+import authorizedFetch from '../services/authorizedFetch';
 import { useFileActions } from './FileContext';
+import { API_URL } from '../config';
 
 export const useRecentFiles = () => {
   const [files, setFiles] = useState([]);
@@ -10,7 +11,7 @@ export const useRecentFiles = () => {
 
   // --- Recursive Fetch Logic ---
   const fetchAllFilesRecursive = async (folderId = null) => {
-    const url = folderId === null ? '/files' : `/files/${folderId}`;
+    const url = folderId === null ? `${API_URL}/files` : `${API_URL}/files/${folderId}`;
 
     try {
       const response = await authorizedFetch(url);

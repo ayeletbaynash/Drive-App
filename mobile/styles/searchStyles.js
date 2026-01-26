@@ -1,4 +1,4 @@
-import { StyleSheet } from 'react-native';
+import { StyleSheet, Platform, StatusBar } from 'react-native';
 
 export const searchStyles = StyleSheet.create({
   container: {
@@ -9,7 +9,7 @@ export const searchStyles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 12, // רווח בצדדים (נשאר אותו דבר)
     paddingBottom: 12,     // רווח למטה (נשאר אותו דבר)
-    paddingTop: 12,
+    paddingTop: Platform.OS === 'android' ? (StatusBar.currentHeight || 24) + 10 : 60,
     borderBottomWidth: 1,
     gap: 10,
   },

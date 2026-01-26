@@ -1,13 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { Tabs, useRouter, useGlobalSearchParams } from 'expo-router';
 import { View, Text, TouchableOpacity} from 'react-native';
 import { Ionicons } from '@expo/vector-icons'; 
 import { layoutStyles } from '../../styles/layoutStyles';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import React, { useState } from 'react'
 import ProfileButton from '../../components/ProfileButton';
 import ThemeToggle from '../../components/ThemeToggle'; // הכפתור החדש
 import { useAppTheme } from '../../context/ThemeContext'; // ה-Hook שלנו
+import SideMenu from '../../components/SideMenu';
 import CreateFile from '../../components/operations/CreateFile'
 import CreateFolder from '../../components/operations/CreateFolder'
 import AntDesign from '@expo/vector-icons/AntDesign';
@@ -19,39 +19,42 @@ import CameraUpload from '../../components/operations/CameraUpload';
 export default function TabsLayout() {
   const { theme } = useAppTheme();
   const router = useRouter();
-  const [isMenuVisible, setMenuVisible] = useState(false);
+  const { folderId } = useGlobalSearchParams();
 
+  const [isMenuVisible, setMenuVisible] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [isCreateFileVisible, setIsCreateFileVisible] = useState(false)
   const [isCreateFolderVisible, setIsCreateFolderVisible] = useState(false)
-  const { folderId } = useGlobalSearchParams();
 
   const fileUploadRef = useRef(null);  // ref to access FileUpload methods
   const cameraUploadRef = useRef(null);
 
   return (
     <>
-      {/* 1. התפריט נמצא כאן, מחוץ ל-View הראשי כדי לצוף מעליו */}
+      {/* 1. Side Menu (External to main view to float above) */}
       <SideMenu 
         visible={isMenuVisible} 
         onClose={() => setMenuVisible(false)} 
       />
-    <View style={[layoutStyles.container, { backgroundColor: theme.background }]}>
+    {/* <View style={[layoutStyles.container, { backgroundColor: theme.background }]}>
 
-      <View style={layoutStyles.container}>
+      <View style={layoutStyles.container}> */}
       {/* logic only - not taking space */}
       <CreateFile visible={isCreateFileVisible} parentId={folderId || null} onClose={() => setIsCreateFileVisible(false)} />
       <CreateFolder visible={isCreateFolderVisible} parentId={folderId || null} onClose={() => setIsCreateFolderVisible(false)} />
       <FileUpload ref={fileUploadRef} folderId={folderId} />
       <CameraUpload ref={cameraUploadRef} folderId={folderId} />
-      </View>
+
+      {/* 2. Main Container */}
+      <View style={[layoutStyles.container, { backgroundColor: theme.background }]}>
+
       {/* Top Bar & Tabs */}
       {/* <SafeAreaView edges={['top']} style={layoutStyles.safeArea}></SafeAreaView> */}
 
       <SafeAreaView edges={['top']} style={{ backgroundColor: theme.background }}> 
         <View style={[layoutStyles.topBarContainer, { backgroundColor: theme.background, borderBottomColor: theme.border }]}>
           
-          {/* 2. התיקון: הוספנו onPress לכפתור */}
+          {/* Hamburger Button */}
             <TouchableOpacity 
               style={layoutStyles.iconButton}
               onPress={() => setMenuVisible(true)} 
@@ -59,7 +62,7 @@ export default function TabsLayout() {
               <Ionicons name="menu" size={28} color={theme.textMuted} />
             </TouchableOpacity>
 
-          {/* Search Bar - שינוי צבע דינמי */}
+          {/* Search Bar Button */}
           <TouchableOpacity 
             style={[layoutStyles.searchContainer, { backgroundColor: theme.surface, flex: 1 }]} 
             onPress={() => router.push('/search')} // Navigate to Search Screen
@@ -79,9 +82,10 @@ export default function TabsLayout() {
 
         </View>
     
-         <View style={layoutStyles.topBar}><Text style={layoutStyles.topBarText}>top bar</Text></View>
+         {/* <View style={layoutStyles.topBar}><Text style={layoutStyles.topBarText}>top bar</Text></View> */}
       </SafeAreaView>
 
+      {/* Tabs Area - ONE Tabs component only */}
       <View style={{ flex: 1 }}>
       <Tabs screenOptions={{ 
         headerShown: false, 
@@ -103,23 +107,6 @@ export default function TabsLayout() {
             unmountOnBlur: true,
           }} 
         />
-        <Tabs screenOptions={{ 
-          headerShown: false, 
-          tabBarActiveTintColor: layoutStyles.activeColor, 
-          tabBarInactiveTintColor: layoutStyles.inactiveColor,
-          tabBarStyle: layoutStyles.tabBarCustom 
-          }}>
-          
-          <Tabs.Screen 
-            name="index" 
-            options={{
-              tabBarLabel: 'Home',
-              tabBarIcon: ({ color, size, focused }) => (
-                <Ionicons name={focused ? 'home' : 'home-outline'} size={size} color={color} />
-              ),
-              unmountOnBlur: true,
-            }} 
-          />
 
           <Tabs.Screen name="Starred" options={{
               tabBarLabel: 'Starred',
@@ -145,7 +132,6 @@ export default function TabsLayout() {
               unmountOnBlur: true,
           }} />
 
-      </Tabs>
       </Tabs>
     </View>
 
@@ -173,6 +159,7 @@ export default function TabsLayout() {
       <TouchableOpacity 
         style={[layoutStyles.fab, layoutStyles.cameraFab]} 
         onPress={() => cameraUploadRef.current?.handleCamera()}
+        activeOpacity={0.8}
       >
         <Ionicons name="camera" size={24} color="white" />
       </TouchableOpacity>

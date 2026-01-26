@@ -1,4 +1,5 @@
-import { TouchableOpacity, Text, Alert } from 'react-native';
+import React from 'react';
+import { TouchableOpacity, Text, DeviceEventEmitter } from 'react-native';
 import { useFileActions } from '../../context/FileContext'
 import { styles } from '../../styles/FileItem.styles'
 import { Feather } from '@expo/vector-icons'
@@ -8,6 +9,8 @@ const RemoveFile = ({ file, onComplete }) => {
 
   const handleRemove = async () => {
     await addToFileDeletionList(file);
+    DeviceEventEmitter.emit('somethingChange');
+
     if (onComplete) onComplete();
   };
 
@@ -19,4 +22,4 @@ const RemoveFile = ({ file, onComplete }) => {
   );
 };
 
-export default RemoveFile
+export default RemoveFile;

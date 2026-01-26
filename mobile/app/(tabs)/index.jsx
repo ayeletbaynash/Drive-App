@@ -58,9 +58,17 @@ export default function HomeScreen() {
     }, [folderId]);
 
     const visibleFiles = useMemo(() => {
-        return files.filter(file => 
-            !deletedFiles.some(deleted => deleted.id === file.id)
-        );
+        return files.filter(file => {
+            const fileId = file.id || file._id;
+            const isFileDeleted = deletedFiles.some(deleted => deleted.id === fileId);
+            if (isFileDeleted) return false;
+
+            if (file.parent_id) {
+                const isParentDeleted = deletedFiles.some(deleted => deleted.id === file.parent_id);
+                if (isParentDeleted) return false;
+            }
+            return true;
+        });
     }, [files, deletedFiles]);
 
     const handleNavigate = (item) => {

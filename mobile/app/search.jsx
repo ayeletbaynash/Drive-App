@@ -1,52 +1,66 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { View, TextInput, FlatList, TouchableOpacity, Text, ActivityIndicator } from 'react-native';
+import { View, TextInput, FlatList, TouchableOpacity, Text, ActivityIndicator, DeviceEventEmitter } from 'react-native'; // <-- הוספנו DeviceEventEmitter
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useAppTheme } from '../context/ThemeContext';
-import { authorizedFetch } from '../services/authorizedFetch';
+import authorizedFetch from '../services/authorizedFetch'; 
+import { useFileActions } from '../context/FileContext';
 import FileItem from '../components/FileItem';
-import { searchStyles } from '../styles/searchStyles'; // <-- הייבוא של הסטייל החיצוני
+import FolderItem from '../components/FolderItem';
+import { searchStyles } from '../styles/searchStyles';
+import { API_URL } from '../config';
 
 export default function SearchScreen() {
-  // --- 1. State & Hooks (לוגיקה) ---
   const [query, setQuery] = useState('');
   const [results, setResults] = useState([]);
   const [isSearching, setIsSearching] = useState(false);
   
-  const { theme } = useAppTheme(); // צבעים דינמיים
+  const { theme } = useAppTheme();
   const router = useRouter();
+  const { deletedFiles } = useFileActions();
   
-  const parentStatusCache = useRef(new Map());
+  const folderCache = useRef(new Map());
 
-  // --- 2. Helper Functions (לוגיקה של מחיקה) ---
+  // --- לוגיקת סינון מחיקות (זהה לווב) ---
   const isUnderDeletedFolder = async (file) => {
-    let parentId = file.parent_id;
+    if (deletedFiles.some(d => d.id === file.id)) return true;
 
-    while (parentId !== null) {
-      if (parentStatusCache.current.has(parentId)) {
-        return parentStatusCache.current.get(parentId);
+    let currentId = file.parent_id;
+
+    while (currentId !== null) {
+      if (deletedFiles.some(d => d.id === currentId)) {
+        folderCache.current.set(currentId, { isDeleted: true, parentId: null });
+        return true;
+      }
+
+      if (folderCache.current.has(currentId)) {
+        const cached = folderCache.current.get(currentId);
+        if (cached.isDeleted) return true;
+        currentId = cached.parentId;
+        continue;
       }
 
       try {
-        const response = await authorizedFetch(`/files/${parentId}`);
+        const response = await authorizedFetch(`${API_URL}/files/${currentId}`);
+        
         if (!response.ok) {
-          parentStatusCache.current.set(parentId, false);
-          return false;
+          folderCache.current.set(currentId, { isDeleted: true, parentId: null });
+          return true;
         }
-        const parent = await response.json();
-        // כאן תוסיפי בדיקה אם התיקייה עצמה מחוקה (בהתאם למה שהשרת מחזיר)
-        // כרגע זה ממשיך לעלות למעלה
-        parentId = parent.parent_id;
+
+        const folder = await response.json();
+        folderCache.current.set(currentId, { isDeleted: false, parentId: folder.parent_id });
+        currentId = folder.parent_id;
       } catch (e) {
-        parentStatusCache.current.set(parentId, false);
+        console.error("Error checking ancestry:", e);
         return false;
       }
     }
     return false;
   };
 
-  // --- 3. Search Execution (לוגיקה של חיפוש) ---
+  // --- ביצוע החיפוש ---
   const performSearch = async (text, signal) => {
     if (!text.trim()) {
       setResults([]);
@@ -54,12 +68,38 @@ export default function SearchScreen() {
     }
 
     setIsSearching(true);
+    folderCache.current.clear();
+
     try {
-      const response = await authorizedFetch(`/search/${encodeURIComponent(text)}`, { signal });
+      const response = await authorizedFetch(`${API_URL}/search/${encodeURIComponent(text)}`, { signal });
       if (response.ok) {
         const data = await response.json();
-        // כאן אפשר להוסיף את הסינון של isUnderDeletedFolder אם צריך
-        setResults(data); 
+        const lowerQuery = text.toLowerCase();
+        
+        const filterPromises = data.map(async (item) => {
+            // 1. בדיקת סוגי קבצים ספציפיים (כמו בווב)
+            // בווב יש לוגיקה שמסננת תמונות/PDF אם השם לא מכיל את הטקסט במפורש
+            const fileName = (item.name || "").toLowerCase();
+            const isImageOrPdf = fileName.endsWith('.png') || 
+                                 fileName.endsWith('.jpg') || 
+                                 fileName.endsWith('.jpeg') ||
+                                 fileName.endsWith('.pdf');
+            
+            if (isImageOrPdf) {
+                if (!fileName.includes(lowerQuery)) {
+                    return null; // סינון החוצה
+                }
+            }
+
+            // 2. בדיקת מחיקה היררכית
+            const isDeleted = await isUnderDeletedFolder(item);
+            return isDeleted ? null : item;
+        });
+
+        const resolvedResults = await Promise.all(filterPromises);
+        const validResults = resolvedResults.filter(item => item !== null);
+
+        setResults(validResults); 
       }
     } catch (error) {
       if (error.name !== 'AbortError') {
@@ -70,36 +110,94 @@ export default function SearchScreen() {
     }
   };
 
-  // --- 4. Debounce Effect (לוגיקה של המתנה) ---
+  // --- אפקטים (Effects) ---
+
+  // 1. Debounce לחיפוש בעת הקלדה
   useEffect(() => {
     const controller = new AbortController();
     const timeoutId = setTimeout(() => {
       performSearch(query, controller.signal);
-    }, 400); // מחכה 400 מילישניות לפני שליחה לשרת
+    }, 400);
 
     return () => {
       clearTimeout(timeoutId);
       controller.abort();
     };
-  }, [query]);
+  }, [query, deletedFiles]); // רץ כשמקלידים או כשיש מחיקה
 
-  // --- 5. Handlers ---
+  // 2. האזנה לשינויים חיצוניים (Rename, Upload וכו') - הוספנו את זה!
+  useEffect(() => {
+    const refreshSearch = () => {
+        if (query.trim().length > 0) {
+            // מריצים חיפוש מחדש ללא AbortController כי זה רענון מיידי
+            performSearch(query); 
+        }
+    };
+
+    const subscription = DeviceEventEmitter.addListener('somethingChange', refreshSearch);
+
+    return () => {
+        subscription.remove();
+    };
+  }, [query]); // תלוי בשאילתה הנוכחית
+
   const handleOpenFile = (file) => {
+    const realId = file._id || file.id;
+
     router.push({
       pathname: '/file-viewer',
-      params: { file: JSON.stringify(file) }
+      params: { 
+          id: realId, 
+          name: file.name 
+      }
     });
   };
 
-  // --- 6. The View (התצוגה) ---
+  const handleOpenFolder = (folder) => {
+    const realId = folder._id || folder.id;
+    // ניווט למסך התיקיות (בדיוק כמו במסך הבית)
+    router.push({
+        pathname: '/(tabs)', // ודאי שהנתיב תואם לשם הקובץ שלך!
+        params: { 
+            folderId: realId, 
+            folderName: folder.name 
+        }
+    });
+  };
+  
+  // --- Render Item (החלק החשוב) ---
+  const renderSearchResult = ({ item }) => {
+    const fileName = item.name || "";
+    // בדיקה: האם זה תיקייה?
+    // אם השרת אומר 'folder' או שאין נקודה בשם
+    const isFolder = item.type === 'folder' || (fileName.length > 0 && !fileName.includes('.'));
+    const normalizedItem = { ...item, id: item._id || item.id };
+
+    if (isFolder) {
+        return (
+            <FolderItem 
+                folder={normalizedItem} 
+                isTrash={false} 
+                onFolderPress={handleOpenFolder} 
+            />
+        );
+    }
+
+    // אחרת, זה קובץ רגיל
+    return (
+        <FileItem 
+            file={normalizedItem} 
+            onOpen={() => handleOpenFile(normalizedItem)} 
+            isTrash={false}
+        />
+    );
+  };
+
   return (
-    // משתמשים ב-searchStyles למיקום, וב-theme לצבעים
     <SafeAreaView 
-       edges={['left', 'right', 'bottom']} // <-- ביטלנו את 'top'
+       edges={['left', 'right', 'bottom']}
        style={[searchStyles.container, { backgroundColor: theme.background }]}
     >
-      
-      {/* Header Section */}
       <View style={[searchStyles.header, { borderBottomColor: theme.border }]}>
         <TouchableOpacity onPress={() => router.back()} style={searchStyles.backBtn}>
           <Ionicons name="arrow-back" size={24} color={theme.textMuted} />
@@ -111,7 +209,7 @@ export default function SearchScreen() {
             style={[searchStyles.input, { color: theme.textMain }]}
             placeholder="Search in Drive"
             placeholderTextColor={theme.textMuted}
-            autoFocus={true} // מקלדת קופצת אוטומטית
+            autoFocus={true}
             value={query}
             onChangeText={setQuery}
             returnKeyType="search"
@@ -120,19 +218,19 @@ export default function SearchScreen() {
         </View>
       </View>
 
-      {/* Results List */}
       <FlatList
         data={results}
-        keyExtractor={(item) => item.id}
+        keyExtractor={(item) => item.id || item._id}
         contentContainerStyle={searchStyles.listContent}
         keyboardShouldPersistTaps="handled"
-        renderItem={({ item }) => (
-          <FileItem 
-            file={item} 
-            onOpen={() => handleOpenFile(item)} 
-            isTrash={false}
-          />
-        )}
+        // renderItem={({ item }) => (
+        //   <FileItem 
+        //     file={item} 
+        //     onOpen={() => handleOpenFile(item)} 
+        //     isTrash={false}
+        //   />
+        // )}
+        renderItem={renderSearchResult}
         ListEmptyComponent={
           !isSearching && query.length > 0 && (
             <View style={searchStyles.emptyContainer}>
