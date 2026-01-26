@@ -3,7 +3,7 @@ import { View, Text, ActivityIndicator, DeviceEventEmitter, Alert, TouchableOpac
 import { Colors } from '../../constants/theme';
 import { layoutStyles } from '../../styles/layoutStyles.js';
 import FileViewList from '../../components/FileViewList'
-import  authorizedFetch  from '../../services/authorizedFetch'
+import authorizedFetch from '../../services/authorizedFetch.jsx'
 import { API_URL } from '../../config';
 import { useFileActions } from '../../context/FileContext'
 

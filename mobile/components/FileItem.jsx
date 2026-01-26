@@ -10,8 +10,9 @@ import Rename from './operations/Rename'
 import MaterialIcons from '@expo/vector-icons/MaterialIcons'
 import EditContent from './operations/EditContent'
 import Feather from '@expo/vector-icons/Feather';
+import CopyFile from './operations/CopyFile';
 
-const FileItem = ({ file, onOpen, isTrash }) => {
+const FileItem = ({ file, onOpen, isTrash, fetchFiles }) => {
   const [isMenuVisible, setIsMenuVisible] = useState(false)
   const [isRenameModalVisible, setIsRenameModalVisible] = useState(false)
   const [isEditModalVisible, setIsEditModalVisible] = useState(false);
@@ -94,6 +95,12 @@ const FileItem = ({ file, onOpen, isTrash }) => {
                 <Text style={{ fontSize: 16 }}>Rename</Text>
               </View>
             </TouchableOpacity>
+
+            <CopyFile 
+              file={file} 
+              onAction={() => setIsMenuVisible(false)} 
+              onSuccess={fetchFiles} // to refresh file list after copy
+            />
 
             {/* Edit Content Button */}
             <TouchableOpacity 
