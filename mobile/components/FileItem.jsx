@@ -6,11 +6,17 @@ import React, { useState } from 'react'
 import RemoveFile from './operations/Remove'
 import { useFileActions } from '../context/FileContext'
 import StarFile from './operations/StarFile'
+import Rename from './operations/Rename'
+import MaterialIcons from '@expo/vector-icons/MaterialIcons'
+import EditContent from './operations/EditContent'
+import Feather from '@expo/vector-icons/Feather';
 
 const FileItem = ({ file, onOpen, isTrash }) => {
-  const [isMenuVisible, setIsMenuVisible] = useState(false);
+  const [isMenuVisible, setIsMenuVisible] = useState(false)
+  const [isRenameModalVisible, setIsRenameModalVisible] = useState(false)
+  const [isEditModalVisible, setIsEditModalVisible] = useState(false);
   const { starredFiles } = useFileActions();
-  const isStarred = starredFiles.some(f => f.id === file.id);
+  const isStarred = starredFiles.some(f => f.id === file.id)
 
   const getFileIcon = (fileName) => {
     if (fileName.endsWith('.pdf')) return <FontAwesome6 name="file-pdf" size={24} color="red" />
@@ -40,7 +46,7 @@ const FileItem = ({ file, onOpen, isTrash }) => {
               )}
             </View>
             {/* Modification date below the name */}
-            <Text style={styles.dateText}>Modified: {file.lastModified}</Text>
+            <Text style={styles.dateText}>Modified: {new Date(file.updatedAt).toLocaleDateString('he-IL')} {new Date(file.updatedAt).toLocaleTimeString('he-IL', { hour: '2-digit', minute: '2-digit' })}</Text>
           </View>
         </View>
       </TouchableOpacity>
@@ -76,8 +82,31 @@ const FileItem = ({ file, onOpen, isTrash }) => {
                 onComplete={() => setIsMenuVisible(false)} 
             />
             
-            <TouchableOpacity style={styles.simpleButton} onPress={() => alert('Rename')}>
-              <Text style={{ fontSize: 16 }}>Rename</Text>
+            <TouchableOpacity 
+                style={styles.simpleButton} 
+                onPress={() => {
+                    setIsMenuVisible(false)
+                    setIsRenameModalVisible(true)
+                }}
+            >
+              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                <MaterialIcons name="drive-file-rename-outline" size={24} color="black" />
+                <Text style={{ fontSize: 16 }}>Rename</Text>
+              </View>
+            </TouchableOpacity>
+
+            {/* Edit Content Button */}
+            <TouchableOpacity 
+                style={styles.simpleButton} 
+                onPress={() => {
+                    setIsMenuVisible(false);
+                    setIsEditModalVisible(true);
+                }}
+            >
+              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                <Feather name="edit" size={24} color="black" />
+                <Text style={{ fontSize: 16 }}>Edit Content</Text>
+              </View>
             </TouchableOpacity>
             
             <TouchableOpacity style={styles.simpleButton} onPress={() => alert('Share')}>
@@ -91,6 +120,16 @@ const FileItem = ({ file, onOpen, isTrash }) => {
           </>
         )}
       </ActionSheet>
+      <Rename 
+          file={file} 
+          visible={isRenameModalVisible} 
+          onClose={() => setIsRenameModalVisible(false)} 
+      />
+      <EditContent 
+          file={file} 
+          visible={isEditModalVisible} 
+          onClose={() => setIsEditModalVisible(false)} 
+      />
     </View>
   );
 };
