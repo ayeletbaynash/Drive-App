@@ -6,6 +6,7 @@ import React, { useState } from 'react'
 import RemoveFile from './operations/Remove'
 import { useFileActions } from '../context/FileContext'
 import StarFile from './operations/StarFile'
+import DownloadFile from './operations/DownloadFile';
 
 const FileItem = ({ file, onOpen, isTrash }) => {
   const [isMenuVisible, setIsMenuVisible] = useState(false);
@@ -79,6 +80,11 @@ const FileItem = ({ file, onOpen, isTrash }) => {
             <TouchableOpacity style={styles.simpleButton} onPress={() => alert('Rename')}>
               <Text style={{ fontSize: 16 }}>Rename</Text>
             </TouchableOpacity>
+
+            <DownloadFile 
+              file={file} 
+              onComplete={() => setIsMenuVisible(false)} 
+            />
             
             <TouchableOpacity style={styles.simpleButton} onPress={() => alert('Share')}>
               <Text style={{ fontSize: 16 }}>Share</Text>
