@@ -10,6 +10,7 @@ import AntDesign from '@expo/vector-icons/AntDesign';
 import FileUpload from '../../components/FileUpload';
 import Entypo from '@expo/vector-icons/Entypo';
 import CameraUpload from '../../components/operations/CameraUpload';
+import { Colors } from '../../constants/theme'; 
 
 
 export default function TabsLayout() {
@@ -35,8 +36,40 @@ export default function TabsLayout() {
       </SafeAreaView>
 
       <View style={{ flex: 1 }}>
-        <Tabs screenOptions={{ /* my options */ }}>
-          {/* my tabs */}
+        <Tabs screenOptions={{ 
+            headerShown: false, 
+            tabBarActiveTintColor: layoutStyles.activeColor,   
+            tabBarInactiveTintColor: layoutStyles.inactiveColor, 
+            tabBarStyle: layoutStyles.tabBarCustom,
+        }}>
+          <Tabs.Screen
+            name="index"
+            options={{
+              title: 'Home',
+              tabBarIcon: ({ color }) => <Ionicons name="home" size={24} color={color} />,
+            }}
+          />
+          <Tabs.Screen
+            name="Files"
+            options={{
+              title: 'Files',
+              tabBarIcon: ({ color }) => <Ionicons name="folder" size={24} color={color} />,
+            }}
+          />
+          <Tabs.Screen
+            name="Shared"
+            options={{
+              title: 'Shared',
+              tabBarIcon: ({ color }) => <Ionicons name="people" size={24} color={color} />,
+            }}
+          />
+          <Tabs.Screen
+            name="Starred"
+            options={{
+              title: 'Starred',
+              tabBarIcon: ({ color }) => <Ionicons name="star" size={24} color={color} />,
+            }}
+          />
         </Tabs>
       </View>
 
