@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Tabs, useRouter, useGlobalSearchParams } from 'expo-router';
-import { View, Text, TouchableOpacity, TouchableOpacity } from 'react-native';
+import { View, Text, TouchableOpacity} from 'react-native';
 import { Ionicons } from '@expo/vector-icons'; 
 import { layoutStyles } from '../../styles/layoutStyles';
 import { SafeAreaView } from 'react-native-safe-area-context';
