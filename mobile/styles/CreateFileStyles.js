@@ -1,4 +1,5 @@
 import { StyleSheet, Dimensions } from 'react-native';
+import { theme } from '../constants/theme';
 
 const { width } = Dimensions.get('window');
 
@@ -60,7 +61,7 @@ const styles = StyleSheet.create({
     },
     btnPrimary: {
         flex: 1,
-        backgroundColor: '#007AFF',
+        backgroundColor: theme.colors.primary,
         padding: 15,
         borderRadius: 10,
         alignItems: 'center',

@@ -4,13 +4,16 @@ import { View, Text, TouchableOpacity} from 'react-native';
 import { Ionicons } from '@expo/vector-icons'; 
 import { layoutStyles } from '../../styles/layoutStyles';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import React, { useState } from 'react'
 import ProfileButton from '../../components/ProfileButton';
 import ThemeToggle from '../../components/ThemeToggle'; // הכפתור החדש
 import { useAppTheme } from '../../context/ThemeContext'; // ה-Hook שלנו
-import SideMenu from '../../components/SideMenu';
-import CreateFile from '../../components/operations/CreateFile';
-import CreateFolder from '../../components/operations/CreateFolder';
+import CreateFile from '../../components/operations/CreateFile'
+import CreateFolder from '../../components/operations/CreateFolder'
 import AntDesign from '@expo/vector-icons/AntDesign';
+import FileUpload from '../../components/FileUpload';
+import Entypo from '@expo/vector-icons/Entypo';
+import CameraUpload from '../../components/operations/CameraUpload';
 
 
 export default function TabsLayout() {
@@ -23,6 +26,9 @@ export default function TabsLayout() {
   const [isCreateFolderVisible, setIsCreateFolderVisible] = useState(false)
   const { folderId } = useGlobalSearchParams();
 
+  const fileUploadRef = useRef(null);  // ref to access FileUpload methods
+  const cameraUploadRef = useRef(null);
+
   return (
     <>
       {/* 1. התפריט נמצא כאן, מחוץ ל-View הראשי כדי לצוף מעליו */}
@@ -31,6 +37,16 @@ export default function TabsLayout() {
         onClose={() => setMenuVisible(false)} 
       />
     <View style={[layoutStyles.container, { backgroundColor: theme.background }]}>
+
+      <View style={layoutStyles.container}>
+      {/* logic only - not taking space */}
+      <CreateFile visible={isCreateFileVisible} parentId={folderId || null} onClose={() => setIsCreateFileVisible(false)} />
+      <CreateFolder visible={isCreateFolderVisible} parentId={folderId || null} onClose={() => setIsCreateFolderVisible(false)} />
+      <FileUpload ref={fileUploadRef} folderId={folderId} />
+      <CameraUpload ref={cameraUploadRef} folderId={folderId} />
+      </View>
+      {/* Top Bar & Tabs */}
+      {/* <SafeAreaView edges={['top']} style={layoutStyles.safeArea}></SafeAreaView> */}
 
       <SafeAreaView edges={['top']} style={{ backgroundColor: theme.background }}> 
         <View style={[layoutStyles.topBarContainer, { backgroundColor: theme.background, borderBottomColor: theme.border }]}>
@@ -62,9 +78,10 @@ export default function TabsLayout() {
           </View>
 
         </View>
+    
+         <View style={layoutStyles.topBar}><Text style={layoutStyles.topBarText}>top bar</Text></View>
       </SafeAreaView>
 
-      {/* Tabs */}
       <View style={{ flex: 1 }}>
       <Tabs screenOptions={{ 
         headerShown: false, 
@@ -132,79 +149,42 @@ export default function TabsLayout() {
       </Tabs>
     </View>
 
-      {/* the options of the + menu */}
+      {/* options menu - must be above everything */}
       {isOpen && (
         <View style={layoutStyles.optionsContainer}>
-
-   {/*the text "new folder".click on him will open the modal for this */}
-
-          <TouchableOpacity 
-            style={layoutStyles.optionItem} 
-            onPress={() => { 
-                setIsOpen(false); 
-                setIsCreateFolderVisible(true); 
-            }}
-          >
+          <TouchableOpacity style={layoutStyles.optionItem} onPress={() => { setIsOpen(false); setIsCreateFolderVisible(true); }}>
             <Text style={layoutStyles.optionText}>New Folder</Text>
-            <View style={layoutStyles.iconCircle}>
-              <AntDesign name="folder-add" size={24} color="white" /> 
-            </View>
+            <View style={layoutStyles.iconCircle}><AntDesign name="folder-add" size={24} color="white" /></View>
           </TouchableOpacity>
 
-          <TouchableOpacity 
-            style={layoutStyles.optionItem} 
-            onPress={() => { console.log("Upload File"); setIsOpen(false); }}
-          >
-
+          <TouchableOpacity style={layoutStyles.optionItem} onPress={() => { setIsOpen(false); fileUploadRef.current?.handleUpload(); }}>
             <Text style={layoutStyles.optionText}>Upload File</Text>
-            <View style={layoutStyles.iconCircle}>
-              <Ionicons name="folder-add" size={24} color="white" />
-            </View>
+            <View style={layoutStyles.iconCircle}><Entypo name="upload" size={24} color="white" /></View>
           </TouchableOpacity>
 
-
-              {/*the text "new text file".click on him will open the modal for this */}
-          <TouchableOpacity 
-            style={layoutStyles.optionItem} 
-            onPress={() => { 
-                setIsOpen(false); 
-                setIsCreateFileVisible(true); 
-            }}
-          >
+          <TouchableOpacity style={layoutStyles.optionItem} onPress={() => { setIsOpen(false); setIsCreateFileVisible(true); }}>
             <Text style={layoutStyles.optionText}>New Text File</Text>
-            <View style={layoutStyles.iconCircle}>
-              <Ionicons name="document-text-outline" size={24} color="white" />
-            </View>
+            <View style={layoutStyles.iconCircle}><Ionicons name="document-text-outline" size={24} color="white" /></View>
           </TouchableOpacity>
-
         </View>
       )}
 
-      {/*button + */}
+      {/* camera button - Always on */}
       <TouchableOpacity 
-        style={[layoutStyles.fab]} 
+        style={[layoutStyles.fab, layoutStyles.cameraFab]} 
+        onPress={() => cameraUploadRef.current?.handleCamera()}
+      >
+        <Ionicons name="camera" size={24} color="white" />
+      </TouchableOpacity>
+
+      {/* plus button */}
+      <TouchableOpacity 
+        style={layoutStyles.fab} 
         onPress={() => setIsOpen(!isOpen)}
         activeOpacity={0.8}
       >
         <Ionicons name={isOpen ? "close" : "add"} size={35} color="white" />
       </TouchableOpacity>
-{/* the component of create file */}
-<CreateFile 
-        visible={isCreateFileVisible}
-        parentId={folderId || null} 
-        onClose={() => setIsCreateFileVisible(false)} 
-        onSuccess={() => {
-            console.log("File created successfully!");
-            setIsCreateFileVisible(false);
-        }}
-      />
-      {/* the component of create folder */}
-      <CreateFolder 
-        visible={isCreateFolderVisible} 
-        parentId={folderId || null} 
-        onClose={() => setIsCreateFolderVisible(false)} 
-        onSuccess={() => setIsCreateFolderVisible(false)}
-      />
     </View>
     </>
   );
