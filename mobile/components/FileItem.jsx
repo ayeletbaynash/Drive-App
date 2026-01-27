@@ -1,304 +1,180 @@
-import { View, Text, TouchableOpacity, DeviceEventEmitter } from 'react-native';
+import { View, Text, TouchableOpacity } from 'react-native';
 import { Ionicons, FontAwesome6, AntDesign, FontAwesome } from '@expo/vector-icons';
-import ActionSheet from './ActionSheet'
-import React, { useState, useRef } from 'react' 
-import RemoveFile from './operations/Remove'
-import { useFileActions } from '../context/FileContext'
-import StarFile from './operations/StarFile'
-import Rename from './operations/Rename'
-import MaterialIcons from '@expo/vector-icons/MaterialIcons'
-import EditContent from './operations/EditContent'
+import ActionSheet from './ActionSheet';
+import React, { useState, useRef } from 'react';
+import RemoveFile from './operations/Remove';
+import { useFileActions } from '../context/FileContext';
+import StarFile from './operations/StarFile';
+import Rename from './operations/Rename';
+import MaterialIcons from '@expo/vector-icons/MaterialIcons';
+import EditContent from './operations/EditContent';
 import HardDelete from './operations/HardDelete';
 import FileDetailsModal from './FileDetailsModal';
-import Feather from '@expo/vector-icons/Feather'
-import CopyFile from './operations/CopyFile'
-import ChangeImage from './operations/ChangeImage'
+import Feather from '@expo/vector-icons/Feather';
+import CopyFile from './operations/CopyFile';
+import ChangeImage from './operations/ChangeImage';
 import Share from './operations/Share';
-import MoveFile from './operations/MoveFile'
+import MoveFile from './operations/MoveFile';
 import DownloadFile from './operations/DownloadFile';
-import { useAppTheme } from '../context/ThemeContext'
-import { getFileItemStyles } from '../styles/FileItem.styles'
+import { useAppTheme } from '../context/ThemeContext';
+import { getFileItemStyles } from '../styles/FileItem.styles';
 
 const FileItem = ({ file, onOpen, isTrash, fetchFiles, onRestore }) => {
   const { theme } = useAppTheme();
   const styles = getFileItemStyles(theme);
 
-  const [isMenuVisible, setIsMenuVisible] = useState(false)
-  const [isRenameModalVisible, setIsRenameModalVisible] = useState(false)
- 
+  const [isMenuVisible, setIsMenuVisible] = useState(false);
+  const [isRenameModalVisible, setIsRenameModalVisible] = useState(false);
   const [isShareModalVisible, setIsShareModalVisible] = useState(false);
   const [isEditModalVisible, setIsEditModalVisible] = useState(false);
   const [isDetailsVisible, setIsDetailsVisible] = useState(false);
   const [isMoveModalVisible, setIsMoveModalVisible] = useState(false);
-  
-  // Ref for ChangeImage component
+
   const changeImageRef = useRef(null);
-
   const { starredFiles } = useFileActions();
-  if (!file) return null;
-  const isStarred = starredFiles.some(f => f.id === file.id)
 
-  // Permission Logic
-  const userPermission = file.permission || 'read'; 
+  if (!file) return null;
+
+  const isStarred = starredFiles.some(f => f.id === file.id);
+  const userPermission = file.permission || 'read';
   const isOwner = userPermission === 'owner';
   const canWrite = isOwner || userPermission === 'write';
 
-  // File Type Checks 
   const fileName = file.name || "";
   const isTextFile = fileName.toLowerCase().endsWith('.txt');
   const isImageFile = /\.(jpg|jpeg|png)$/i.test(fileName);
 
   const getFileIcon = (item) => {
-    const fileName = item.name || "";
-    const isFolder = item.type === 'folder' || (fileName.length > 0 && !fileName.includes('.'));
-    
-    if (isFolder) {
-        return <Ionicons name="folder" size={28} color={theme.folderIcon} />; 
-    }
-    if (fileName.endsWith('.pdf')) return <FontAwesome6 name="file-pdf" size={24} color={theme.pdfIcon} />
-    if (fileName.endsWith('.txt')) return <AntDesign name="file-text" size={24} color={theme.txtIcon} />
-    if (fileName.endsWith('.jpg') || fileName.endsWith('.jpeg') || fileName.endsWith('.png')) {
-        return <Ionicons name="image" size={24} color={theme.imageIcon} />;
-    }
+    const name = item.name || "";
+    const isFolder = item.type === 'folder' || (name.length > 0 && !name.includes('.'));
+
+    if (isFolder) return <Ionicons name="folder" size={28} color={theme.folderIcon} />;
+    if (name.endsWith('.pdf')) return <FontAwesome6 name="file-pdf" size={24} color={theme.pdfIcon} />;
+    if (name.endsWith('.txt')) return <AntDesign name="file-text" size={24} color={theme.txtIcon} />;
+    if (/\.(jpg|jpeg|png)$/i.test(name)) return <Ionicons name="image" size={24} color={theme.imageIcon} />;
     return <AntDesign name="file" size={24} color={theme.fileIcon} />;
   };
 
   return (
     <View style={styles.container}>
-      {/* Click to Open */}
       <TouchableOpacity 
         style={styles.textContainer} 
         onPress={() => onOpen(file)}
         activeOpacity={0.6}
       >
         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-          <View style={styles.iconContainer}>
-            {getFileIcon(file)}
-          </View>
-          
+          <View style={styles.iconContainer}>{getFileIcon(file)}</View>
           <View style={{ flex: 1 }}>
             <View style={{ flexDirection: 'row', alignItems: 'center' }}>
               <Text style={styles.fileName} numberOfLines={1}>{file.name}</Text>
-              {isStarred && (
-                <FontAwesome name="star" size={14} color={theme.starIcon} style={{ marginLeft: 6 }} />
-              )}
+              {isStarred && <FontAwesome name="star" size={14} color={theme.starIcon} style={{ marginLeft: 6 }} />}
             </View>
-            <Text style={styles.dateText}>Modified: {new Date(file.updatedAt).toLocaleDateString('he-IL')} {new Date(file.updatedAt).toLocaleTimeString('he-IL', { hour: '2-digit', minute: '2-digit' })}</Text>
+            <Text style={styles.dateText}>
+              Modified: {new Date(file.updatedAt).toLocaleDateString('he-IL')} {new Date(file.updatedAt).toLocaleTimeString('he-IL', { hour: '2-digit', minute: '2-digit' })}
+            </Text>
           </View>
         </View>
       </TouchableOpacity>
 
-      {/* Click for Menu */}
-      <TouchableOpacity 
-        style={styles.menuButton} 
-        onPress={() => setIsMenuVisible(true)}
-      >
+      <TouchableOpacity style={styles.menuButton} onPress={() => setIsMenuVisible(true)}>
         <Ionicons name="ellipsis-vertical" size={20} color={theme.menuIcon} />
       </TouchableOpacity>
 
-      <ActionSheet 
-        visible={isMenuVisible} 
-        onClose={() => setIsMenuVisible(false)}
-        fileName={file.name}
-      >
+      <ActionSheet visible={isMenuVisible} onClose={() => setIsMenuVisible(false)} fileName={file.name}>
         {isTrash ? (
           <>
-            {/* TRASH MODE (Owner Only) */}
             {isOwner && (
-            <TouchableOpacity 
+              <TouchableOpacity 
                 style={styles.simpleButton} 
-                onPress={() => {
-                    setIsMenuVisible(false); 
-                    if (onRestore) onRestore(); 
-                }}
-            >
-              <View style={{ flexDirection: 'row', alignItems: 'center' }}></View>
-              <MaterialIcons name="restore" size={24} color={theme.successIcon} style={{ marginRight: 8 }} />
-              <Text style={{ color: theme.successIcon, fontSize: 16 }}>Restore</Text>
-            </TouchableOpacity>
+                onPress={() => { setIsMenuVisible(false); if (onRestore) onRestore(); }}
+              >
+                <MaterialIcons name="restore" size={24} color={theme.successIcon} style={{ marginRight: 8 }} />
+                <Text style={{ color: theme.successIcon, fontSize: 16 }}>Restore</Text>
+              </TouchableOpacity>
             )}
-            
-            {/* Hard Delete Component */}
-            {isOwner && (
-            <HardDelete 
-                file={file} 
-                onComplete={() => setIsMenuVisible(false)}
-            />
-            )}
+            {isOwner && <HardDelete file={file} onComplete={() => setIsMenuVisible(false)} />}
           </>
         ) : (
           <>
-          {/* 1. UNIVERSAL ACTIONS (Everyone) */}
-            {/* Details Button */}
-             <TouchableOpacity 
-                style={styles.simpleButton} 
-                onPress={() => {
-                    setIsMenuVisible(false);
-                    setTimeout(() => setIsDetailsVisible(true), 100);
-                }}
-            >
-              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                  <Ionicons name="information-circle-outline" size={24} color={theme.textMain} style={{ marginRight: 8 }} />
-                  <Text style={{ color: theme.textMain, fontSize: 16 }}>Details</Text>
-              </View>
-            </TouchableOpacity>
-
-            {/* Added Star option to menu */}
-            <StarFile 
-                file={file} 
-                onComplete={() => setIsMenuVisible(false)} 
-            />
-          
-            <CopyFile 
-              file={file} 
-              onAction={() => setIsMenuVisible(false)} 
-              onSuccess={fetchFiles} 
-            />
-
+            {/* 1. UNIVERSAL ACTIONS */}
             <TouchableOpacity 
-                style={styles.simpleButton} 
-                onPress={() => {
-                    setIsMenuVisible(false);
-                    setIsMoveModalVisible(true);
-                }}
+              style={styles.simpleButton} 
+              onPress={() => { setIsMenuVisible(false); setTimeout(() => setIsDetailsVisible(true), 100); }}
             >
-              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                <Ionicons name="folder-open-outline" size={24} color="black" />
-                <Text style={{ fontSize: 16, marginLeft: 10 }}>Move to...</Text>
-              </View>
+              <Ionicons name="information-circle-outline" size={24} color={theme.textMain} style={{ marginRight: 8 }} />
+              <Text style={{ color: theme.textMain, fontSize: 16 }}>Details</Text>
             </TouchableOpacity>
 
-            <DownloadFile 
-              file={file} 
-              onComplete={() => setIsMenuVisible(false)} 
-            />
+            <StarFile file={file} onComplete={() => setIsMenuVisible(false)} />
+            
+            <CopyFile file={file} onAction={() => setIsMenuVisible(false)} onSuccess={fetchFiles} />
 
-            {/* 2. WRITE PERMISSIONS (Editor/Owner) */}
+            <DownloadFile file={file} onComplete={() => setIsMenuVisible(false)} />
+
+            {/* 2. WRITE PERMISSIONS */}
             {canWrite && (
-             <TouchableOpacity 
+              <TouchableOpacity 
                 style={styles.simpleButton} 
-                onPress={() => {
-                    setIsMenuVisible(false)
-                    setIsRenameModalVisible(true)
-                }}
-            >
-              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                <MaterialIcons name="drive-file-rename-outline" size={24} color={theme.textMain} />
-                <Text style={{ color: theme.textMain, fontSize: 16, marginLeft: 10 }}>Rename</Text>
-              </View>
-            </TouchableOpacity>
+                onPress={() => { setIsMenuVisible(false); setIsRenameModalVisible(true); }}
+              >
+                <MaterialIcons name="drive-file-rename-outline" size={24} color={theme.textMain} style={{ marginRight: 8 }} />
+                <Text style={{ color: theme.textMain, fontSize: 16 }}>Rename</Text>
+              </TouchableOpacity>
+            )}
+
+            {canWrite && isImageFile && (
+              <TouchableOpacity 
+                style={styles.simpleButton} 
+                onPress={() => { setIsMenuVisible(false); changeImageRef.current?.open(); }}
+              >
+                <FontAwesome name="image" size={22} color={theme.textMain} style={{ marginRight: 8 }} />
+                <Text style={{ color: theme.textMain, fontSize: 16 }}>Replace Image</Text>
+              </TouchableOpacity>
             )}
 
             {canWrite && isTextFile && (
-            <TouchableOpacity 
+              <TouchableOpacity 
                 style={styles.simpleButton} 
-                onPress={() => {
-                    setIsMenuVisible(false);
-                    changeImageRef.current?.open(); 
-                }}
-            >
-              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                <FontAwesome name="image" size={22} color={theme.textMain} />
-                <Text style={{ color: theme.textMain, fontSize: 16, marginLeft: 10 }}>Replace Image</Text>
-              </View>
-            </TouchableOpacity>
-            )}
-
-            {canWrite && isTextFile && (
-            <TouchableOpacity 
-                style={styles.simpleButton} 
-                onPress={() => {
-                    setIsMenuVisible(false);
-                    setIsEditModalVisible(true);
-                }}
-            >
-              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                <Feather name="edit" size={24} color={theme.textMain} />
-                <Text style={{ color: theme.textMain, fontSize: 16, marginLeft: 10 }}>Edit Content</Text>
-              </View>
-            </TouchableOpacity>
+                onPress={() => { setIsMenuVisible(false); setIsEditModalVisible(true); }}
+              >
+                <Feather name="edit" size={24} color={theme.textMain} style={{ marginRight: 8 }} />
+                <Text style={{ color: theme.textMain, fontSize: 16 }}>Edit Content</Text>
+              </TouchableOpacity>
             )}
 
             {/* 3. OWNER PERMISSIONS */}
             {isOwner && (
-             <TouchableOpacity 
-                style={styles.simpleButton} 
-                onPress={() => {
-                    setIsMenuVisible(false);
-                    setIsShareModalVisible(true);
-                }}
-            >
-              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                <Ionicons name="person-add-outline" size={24} color={theme.textMain} />
-                <Text style={{ color: theme.textMain, fontSize: 16, marginLeft: 10 }}>Share</Text>
-              </View>
-            </TouchableOpacity>
+              <>
+                <TouchableOpacity 
+                  style={styles.simpleButton} 
+                  onPress={() => { setIsMenuVisible(false); setIsShareModalVisible(true); }}
+                >
+                  <Ionicons name="person-add-outline" size={24} color={theme.textMain} style={{ marginRight: 8 }} />
+                  <Text style={{ color: theme.textMain, fontSize: 16 }}>Share</Text>
+                </TouchableOpacity>
 
-            <TouchableOpacity 
-                style={styles.simpleButton} 
-                onPress={() => {
-                    setIsMenuVisible(false);
-                    setIsMoveModalVisible(true);
-                }}
-            >
-              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                <Ionicons name="folder-open-outline" size={24} color={theme.textMain} />
-                <Text style={{ color: theme.textMain, fontSize: 16, marginLeft: 10 }}>Move to...</Text>
-              </View>
-            </TouchableOpacity>
+                <TouchableOpacity 
+                  style={styles.simpleButton} 
+                  onPress={() => { setIsMenuVisible(false); setIsMoveModalVisible(true); }}
+                >
+                  <Ionicons name="folder-open-outline" size={24} color={theme.textMain} style={{ marginRight: 8 }} />
+                  <Text style={{ color: theme.textMain, fontSize: 16 }}>Move to...</Text>
+                </TouchableOpacity>
 
-            <DownloadFile 
-              file={file} 
-              onComplete={() => setIsMenuVisible(false)} 
-            />
-            
-            
-            )}
-            
-            {isOwner && (
-            <RemoveFile 
-              file={file} 
-              onComplete={() => setIsMenuVisible(false)}
-            />
+                <RemoveFile file={file} onComplete={() => setIsMenuVisible(false)} />
+              </>
             )}
           </>
         )}
       </ActionSheet>
 
-      {/*modals*/}
-      <Rename 
-          file={file} 
-          visible={isRenameModalVisible} 
-          onClose={() => setIsRenameModalVisible(false)} 
-      />
-
-      <ChangeImage 
-          ref={changeImageRef} 
-          file={file} 
-          onAction={() => setIsMenuVisible(false)} 
-      />
-
-      <EditContent 
-          file={file} 
-          visible={isEditModalVisible} 
-          onClose={() => setIsEditModalVisible(false)} 
-      />
-      <FileDetailsModal 
-        file={file}
-        visible={isDetailsVisible}
-        onClose={() => setIsDetailsVisible(false)}
-      />
-      <Share 
-          file={file} 
-          visible={isShareModalVisible} 
-          onClose={() => setIsShareModalVisible(false)} 
-      />
-      <MoveFile 
-          file={file} 
-          visible={isMoveModalVisible} 
-          onClose={() => setIsMoveModalVisible(false)} 
-      />
-     
+      {/* Modals */}
+      <Rename file={file} visible={isRenameModalVisible} onClose={() => setIsRenameModalVisible(false)} />
+      <ChangeImage ref={changeImageRef} file={file} onAction={() => setIsMenuVisible(false)} />
+      <EditContent file={file} visible={isEditModalVisible} onClose={() => setIsEditModalVisible(false)} />
+      <FileDetailsModal file={file} visible={isDetailsVisible} onClose={() => setIsDetailsVisible(false)} />
+      <Share file={file} visible={isShareModalVisible} onClose={() => setIsShareModalVisible(false)} />
+      <MoveFile file={file} visible={isMoveModalVisible} onClose={() => setIsMoveModalVisible(false)} />
     </View>
   );
 };
