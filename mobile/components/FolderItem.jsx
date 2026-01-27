@@ -6,27 +6,27 @@ import ActionSheet from './ActionSheet';
 import RemoveFile from './operations/Remove'; 
 import HardDelete from './operations/HardDelete'; 
 import Rename from './operations/Rename';
+import FileDetailsModal from './FileDetailsModal'; 
 import { useFileActions } from '../context/FileContext';
 import DownloadFolder from './operations/DownloadFolder';
 
 const FolderItem = ({ folder, isTrash, onFolderPress }) => {
   const [isMenuVisible, setIsMenuVisible] = useState(false);
-  const [isRenameModalVisible, setIsRenameModalVisible] = useState(false); // 👇 סטייט למודאל שינוי שם
-
+  const [isRenameModalVisible, setIsRenameModalVisible] = useState(false); 
+  const [isDetailsVisible, setIsDetailsVisible] = useState(false);
   const { restoreFromFileDeletionList } = useFileActions();
 
   const handleRestore = async () => {
       const folderId = folder._id || folder.id;
       await restoreFromFileDeletionList(folderId);
       setIsMenuVisible(false);
-      // עדכון המסך שהתיקייה שוחזרה
       DeviceEventEmitter.emit('somethingChange'); 
   };
 
   const menuButtonStyle = {
-      flexDirection: 'row',   // זה מה ששם את האייקון והטקסט באותה שורה
-      alignItems: 'center',   // מיישר אותם לגובה האמצע
-      paddingVertical: 12,    // נותן קצת אוויר מלמעלה ולמטה
+      flexDirection: 'row',   
+      alignItems: 'center',   
+      paddingVertical: 12,   
   };
 
   return (
@@ -73,7 +73,7 @@ const FolderItem = ({ folder, isTrash, onFolderPress }) => {
             </TouchableOpacity>
 
             <HardDelete 
-                file={folder} // שולחים את התיקייה כ-"file"
+                file={folder} 
                 onComplete={() => setIsMenuVisible(false)}
             />
           </>
@@ -83,8 +83,19 @@ const FolderItem = ({ folder, isTrash, onFolderPress }) => {
             <TouchableOpacity 
                 style={[styles.simpleButton, menuButtonStyle]} 
                 onPress={() => {
-                    setIsMenuVisible(false); // סוגר את התפריט
-                    setIsRenameModalVisible(true); // פותח את המודאל
+                    setIsMenuVisible(false); 
+                    setTimeout(() => setIsDetailsVisible(true), 100);
+                }}
+            >
+              <Ionicons name="information-circle-outline" size={24} color="black" style={{ marginRight: 12 }} />
+              <Text style={{ fontSize: 16 }}>Details</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity 
+                style={[styles.simpleButton, menuButtonStyle]} 
+                onPress={() => {
+                    setIsMenuVisible(false);
+                    setIsRenameModalVisible(true);
                 }}
             >
               <MaterialIcons name="drive-file-rename-outline" size={24} color="black" style={{ marginRight: 12 }} />
@@ -110,6 +121,12 @@ const FolderItem = ({ folder, isTrash, onFolderPress }) => {
           onClose={() => setIsRenameModalVisible(false)} 
       />
 
+      <FileDetailsModal 
+        file={folder}
+        visible={isDetailsVisible}
+        onClose={() => setIsDetailsVisible(false)}
+      />
+      
     </View>
   );
 };

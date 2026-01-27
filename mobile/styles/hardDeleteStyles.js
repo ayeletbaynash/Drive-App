@@ -1,10 +1,9 @@
 import { StyleSheet, Dimensions } from 'react-native';
-import { theme } from '../constants/theme'; // ודאי שיש לך גישה ל-theme
+import { theme } from '../constants/theme'; 
 
 const { width } = Dimensions.get('window');
 
 export const hardDeleteStyles = StyleSheet.create({
-  // כפתור התפריט (בתוך ה-ActionSheet)
   menuButton: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -14,12 +13,11 @@ export const hardDeleteStyles = StyleSheet.create({
   },
   menuText: {
     fontSize: 16,
-    color: '#dc3545', // אדום
+    color: '#dc3545', 
     marginLeft: 10,
     fontWeight: '600',
   },
 
-  // המודל עצמו
   overlay: {
     flex: 1,
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
@@ -38,7 +36,6 @@ export const hardDeleteStyles = StyleSheet.create({
     shadowRadius: 4,
   },
   
-  // כותרת עם אייקון
   headerContainer: {
     alignItems: 'center',
     marginBottom: 16,
@@ -46,11 +43,10 @@ export const hardDeleteStyles = StyleSheet.create({
   title: {
     fontSize: 22,
     fontWeight: 'bold',
-    color: '#dc3545', // אדום
+    color: '#dc3545', 
     marginTop: 10,
   },
   
-  // טקסטים
   bodyText: {
     fontSize: 16,
     color: '#333',
@@ -69,7 +65,6 @@ export const hardDeleteStyles = StyleSheet.create({
     fontWeight: 'bold',
   },
 
-  // כפתורים
   actions: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -84,7 +79,7 @@ export const hardDeleteStyles = StyleSheet.create({
   },
   btnDelete: {
     flex: 1,
-    backgroundColor: '#dc3545', // אדום
+    backgroundColor: '#dc3545', 
     paddingVertical: 12,
     borderRadius: 10,
     alignItems: 'center',

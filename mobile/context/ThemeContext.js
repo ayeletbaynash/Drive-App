@@ -1,7 +1,7 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
-import { useColorScheme } from 'react-native'; // מזהה אוטומטית את הגדרות הטלפון
+import { useColorScheme } from 'react-native'; 
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Colors } from '../constants/theme'; // הייבוא מקובץ ה-Theme שלך
+import { Colors } from '../constants/theme';
 
 const ThemeContext = createContext();
 
@@ -9,7 +9,6 @@ export const ThemeProvider = ({ children }) => {
   const systemScheme = useColorScheme(); // 'light' or 'dark'
   const [themeMode, setThemeMode] = useState(systemScheme || 'light');
 
-  // טעינת מצב שמור מהזיכרון
   useEffect(() => {
     const loadTheme = async () => {
       const savedTheme = await AsyncStorage.getItem('appTheme');
@@ -26,7 +25,6 @@ export const ThemeProvider = ({ children }) => {
     await AsyncStorage.setItem('appTheme', newMode);
   };
 
-  // אובייקט הצבעים הנוכחי (למשל: Colors.light או Colors.dark)
   const theme = Colors[themeMode];
 
   return (
@@ -36,5 +34,4 @@ export const ThemeProvider = ({ children }) => {
   );
 };
 
-// Hook פשוט לשימוש בקומפוננטות
 export const useAppTheme = () => useContext(ThemeContext);

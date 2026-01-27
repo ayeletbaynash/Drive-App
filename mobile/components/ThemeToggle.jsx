@@ -11,7 +11,7 @@ export default function ThemeToggle() {
       <Ionicons 
         name={themeMode === 'light' ? 'moon-outline' : 'sunny-outline'} 
         size={24} 
-        color={theme.textMuted} // משתמש בצבע מה-Theme
+        color={theme.textMuted} 
       />
     </TouchableOpacity>
   );

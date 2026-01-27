@@ -7,8 +7,8 @@ export const searchStyles = StyleSheet.create({
   header: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 12, // רווח בצדדים (נשאר אותו דבר)
-    paddingBottom: 12,     // רווח למטה (נשאר אותו דבר)
+    paddingHorizontal: 12, 
+    paddingBottom: 12,    
     paddingTop: Platform.OS === 'android' ? (StatusBar.currentHeight || 24) + 10 : 60,
     borderBottomWidth: 1,
     gap: 10,
@@ -21,7 +21,7 @@ export const searchStyles = StyleSheet.create({
     flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
-    borderRadius: 30, // קצוות עגולים יותר (כמו בווב)
+    borderRadius: 30, 
     paddingHorizontal: 15,
     height: 46,
   },
