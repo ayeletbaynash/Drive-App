@@ -11,7 +11,7 @@ import { useLocalSearchParams, useRouter } from 'expo-router'
 import { useFileFilter } from '../../context/useFileFilter';
 
 export default function HomeScreen() {
-    const { folderId, folderName } = useLocalSearchParams(); 
+    const { folderId, folderName, parentId } = useLocalSearchParams(); 
     const router = useRouter()
     const { deletedFiles } = useFileActions();
     
@@ -67,33 +67,12 @@ export default function HomeScreen() {
     // 4. Navigation
     const handleNavigate = (item) => {
         if (item.type === 'folder') {
-            router.push({ pathname: '/', params: { folderId: item.id, folderName: item.name } });
+            router.push({ pathname: '/', params: { folderId: item.id, folderName: item.name, parentId: folderId } });
         }
     };
 
     return (
         <View style={layoutStyles.container}>
-           {folderId ? (
-        <View style={layoutStyles.headerContainer}>
-            <TouchableOpacity 
-                onPress={() => {
-                    if (currentFolder.parentId) {
-                        router.push({ pathname: '/', params: { folderId: currentFolder.parentId } });
-                    } else {
-                        router.replace('/'); 
-                    }
-                }} 
-                style={layoutStyles.backButton}
-                hitSlop={{ top: 15, bottom: 15, left: 15, right: 15 }}
-            >
-                <Text style={layoutStyles.backIcon}>←</Text>
-            </TouchableOpacity>
-            
-            <Text style={layoutStyles.headerTitle} numberOfLines={1}>
-                {folderName || currentFolder.name || (isLoading ? 'Loading...' : 'Folder')}
-            </Text>
-        </View>
-    ) : null}
 
         <View style={{ flex: 1 }}>
             {isLoading ? (

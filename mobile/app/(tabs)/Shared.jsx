@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { View, DeviceEventEmitter, ActivityIndicator } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useRouter } from 'expo-router';
+import { useRouter, useLocalSearchParams } from 'expo-router';
 import EmptyState from '../../components/EmptyState';
 import FileViewList from '../../components/FileViewList';
 import { layoutStyles } from '../../styles/layoutStyles'; 
@@ -13,6 +13,7 @@ import { useFileFilter } from '../../context/useFileFilter';
 
 export default function SharedScreen() {
   const router = useRouter();
+  const { folderId } = useLocalSearchParams();
   
   const [allFiles, setAllFiles] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -21,7 +22,7 @@ export default function SharedScreen() {
   // Trigger for forcing updates
   const [refreshKey, setRefreshKey] = useState(0);
 
-  // 1. Retrieve logged-in user ID to distinguish "my files" from "shared files"
+  //  Retrieve logged-in user ID to distinguish "my files" from "shared files"
   useEffect(() => {
     const getUserId = async () => {
         try {
@@ -34,7 +35,7 @@ export default function SharedScreen() {
     getUserId();
   }, []);
 
-  // 2. Fetch all accessible files from the server
+  // Fetch all accessible files from the server
   const fetchFiles = async () => {
     setIsLoading(true);
     try {
@@ -55,7 +56,7 @@ export default function SharedScreen() {
     }
   };
 
-  // 3. Initial fetch and event listener for global updates (uploads, renames, etc.)
+  //  Initial fetch and event listener for global updates (uploads, renames, etc.)
   useEffect(() => {
     fetchFiles();
 
@@ -67,7 +68,7 @@ export default function SharedScreen() {
     return () => listener.remove();
   }, []);
 
-  // 4. Core Logic: Filter files NOT owned by the current user (Shared with me)
+  // Core Logic: Filter files NOT owned by the current user (Shared with me)
   const sharedRawFiles = useMemo(() => {
     if (!currentUserId) return [];
 
@@ -92,10 +93,11 @@ export default function SharedScreen() {
     });
   };
 
-  // 5. Navigation Handlers
+  //  Navigation Handlers
   const handleNavigate = (item) => {
     if (item.type === 'folder') {
-        router.push({ pathname: '/', params: { folderId: item.id, folderName: item.name } });
+      const targetId = item._id || item.id
+        router.push({ pathname: '/(tabs)/Shared', params: { folderId: targetId, folderName: item.name, parentId: folderId } });
     }
   };
 

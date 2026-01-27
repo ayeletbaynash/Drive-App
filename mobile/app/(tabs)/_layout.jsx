@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { Tabs, useRouter, useGlobalSearchParams, router } from 'expo-router';
+import { Tabs, useRouter, useGlobalSearchParams, usePathname } from 'expo-router';
 import { View, Text, TouchableOpacity} from 'react-native';
 import { Ionicons } from '@expo/vector-icons'; 
 import { layoutStyles } from '../../styles/layoutStyles';
@@ -13,25 +13,20 @@ import AntDesign from '@expo/vector-icons/AntDesign';
 import FileUpload from '../../components/FileUpload';
 import Entypo from '@expo/vector-icons/Entypo';
 import CameraUpload from '../../components/operations/CameraUpload';
-
+import { useAppTheme } from '../../context/ThemeContext';
 
 export default function TabsLayout() {
   const { theme } = useAppTheme();
-  const router = useRouter();
-  const { folderId } = useGlobalSearchParams();
-
+  const router = useRouter()
+  const pathname = usePathname()
+  const { folderId, folderName, parentId } = useGlobalSearchParams();
   const [isMenuVisible, setMenuVisible] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [isCreateFileVisible, setIsCreateFileVisible] = useState(false)
   const [isCreateFolderVisible, setIsCreateFolderVisible] = useState(false)
 
   const fileUploadRef = useRef(null);  // ref to access FileUpload methods
-  const cameraUploadRef = useRef(null);
-
-  const handleTabPress = (e, path) => {
-    e.preventDefault()
-    router.replace(path)
-  }
+  const cameraUploadRef = useRef(null)
 
   return (
     <>
@@ -40,9 +35,7 @@ export default function TabsLayout() {
         visible={isMenuVisible} 
         onClose={() => setMenuVisible(false)} 
       />
-    {/* <View style={[layoutStyles.container, { backgroundColor: theme.background }]}>
-
-      <View style={layoutStyles.container}> */}
+   
       {/* logic only - not taking space */}
       <CreateFile visible={isCreateFileVisible} parentId={folderId || null} onClose={() => setIsCreateFileVisible(false)} />
       <CreateFolder visible={isCreateFolderVisible} parentId={folderId || null} onClose={() => setIsCreateFolderVisible(false)} />
@@ -51,10 +44,7 @@ export default function TabsLayout() {
 
       {/* 2. Main Container */}
       <View style={[layoutStyles.container, { backgroundColor: theme.background }]}>
-
       {/* Top Bar & Tabs */}
-      {/* <SafeAreaView edges={['top']} style={layoutStyles.safeArea}></SafeAreaView> */}
-
       <SafeAreaView edges={['top']} style={{ backgroundColor: theme.background }}> 
         <View style={[layoutStyles.topBarContainer, { backgroundColor: theme.background, borderBottomColor: theme.border }]}>
           
@@ -86,14 +76,36 @@ export default function TabsLayout() {
 
         </View>
     
-         {/* <View style={layoutStyles.topBar}><Text style={layoutStyles.topBarText}>top bar</Text></View> */}
       </SafeAreaView>
+      {/* Navigation bar - Visible only inside folders */}
+      {folderId && (
+        <View style={[
+          layoutStyles.breadcrumbContainer, 
+          { backgroundColor: theme.background, borderBottomColor: theme.border }
+        ]}>
+          <TouchableOpacity 
+            onPress={() => {
+              if (parentId && parentId !== 'null') {
+                router.replace({ pathname: pathname, params: { folderId: parentId } });
+                } else {
+                  router.replace(pathname);
+                }
+            }} 
+            style={layoutStyles.backButtonRow}
+          >
+            <Ionicons name="arrow-back" size={24} color={theme.text} />
+          </TouchableOpacity>
 
+          <Text style={[layoutStyles.breadcrumbTitle, { color: theme.text }]} numberOfLines={1}>
+            {folderName || "Folder"}
+          </Text>
+        </View>
+      )}
       {/* Tabs Area - ONE Tabs component only */}
       <View style={{ flex: 1 }}>
       <Tabs screenOptions={{ 
         headerShown: false,
-            unmountOnBlur: true, 
+        unmountOnBlur: true, 
         tabBarActiveTintColor: theme.tabActive, 
           tabBarInactiveTintColor: theme.tabInactive,
           tabBarStyle: [layoutStyles.tabBarCustom, { 
@@ -109,8 +121,13 @@ export default function TabsLayout() {
             tabBarIcon: ({ color, size, focused }) => (
               <Ionicons name={focused ? 'home' : 'home-outline'} size={size} color={color} />
             ),
-            unmountOnBlur: true,
-          }} 
+          }}
+          listeners={{
+            tabPress: (e) => {
+                e.preventDefault();
+                router.replace('/(tabs)/'); 
+            },
+        }}
         />
 
           <Tabs.Screen name="Starred" options={{
@@ -118,24 +135,43 @@ export default function TabsLayout() {
               tabBarIcon: ({ color, size, focused }) => (
                 <Ionicons name={focused ? 'star' : 'star-outline'} size={size} color={color} />
               ),
-              unmountOnBlur: true,
-          }} />
+          }}
+          listeners={{
+            tabPress: (e) => {
+                e.preventDefault();
+                router.replace('/(tabs)/Starred');
+            },
+        }}
+           />
 
           <Tabs.Screen name="Shared" options={{
               tabBarLabel: 'Shared',
               tabBarIcon: ({ color, size, focused }) => (
                 <Ionicons name={focused ? 'people' : 'people-outline'} size={size} color={color} />
               ),
-              unmountOnBlur: true,
-          }} />
+          }} 
+          listeners={{
+            tabPress: (e) => {
+                e.preventDefault();
+                router.replace('/(tabs)/Shared');
+            },
+        }}
+          />
 
           <Tabs.Screen name="Files" options={{
               tabBarLabel: 'Files',
               tabBarIcon: ({ color, size, focused }) => (
                 <Ionicons name={focused ? 'folder' : 'folder-outline'} size={size} color={color} />
               ),
-              unmountOnBlur: true,
-          }} />
+          }}
+          listeners={{
+            tabPress: (e) => {
+                e.preventDefault();
+                router.replace('/(tabs)/Files');
+            },
+        }}
+          
+           />
 
       </Tabs>
     </View>
