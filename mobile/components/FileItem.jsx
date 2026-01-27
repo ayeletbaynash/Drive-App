@@ -1,7 +1,7 @@
 import { View, Text, TouchableOpacity } from 'react-native';
 import { Ionicons, FontAwesome6, AntDesign, FontAwesome } from '@expo/vector-icons';
 import ActionSheet from './ActionSheet';
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useMemo } from 'react';
 import RemoveFile from './operations/Remove';
 import { useFileActions } from '../context/FileContext';
 import StarFile from './operations/StarFile';
@@ -21,7 +21,7 @@ import { getFileItemStyles } from '../styles/FileItem.styles';
 
 const FileItem = ({ file, onOpen, isTrash, fetchFiles, onRestore }) => {
   const { theme } = useAppTheme();
-  const styles = getFileItemStyles(theme);
+  const styles = useMemo(() => getFileItemStyles(theme), [theme]);
 
   const [isMenuVisible, setIsMenuVisible] = useState(false);
   const [isRenameModalVisible, setIsRenameModalVisible] = useState(false);

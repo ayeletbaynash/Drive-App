@@ -1,5 +1,5 @@
 import React, { useState, useRef, useMemo } from 'react';
-import { Tabs, useRouter, useGlobalSearchParams } from 'expo-router';
+import { Tabs, useRouter, useGlobalSearchParams, usePathname } from 'expo-router';
 import { View, Text, TouchableOpacity} from 'react-native';
 import { Ionicons } from '@expo/vector-icons'; 
 import { createLayoutStyles } from '../../styles/layoutStyles';
@@ -14,18 +14,17 @@ import AntDesign from '@expo/vector-icons/AntDesign';
 import FileUpload from '../../components/FileUpload';
 import Entypo from '@expo/vector-icons/Entypo';
 import CameraUpload from '../../components/operations/CameraUpload';
-import { useAppTheme } from '../../context/ThemeContext';
 
 export default function TabsLayout() {
   const { theme } = useAppTheme();
   const layoutStyles = useMemo(() => createLayoutStyles(theme), [theme]);
   const router = useRouter();
-  const pathname = usePathname()
   const { folderId, folderName, parentId } = useGlobalSearchParams();
   const [isMenuVisible, setMenuVisible] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [isCreateFileVisible, setIsCreateFileVisible] = useState(false)
   const [isCreateFolderVisible, setIsCreateFolderVisible] = useState(false)
+  const pathname = usePathname()
 
   const fileUploadRef = useRef(null);  // ref to access FileUpload methods
   const cameraUploadRef = useRef(null)

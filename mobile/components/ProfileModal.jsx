@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { View, Text, Modal, TouchableOpacity, Image, Pressable } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { router } from 'expo-router';
@@ -8,7 +8,7 @@ import { useAppTheme } from '../context/ThemeContext';
 
 export default function ProfileModal({ visible, onClose, user }) {
   const { theme } = useAppTheme();
-  const styles = createProfileStyles(theme);
+  const styles = useMemo(() => createProfileStyles(theme), [theme]);
   
   const handleLogout = async () => {
     try {

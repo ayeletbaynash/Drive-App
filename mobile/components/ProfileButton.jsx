@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { TouchableOpacity, Image } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -12,7 +12,7 @@ export default function ProfileButton() {
   const [modalVisible, setModalVisible] = useState(false);
   const [user, setUser] = useState(null);
   const { theme } = useAppTheme();
-  const styles = createProfileStyles(theme);
+  const styles = useMemo(() => createProfileStyles(theme), [theme]);
 
   useEffect(() => {
     const loadUserData = async () => {

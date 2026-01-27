@@ -84,7 +84,7 @@ const FolderItem = ({ folder, isTrash, onFolderPress }) => {
           <>
           {/* TRASH MODE (Owner Only) */}
             {isOwner && (
-            <TouchableOpacity style={[styles.simpleButton, menuButtonStyle]} onPress={handleRestore}>
+            <TouchableOpacity style={styles.simpleButton} onPress={handleRestore}>
               <MaterialIcons name="restore" size={24} color={theme.successIcon} />
               <Text style={{ color: theme.successIcon, fontSize: 16, fontWeight: '600' }}>Restore</Text>
             </TouchableOpacity>
@@ -115,7 +115,7 @@ const FolderItem = ({ folder, isTrash, onFolderPress }) => {
             </TouchableOpacity>
 
             <TouchableOpacity 
-                style={[styles.simpleButton, menuButtonStyle]} 
+                style={styles.simpleButton} 
                 onPress={() => {
                     setIsMenuVisible(false);
                     setIsRenameModalVisible(true);
@@ -124,7 +124,7 @@ const FolderItem = ({ folder, isTrash, onFolderPress }) => {
               <MaterialIcons name="drive-file-rename-outline" size={24} color={theme.textMain} style={{ marginRight: 12 }} />
                  <Text style={{ color: theme.textMain, fontSize: 16 }}>Rename</Text>
             </TouchableOpacity>
-            
+
             <StarFile 
                 file={folder} 
                 onComplete={() => setIsMenuVisible(false)} 
