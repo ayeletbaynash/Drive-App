@@ -17,9 +17,11 @@ export default function RecentScreen() {
   const { files, isLoading, onRefresh } = useRecentFiles();
 
   const handleOpenFile = (file) => {
+    const realId = file._id || file.id;
+
     router.push({
       pathname: '/file-viewer',
-      params: { file: JSON.stringify(file) }
+      params: { id: realId, name: file.name }
     });
   };
 
@@ -43,14 +45,17 @@ export default function RecentScreen() {
       ) : (
         <FlatList
           data={files}
-          keyExtractor={(item) => item.id}
-          renderItem={({ item }) => (
+          keyExtractor={(item) => item.id || item._id}
+          renderItem={({ item }) => {
+            const normalizedItem = { ...item, id: item._id || item.id };
+            return (
             <FileItem 
-              file={item} 
-              onOpen={() => handleOpenFile(item)}
+              file={normalizedItem} 
+              onOpen={() => handleOpenFile(normalizedItem)}
               isTrash={false}
             />
-          )}
+            );
+          }}
           refreshing={isLoading}
           onRefresh={onRefresh} // Pull to refresh support
           ListEmptyComponent={

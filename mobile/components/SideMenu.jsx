@@ -13,25 +13,23 @@ const MENU_WIDTH = width * 0.75;
 export default function SideMenu({ visible, onClose }) {
   const { theme } = useAppTheme();
   const router = useRouter();
-  const pathname = usePathname(); // כדי לדעת איפה אנחנו נמצאים ולסמן את הכפתור
+  const pathname = usePathname();
   
-  // יצירת הסטיילים עם הצבעים העדכניים
   const styles = createSideMenuStyles(theme);
 
-  // משתני אנימציה
-  // 1. מיקום התפריט (מתחיל מחוץ למסך בצד שמאל)
+  // Animation Values
+  // 1. Menu Position (Starts off-screen to the left)
   const slideAnim = useRef(new Animated.Value(-MENU_WIDTH)).current;
-  // 2. שקיפות הרקע הכהה (מתחיל שקוף לגמרי)
+  // 2. Backdrop Opacity (Starts transparent)
   const fadeAnim = useRef(new Animated.Value(0)).current;
 
-  // הפעלה כש-visible משתנה
+  // Effect: Run Entry Animation when 'visible' changes
   useEffect(() => {
     if (visible) {
-      // כניסה: החלקה פנימה והחשכה של הרקע במקביל
       Animated.parallel([
         Animated.timing(slideAnim, {
           toValue: 0,
-          duration: 300, // מהירות האנימציה (מילישניות)
+          duration: 300, 
           useNativeDriver: true,
         }),
         Animated.timing(fadeAnim, {
@@ -43,46 +41,44 @@ export default function SideMenu({ visible, onClose }) {
     }
   }, [visible]);
 
-  // פונקציית סגירה מותאמת (קודם אנימציה, ואז סגירה אמיתית)
+  // Exit Animation & Close Handler
   const handleClose = () => {
     Animated.parallel([
       Animated.timing(slideAnim, {
-        toValue: -MENU_WIDTH, // יציאה החוצה
+        toValue: -MENU_WIDTH, 
         duration: 200,
         useNativeDriver: true,
       }),
       Animated.timing(fadeAnim, {
-        toValue: 0, // העלמת הרקע הכהה
+        toValue: 0, 
         duration: 200,
         useNativeDriver: true,
       }),
     ]).start(() => {
-      onClose(); // רק בסוף האנימציה מעלימים את המודל
+      onClose(); 
     });
   };
 
-  // פונקציה לניווט
+  // Navigation Handler
   const navigateTo = (path) => {
-    handleClose(); // קודם סוגרים יפה
-    setTimeout(() => router.push(path), 200); // ואז מנווטים
+    handleClose(); 
+    setTimeout(() => router.push(path), 200);
   };
 
-  // רכיב עזר לכפתור בתפריט (כדי לא לשכפל קוד)
+  // Helper Component for Menu Items
   const MenuItem = ({ label, icon, path }) => {
-    // בדיקה אם אנחנו בעמוד הנוכחי כדי להדגיש אותו
     const isActive = pathname === path; 
     
     return (
       <TouchableOpacity 
         style={[
           styles.navItem, 
-          // אם פעיל - צבע רקע ירוק עדין מאוד
           isActive && { backgroundColor: theme.rowHover } 
         ]} 
         onPress={() => navigateTo(path)}
       >
         <Ionicons 
-          name={isActive ? icon : `${icon}-outline`} // אייקון מלא אם פעיל
+          name={isActive ? icon : `${icon}-outline`} 
           size={24} 
           color={theme.primary} 
         />
@@ -103,39 +99,36 @@ export default function SideMenu({ visible, onClose }) {
       onRequestClose={handleClose}
     >
       <View style={styles.modalOverlay}>
-        {/* 1. הרקע הכהה (לוחצים עליו כדי לסגור) */}
+        {/* 1. Dark Backdrop (Click to close) */}
         <Animated.View style={[styles.backdrop, { opacity: fadeAnim }]}>
            <Pressable style={{ flex: 1 }} onPress={handleClose} />
         </Animated.View>
 
-        {/* 2. התפריט הגולש (החלקה) */}
+        {/* 2. Sliding Menu Container */}
         <Animated.View 
           style={[
             styles.menuContainer, 
-            { transform: [{ translateX: slideAnim }] } // כאן קורה הקסם של התזוזה
+            { transform: [{ translateX: slideAnim }] } 
           ]}
         >
           <SafeAreaView style={{ flex: 1 }}>
             
-            {/* 1. לוגו למעלה */}
+            {/* Header / Logo */}
             <View style={styles.logoContainer}>
-              {/* מבטלים לחיצה על הלוגו בתוך התפריט */}
               <View pointerEvents="none"> 
                  <AppLogo scale={1.2} />
               </View>
             </View>
 
-            {/* 2. רשימת הניווט */}
+            {/* Navigation Items */}
             <View style={styles.navItems}>
               
               <MenuItem label="Recent" icon="time" path="/recent" />
               <MenuItem label="Trash" icon="trash" path="/trash" />
-              
-              {/* אפשר להוסיף כאן עוד כפתורים בעתיד */}
-            
+                          
             </View>
 
-            {/* 3. פוטר קטן */}
+            {/* Footer */}
             <View style={styles.footer}>
               <Text style={styles.footerText}>AwesoMe Drive v1.0</Text>
             </View>

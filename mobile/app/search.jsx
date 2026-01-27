@@ -22,7 +22,7 @@ export default function SearchScreen() {
   
   const folderCache = useRef(new Map());
 
-  // --- לוגיקת סינון מחיקות (זהה לווב) ---
+  // Hierarchy Check (Soft Delete)
   const isUnderDeletedFolder = async (file) => {
     if (deletedFiles.some(d => d.id === file.id)) return true;
 
@@ -60,7 +60,7 @@ export default function SearchScreen() {
     return false;
   };
 
-  // --- ביצוע החיפוש ---
+  // Execute Search
   const performSearch = async (text, signal) => {
     if (!text.trim()) {
       setResults([]);
@@ -77,8 +77,6 @@ export default function SearchScreen() {
         const lowerQuery = text.toLowerCase();
         
         const filterPromises = data.map(async (item) => {
-            // 1. בדיקת סוגי קבצים ספציפיים (כמו בווב)
-            // בווב יש לוגיקה שמסננת תמונות/PDF אם השם לא מכיל את הטקסט במפורש
             const fileName = (item.name || "").toLowerCase();
             const isImageOrPdf = fileName.endsWith('.png') || 
                                  fileName.endsWith('.jpg') || 
@@ -87,11 +85,11 @@ export default function SearchScreen() {
             
             if (isImageOrPdf) {
                 if (!fileName.includes(lowerQuery)) {
-                    return null; // סינון החוצה
+                    return null; 
                 }
             }
 
-            // 2. בדיקת מחיקה היררכית
+            // Check against soft-delete hierarchy
             const isDeleted = await isUnderDeletedFolder(item);
             return isDeleted ? null : item;
         });
@@ -110,9 +108,9 @@ export default function SearchScreen() {
     }
   };
 
-  // --- אפקטים (Effects) ---
+  // Effects
 
-  // 1. Debounce לחיפוש בעת הקלדה
+  // 1. Debounce search input
   useEffect(() => {
     const controller = new AbortController();
     const timeoutId = setTimeout(() => {
@@ -123,13 +121,12 @@ export default function SearchScreen() {
       clearTimeout(timeoutId);
       controller.abort();
     };
-  }, [query, deletedFiles]); // רץ כשמקלידים או כשיש מחיקה
+  }, [query, deletedFiles]); 
 
-  // 2. האזנה לשינויים חיצוניים (Rename, Upload וכו') - הוספנו את זה!
+  // 2. Listen for external updates (Rename, Upload, etc.)
   useEffect(() => {
     const refreshSearch = () => {
         if (query.trim().length > 0) {
-            // מריצים חיפוש מחדש ללא AbortController כי זה רענון מיידי
             performSearch(query); 
         }
     };
@@ -139,7 +136,7 @@ export default function SearchScreen() {
     return () => {
         subscription.remove();
     };
-  }, [query]); // תלוי בשאילתה הנוכחית
+  }, [query]); 
 
   const handleOpenFile = (file) => {
     const realId = file._id || file.id;
@@ -155,9 +152,8 @@ export default function SearchScreen() {
 
   const handleOpenFolder = (folder) => {
     const realId = folder._id || folder.id;
-    // ניווט למסך התיקיות (בדיוק כמו במסך הבית)
     router.push({
-        pathname: '/(tabs)', // ודאי שהנתיב תואם לשם הקובץ שלך!
+        pathname: '/(tabs)', 
         params: { 
             folderId: realId, 
             folderName: folder.name 
@@ -165,11 +161,9 @@ export default function SearchScreen() {
     });
   };
   
-  // --- Render Item (החלק החשוב) ---
+  // Render Item Logic
   const renderSearchResult = ({ item }) => {
     const fileName = item.name || "";
-    // בדיקה: האם זה תיקייה?
-    // אם השרת אומר 'folder' או שאין נקודה בשם
     const isFolder = item.type === 'folder' || (fileName.length > 0 && !fileName.includes('.'));
     const normalizedItem = { ...item, id: item._id || item.id };
 
@@ -183,7 +177,7 @@ export default function SearchScreen() {
         );
     }
 
-    // אחרת, זה קובץ רגיל
+    // Render regular file
     return (
         <FileItem 
             file={normalizedItem} 
@@ -223,13 +217,6 @@ export default function SearchScreen() {
         keyExtractor={(item) => item.id || item._id}
         contentContainerStyle={searchStyles.listContent}
         keyboardShouldPersistTaps="handled"
-        // renderItem={({ item }) => (
-        //   <FileItem 
-        //     file={item} 
-        //     onOpen={() => handleOpenFile(item)} 
-        //     isTrash={false}
-        //   />
-        // )}
         renderItem={renderSearchResult}
         ListEmptyComponent={
           !isSearching && query.length > 0 && (

@@ -1,7 +1,7 @@
 import { StyleSheet } from 'react-native';
 
 export const profileStyles = StyleSheet.create({
-  // --- Profile Button (Top Bar) ---
+  // Profile Button (Top Bar)
   buttonContainer: {
     padding: 2,
     marginRight: 8, 
@@ -14,14 +14,14 @@ export const profileStyles = StyleSheet.create({
     borderColor: '#ddd',
   },
 
-  // --- Modal Overlay ---
+  // Modal Overlay
   overlay: {
     flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.5)', // רקע חצי שקוף
-    justifyContent: 'flex-end', // מצמיד למטה
+    backgroundColor: 'rgba(0,0,0,0.5)', 
+    justifyContent: 'flex-end', 
   },
   
-  // --- The Sheet Itself ---
+  // The Sheet Itself 
   sheetContainer: {
     backgroundColor: 'white',
     borderTopLeftRadius: 24,
@@ -44,7 +44,7 @@ export const profileStyles = StyleSheet.create({
     marginBottom: 24,
   },
 
-  // --- Header Content ---
+  // Header Content
   header: {
     alignItems: 'center',
     marginBottom: 24,
@@ -86,7 +86,7 @@ export const profileStyles = StyleSheet.create({
     marginBottom: 24,
   },
 
-  // --- Action Buttons ---
+  // Action Buttons 
   actions: {
     width: '100%',
     gap: 12,

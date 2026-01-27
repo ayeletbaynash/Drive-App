@@ -1,5 +1,5 @@
-import { View, Text, TouchableOpacity } from 'react-native';
-import { Ionicons, FontAwesome6, AntDesign, FontAwesome, MaterialCommunityIcons } from '@expo/vector-icons';
+import { View, Text, TouchableOpacity, DeviceEventEmitter } from 'react-native';
+import { Ionicons, FontAwesome6, AntDesign, FontAwesome } from '@expo/vector-icons';
 import { styles } from '../styles/FileItem.styles';
 import ActionSheet from './ActionSheet'
 import React, { useState, useRef } from 'react' 
@@ -9,8 +9,9 @@ import StarFile from './operations/StarFile'
 import Rename from './operations/Rename'
 import MaterialIcons from '@expo/vector-icons/MaterialIcons'
 import EditContent from './operations/EditContent'
-import Feather from '@expo/vector-icons/Feather';
 import HardDelete from './operations/HardDelete';
+import FileDetailsModal from './FileDetailsModal';
+import Feather from '@expo/vector-icons/Feather'
 import CopyFile from './operations/CopyFile'
 import ChangeImage from './operations/ChangeImage'
 import Share from './operations/Share';
@@ -23,6 +24,7 @@ const FileItem = ({ file, onOpen, isTrash, fetchFiles, onRestore }) => {
  
   const [isShareModalVisible, setIsShareModalVisible] = useState(false);
   const [isEditModalVisible, setIsEditModalVisible] = useState(false);
+  const [isDetailsVisible, setIsDetailsVisible] = useState(false);
   const [isMoveModalVisible, setIsMoveModalVisible] = useState(false);
   
   // Ref for ChangeImage component
@@ -87,19 +89,20 @@ const FileItem = ({ file, onOpen, isTrash, fetchFiles, onRestore }) => {
       >
         {isTrash ? (
           <>
-            {/* --- כפתור שחזור (Restore) --- */}
+            {/* Restore Button */}
             <TouchableOpacity 
                 style={styles.simpleButton} 
                 onPress={() => {
-                    setIsMenuVisible(false); // סגירת התפריט
-                    if (onRestore) onRestore(); // הפעלת פעולת השחזור
+                    setIsMenuVisible(false); 
+                    if (onRestore) onRestore(); 
                 }}
             >
+              <View style={{ flexDirection: 'row', alignItems: 'center' }}></View>
               <MaterialIcons name="restore" size={24} color="green" style={{ marginRight: 8 }} />
               <Text style={{ color: 'green', fontSize: 16 }}>Restore</Text>
             </TouchableOpacity>
             
-            {/* הרכיב החדש למחיקה סופית */}
+            {/* Hard Delete Component */}
             <HardDelete 
                 file={file} 
                 onComplete={() => setIsMenuVisible(false)}
@@ -107,6 +110,21 @@ const FileItem = ({ file, onOpen, isTrash, fetchFiles, onRestore }) => {
           </>
         ) : (
           <>
+            {/* Details Button */}
+             <TouchableOpacity 
+                style={styles.simpleButton} 
+                onPress={() => {
+                    setIsMenuVisible(false);
+                    setTimeout(() => setIsDetailsVisible(true), 100);
+                }}
+            >
+              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                  <Ionicons name="information-circle-outline" size={24} color="black" style={{ marginRight: 8 }} />
+                  <Text style={{ fontSize: 16 }}>Details</Text>
+              </View>
+            </TouchableOpacity>
+
+            {/* Added Star option to menu */}
             <StarFile 
                 file={file} 
                 onComplete={() => setIsMenuVisible(false)} 
@@ -215,6 +233,11 @@ const FileItem = ({ file, onOpen, isTrash, fetchFiles, onRestore }) => {
           file={file} 
           visible={isEditModalVisible} 
           onClose={() => setIsEditModalVisible(false)} 
+      />
+      <FileDetailsModal 
+        file={file}
+        visible={isDetailsVisible}
+        onClose={() => setIsDetailsVisible(false)}
       />
       <Share 
           file={file} 

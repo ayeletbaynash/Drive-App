@@ -45,32 +45,28 @@ export const layoutStyles = StyleSheet.create({
     backgroundColor: Colors.light.background,
   },
   topBarContainer: {
-    flexDirection: 'row',     // sort the items in a row
-    alignItems: 'center',     // set vertical alignment to center
+    flexDirection: 'row',     
+    alignItems: 'center',     
     paddingHorizontal: 16,
     paddingVertical: 10,
-    //backgroundColor: Colors.light.background,
-    gap: 12,                  // room between items
+    gap: 12,                 
     borderBottomWidth: 1,
-    //borderBottomColor: '#f0f0f0', // very light gray border
   },
   iconButton: {
     padding: 4,
   },
   searchContainer: {
-    flex: 1,                  // take up all available space
+    flex: 1,                 
     flexDirection: 'row',
     alignItems: 'center',
-    //backgroundColor: '#f1f3f4', // light gray background like Google
-    paddingVertical: 10,      // a bit higher
+    paddingVertical: 10,      
     paddingHorizontal: 16,
-    borderRadius: 30,         // pill shape
+    borderRadius: 30,       
   },
   searchPlaceholder: {
-    //color: '#5f6368',         // Google's gray text
     fontSize: 16,
     marginLeft: 8,
-    fontFamily: Fonts.sans,  
+    fontFamily: Fonts.sans,   
   },
   rightActions: {
     flexDirection: 'row',
@@ -84,9 +80,7 @@ export const layoutStyles = StyleSheet.create({
     height: 85,
     paddingBottom: 25,
     paddingTop: 10,
-    //backgroundColor: Colors.light.surface,
     borderTopWidth: 1,
-    //borderTopColor: Colors.light.border,
     elevation: 0,
     shadowOpacity: 0,
   },
