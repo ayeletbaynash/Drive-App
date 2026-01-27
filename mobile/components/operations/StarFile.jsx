@@ -19,12 +19,12 @@ const StarFile = ({ file, onComplete }) => {
     <TouchableOpacity style={styles.simpleButton} onPress={handleToggle}>
       {isStarred ? (
         <>
-          <FontAwesome name="star" size={18} color="#ffc107" style={{ marginRight: 10 }} />
+          <FontAwesome name="star" size={24} color="#ffc107" />
           <Text style={{ fontSize: 16 }}>Remove Star</Text>
         </>
       ) : (
         <>
-          <FontAwesome name="star-o" size={18} color="black" style={{ marginRight: 10 }} />
+          <FontAwesome name="star-o" size={24} color="black" />
           <Text style={{ fontSize: 16 }}>Add to Starred</Text>
         </>
       )}

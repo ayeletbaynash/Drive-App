@@ -29,6 +29,7 @@ export const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '600',
     color: Colors.light.textMain,
+    flex: 1,
   },
   dateText: {
     fontSize: 13,
@@ -41,6 +42,7 @@ export const styles = StyleSheet.create({
     paddingVertical: 12,
     paddingHorizontal: 16,
     width: '100%',
+    gap: 12,
 },
   menuButton: {
     padding: 8,

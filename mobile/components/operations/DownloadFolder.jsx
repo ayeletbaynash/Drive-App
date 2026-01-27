@@ -104,14 +104,14 @@ const DownloadFolder = ({ folder, onSuccess }) => {
         <TouchableOpacity 
             onPress={handleFolderDownload}
             disabled={isLoading}
-            style={{ flexDirection: 'row', alignItems: 'center', padding: 10 }}
+            style={styles.simpleButton}
         >
             {isLoading ? (
                 <ActivityIndicator color="#489f1c72" />
             ) : (
                 <>
         <MaterialCommunityIcons name="folder-download-outline" size={24} color="black" />
-        <Text style={{ color: 'black' }}> Download Folder Content</Text>
+        <Text style={{ color: 'black', fontSize: 16 }}> Download Folder Content</Text>
     </>
             )}
         </TouchableOpacity>
