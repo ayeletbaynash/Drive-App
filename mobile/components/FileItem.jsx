@@ -9,7 +9,6 @@ import StarFile from './operations/StarFile'
 import Rename from './operations/Rename'
 import MaterialIcons from '@expo/vector-icons/MaterialIcons'
 import EditContent from './operations/EditContent'
-import Feather from '@expo/vector-icons/Feather';
 import HardDelete from './operations/HardDelete';
 import FileDetailsModal from './FileDetailsModal';
 import Feather from '@expo/vector-icons/Feather'
