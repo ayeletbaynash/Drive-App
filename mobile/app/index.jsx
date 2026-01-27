@@ -3,9 +3,11 @@ import { View, ActivityIndicator } from 'react-native'
 import { Redirect } from 'expo-router'
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useFileActions } from '../context/FileContext';
+import { useAppTheme } from '../context/ThemeContext';
 
 export default function Index() {
     const { userId, setUserId } = useFileActions();
+    const { theme } = useAppTheme();
     const [isLoading, setIsLoading] = useState(true);
     const [hasToken, setHasToken] = useState(false);
 
@@ -36,7 +38,7 @@ export default function Index() {
     if (isLoading) {
         return (
             <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-                <ActivityIndicator size="large" color="#0b3d19" />
+                <ActivityIndicator size="large" color={theme.primary} />
             </View>
         );
     }

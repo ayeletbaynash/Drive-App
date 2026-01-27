@@ -1,11 +1,14 @@
 import React from 'react';
 import { TouchableOpacity, Text, DeviceEventEmitter } from 'react-native';
 import { useFileActions } from '../../context/FileContext'
-import { styles } from '../../styles/FileItem.styles'
+import { getFileItemStyles } from '../../styles/FileItem.styles'
 import { Feather } from '@expo/vector-icons'
+import { useAppTheme } from '../../context/ThemeContext';
 
 const RemoveFile = ({ file, onComplete }) => {
   const { addToFileDeletionList } = useFileActions();
+  const { theme } = useAppTheme();
+  const styles = getFileItemStyles(theme);
 
   const handleRemove = async () => {
     await addToFileDeletionList(file);
@@ -16,8 +19,8 @@ const RemoveFile = ({ file, onComplete }) => {
 
   return (
     <TouchableOpacity style={styles.simpleButton} onPress={handleRemove}>
-        <Feather name="trash-2" size={18} color="black" style={{ marginRight: 8 }} />
-      <Text style={{ fontSize: 16 }}>Remove</Text>
+        <Feather name="trash-2" size={18} color={theme.error} style={{ marginRight: 8 }} />
+      <Text style={{ color: theme.error, fontSize: 16 }}>Remove</Text>
     </TouchableOpacity>
   );
 };

@@ -1,23 +1,23 @@
 import { StyleSheet, Platform } from 'react-native';
-import { Colors, Fonts, Spacing, FontSize } from '../constants/theme';
+import { Fonts, Spacing, FontSize } from '../constants/theme';
 
-export const styles = StyleSheet.create({
+export const createFileViewerStyles = (theme) => StyleSheet.create({
     container: { 
         flex: 1, 
-        backgroundColor: Colors.light.background 
+        backgroundColor: theme.background 
     },
     header: { 
         padding: Spacing.md, 
         paddingTop: 50, // save room for status bar
         borderBottomWidth: 1, 
-        borderColor: Colors.light.border, 
+        borderColor: theme.border, 
         alignItems: 'center',
-        backgroundColor: Colors.light.surface
+        backgroundColor: theme.surface
     },
     title: { 
         fontSize: FontSize.lg, 
         fontWeight: 'bold',
-        color: Colors.light.primary,
+        color: theme.primary,
         fontFamily: Fonts.sans
     },
     contentBody: { 
@@ -38,7 +38,7 @@ export const styles = StyleSheet.create({
     textContent: { 
         fontFamily: Fonts.mono,
         fontSize: FontSize.md,
-        color: Colors.light.textMain
+        color: theme.textMain
     },
     centered: { 
         alignItems: 'center',
@@ -48,12 +48,14 @@ export const styles = StyleSheet.create({
         fontSize: FontSize.md, 
         marginVertical: Spacing.sm, 
         fontWeight: '500',
-        color: Colors.light.textMain
+        color: theme.textMain
     },
     pdfLink: {
-        color: Colors.light.primary,
+        color: theme.primary,
         textDecorationLine: 'underline',
         fontSize: FontSize.md,
         marginTop: Spacing.md
     }
 });
+
+export const styles = createFileViewerStyles;

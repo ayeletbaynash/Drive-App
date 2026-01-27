@@ -1,9 +1,11 @@
-
 import { View, Text, Modal, TouchableOpacity, ScrollView, Pressable } from 'react-native';
-import { styles } from '../styles/ActionSheet.styles';
+import { createActionSheetStyles } from '../styles/ActionSheet.styles';
+import { useAppTheme } from '../context/ThemeContext';
 
 
 export default function ActionSheet({ visible, onClose, fileName, children }) {
+  const { theme } = useAppTheme();
+  const styles = createActionSheetStyles(theme);
   return (
     <Modal
       visible={visible}

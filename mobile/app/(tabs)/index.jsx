@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useMemo } from 'react'
 import { View, Text, ActivityIndicator, DeviceEventEmitter, Alert, TouchableOpacity } from 'react-native';
 import { Colors } from '../../constants/theme';
-import { layoutStyles } from '../../styles/layoutStyles.js';
+import { createLayoutStyles } from '../../styles/layoutStyles.js';
+import { useAppTheme } from '../../context/ThemeContext';
 import FileViewList from '../../components/FileViewList'
 import authorizedFetch from '../../services/authorizedFetch.jsx'
 import { API_URL } from '../../config';
@@ -13,6 +14,8 @@ import { useFileFilter } from '../../context/useFileFilter';
 export default function HomeScreen() {
     const { folderId, folderName } = useLocalSearchParams(); 
     const router = useRouter()
+    const { theme } = useAppTheme();
+    const layoutStyles = useMemo(() => createLayoutStyles(theme), [theme]);
     const { deletedFiles } = useFileActions();
     
     const [files, setFiles] = useState([]);

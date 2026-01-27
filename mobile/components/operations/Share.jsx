@@ -1,14 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, Modal, TouchableOpacity, TextInput, FlatList, ActivityIndicator, Alert, DeviceEventEmitter } from 'react-native';
-import { shareStyles as styles } from '../../styles/shareStyles'; // Path to your style file
+import { createShareStyles } from '../../styles/shareStyles';
 import authorizedFetch from '../../services/authorizedFetch';
 import { API_URL } from '../../config';
+import { useAppTheme } from '../../context/ThemeContext';
 
 const Share = ({ file, visible, onClose }) => {
     const [permissions, setPermissions] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
     const [newUsername, setNewUsername] = useState("");
     const [newRole, setNewRole] = useState("read");
+    const { theme } = useAppTheme();
+    const styles = createShareStyles(theme);
 
     // Fetch existing permissions from the server
     const fetchPermissions = async () => {
@@ -98,16 +101,16 @@ const Share = ({ file, visible, onClose }) => {
 
     // Render individual user item in the list
     const renderPermissionItem = ({ item }) => (
-        <View style={styles.permissionItem}>
-            <Text style={styles.usernameText}>{item.username} ({item.permission})</Text>
+        <View style={[styles.permissionItem, { backgroundColor: theme.rowBackground }]}>
+            <Text style={[styles.usernameText, { color: theme.textMain }]}>{item.username} ({item.permission})</Text>
             
             <View style={styles.itemActions}>
                 <TouchableOpacity onPress={() => openRolePicker((role) => handleUpdateRole(item.pId, role))}>
-                    <Text style={styles.editText}>Edit</Text>
+                    <Text style={[styles.editText, { color: theme.primary }]}>Edit</Text>
                 </TouchableOpacity>
 
                 <TouchableOpacity onPress={() => handleDelete(item.pId)}>
-                    <Text style={styles.deleteText}>Remove</Text>
+                    <Text style={[styles.deleteText, { color: theme.error }]}>Remove</Text>
                 </TouchableOpacity>
             </View>
         </View>
@@ -115,33 +118,34 @@ const Share = ({ file, visible, onClose }) => {
 
     return (
         <Modal visible={visible} transparent animationType="fade" onRequestClose={onClose}>
-            <View style={styles.overlay}>
-                <View style={styles.modalContainer}>
+            <View style={[styles.overlay, { backgroundColor: 'rgba(0,0,0,0.5)' }]}>
+                <View style={[styles.modalContainer, { backgroundColor: theme.surface }]}>
                     
-                    <Text style={styles.modalTitle}>Share: {file.name}</Text>
+                    <Text style={[styles.modalTitle, { color: theme.textMain }]}>Share: {file.name}</Text>
 
                     {/* Add New User Section */}
-                    <View style={styles.addSection}>
+                    <View style={[styles.addSection, { backgroundColor: theme.rowBackground }]}>
                         <TextInput 
                             placeholder="Enter username"
                             value={newUsername}
                             onChangeText={setNewUsername}
-                            style={styles.input}
+                            style={[styles.input, { color: theme.textMain, borderColor: theme.border, backgroundColor: theme.surface }]}
+                            placeholderTextColor={theme.placeholder}
                             autoCapitalize="none"
                         />
-                        <TouchableOpacity onPress={() => openRolePicker(setNewRole)} style={styles.rolePickerButton}>
-                            <Text>Role: {newRole}</Text>
+                        <TouchableOpacity onPress={() => openRolePicker(setNewRole)} style={[styles.rolePickerButton, { backgroundColor: theme.surface, borderColor: theme.border }]}>
+                            <Text style={{ color: theme.textMain }}>Role: {newRole}</Text>
                         </TouchableOpacity>
                         
-                        <TouchableOpacity onPress={handleAddPermission} style={styles.inviteButton}>
-                            <Text style={styles.inviteButtonText}>Invite</Text>
+                        <TouchableOpacity onPress={handleAddPermission} style={[styles.inviteButton, { backgroundColor: theme.primary }]}>
+                            <Text style={[styles.inviteButtonText, { color: theme.white }]}>Invite</Text>
                         </TouchableOpacity>
                     </View>
 
                     {/* Permissions List Section */}
-                    <Text style={styles.listHeader}>People with access:</Text>
+                    <Text style={[styles.listHeader, { color: theme.textMain }]}>People with access:</Text>
                     {isLoading ? (
-                        <ActivityIndicator size="small" />
+                        <ActivityIndicator size="small" color={theme.primary} />
                     ) : (
                         <FlatList 
                             data={permissions}
@@ -151,8 +155,8 @@ const Share = ({ file, visible, onClose }) => {
                         />
                     )}
 
-                    <TouchableOpacity onPress={onClose} style={styles.closeButton}>
-                        <Text style={styles.closeButtonText}>Done</Text>
+                    <TouchableOpacity onPress={onClose} style={[styles.closeButton, { backgroundColor: theme.primary }]}>
+                        <Text style={[styles.closeButtonText, { color: theme.white }]}>Done</Text>
                     </TouchableOpacity>
 
                 </View>

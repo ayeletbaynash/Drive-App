@@ -1,6 +1,5 @@
 import { View, Text, TouchableOpacity, DeviceEventEmitter } from 'react-native';
 import { Ionicons, FontAwesome6, AntDesign, FontAwesome } from '@expo/vector-icons';
-import { styles } from '../styles/FileItem.styles';
 import ActionSheet from './ActionSheet'
 import React, { useState, useRef } from 'react' 
 import RemoveFile from './operations/Remove'
@@ -17,8 +16,13 @@ import ChangeImage from './operations/ChangeImage'
 import Share from './operations/Share';
 import MoveFile from './operations/MoveFile'
 import DownloadFile from './operations/DownloadFile';
+import { useAppTheme } from '../context/ThemeContext'
+import { getFileItemStyles } from '../styles/FileItem.styles'
 
 const FileItem = ({ file, onOpen, isTrash, fetchFiles, onRestore }) => {
+  const { theme } = useAppTheme();
+  const styles = getFileItemStyles(theme);
+
   const [isMenuVisible, setIsMenuVisible] = useState(false)
   const [isRenameModalVisible, setIsRenameModalVisible] = useState(false)
  
@@ -39,14 +43,14 @@ const FileItem = ({ file, onOpen, isTrash, fetchFiles, onRestore }) => {
     const isFolder = item.type === 'folder' || (fileName.length > 0 && !fileName.includes('.'));
     
     if (isFolder) {
-        return <Ionicons name="folder" size={28} color="#FFCA28" />; 
+        return <Ionicons name="folder" size={28} color={theme.folderIcon} />; 
     }
-    if (fileName.endsWith('.pdf')) return <FontAwesome6 name="file-pdf" size={24} color="red" />
-    if (fileName.endsWith('.txt')) return <AntDesign name="file-text" size={24} color="blue" />
+    if (fileName.endsWith('.pdf')) return <FontAwesome6 name="file-pdf" size={24} color={theme.pdfIcon} />
+    if (fileName.endsWith('.txt')) return <AntDesign name="file-text" size={24} color={theme.txtIcon} />
     if (fileName.endsWith('.jpg') || fileName.endsWith('.jpeg') || fileName.endsWith('.png')) {
-        return <Ionicons name="image" size={24} color="green" />; // ירוק לתמונות
+        return <Ionicons name="image" size={24} color={theme.imageIcon} />;
     }
-    return <AntDesign name="file" size={24} color="gray" />;
+    return <AntDesign name="file" size={24} color={theme.fileIcon} />;
   };
 
   return (
@@ -66,7 +70,7 @@ const FileItem = ({ file, onOpen, isTrash, fetchFiles, onRestore }) => {
             <View style={{ flexDirection: 'row', alignItems: 'center' }}>
               <Text style={styles.fileName} numberOfLines={1}>{file.name}</Text>
               {isStarred && (
-                <FontAwesome name="star" size={14} color="#ffc107" style={{ marginLeft: 6 }} />
+                <FontAwesome name="star" size={14} color={theme.starIcon} style={{ marginLeft: 6 }} />
               )}
             </View>
             <Text style={styles.dateText}>Modified: {new Date(file.updatedAt).toLocaleDateString('he-IL')} {new Date(file.updatedAt).toLocaleTimeString('he-IL', { hour: '2-digit', minute: '2-digit' })}</Text>
@@ -79,7 +83,7 @@ const FileItem = ({ file, onOpen, isTrash, fetchFiles, onRestore }) => {
         style={styles.menuButton} 
         onPress={() => setIsMenuVisible(true)}
       >
-        <Ionicons name="ellipsis-vertical" size={20} color="#666" />
+        <Ionicons name="ellipsis-vertical" size={20} color={theme.menuIcon} />
       </TouchableOpacity>
 
       <ActionSheet 
@@ -98,8 +102,8 @@ const FileItem = ({ file, onOpen, isTrash, fetchFiles, onRestore }) => {
                 }}
             >
               <View style={{ flexDirection: 'row', alignItems: 'center' }}></View>
-              <MaterialIcons name="restore" size={24} color="green" style={{ marginRight: 8 }} />
-              <Text style={{ color: 'green', fontSize: 16 }}>Restore</Text>
+              <MaterialIcons name="restore" size={24} color={theme.successIcon} style={{ marginRight: 8 }} />
+              <Text style={{ color: theme.successIcon, fontSize: 16 }}>Restore</Text>
             </TouchableOpacity>
             
             {/* Hard Delete Component */}
@@ -119,8 +123,8 @@ const FileItem = ({ file, onOpen, isTrash, fetchFiles, onRestore }) => {
                 }}
             >
               <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                  <Ionicons name="information-circle-outline" size={24} color="black" style={{ marginRight: 8 }} />
-                  <Text style={{ fontSize: 16 }}>Details</Text>
+                  <Ionicons name="information-circle-outline" size={24} color={theme.textMain} style={{ marginRight: 8 }} />
+                  <Text style={{ color: theme.textMain, fontSize: 16 }}>Details</Text>
               </View>
             </TouchableOpacity>
 
@@ -138,8 +142,8 @@ const FileItem = ({ file, onOpen, isTrash, fetchFiles, onRestore }) => {
                 }}
             >
               <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                <MaterialIcons name="drive-file-rename-outline" size={24} color="black" />
-                <Text style={{ fontSize: 16, marginLeft: 10 }}>Rename</Text>
+                <MaterialIcons name="drive-file-rename-outline" size={24} color={theme.textMain} />
+                <Text style={{ color: theme.textMain, fontSize: 16, marginLeft: 10 }}>Rename</Text>
               </View>
             </TouchableOpacity>
 
@@ -158,8 +162,8 @@ const FileItem = ({ file, onOpen, isTrash, fetchFiles, onRestore }) => {
                 }}
             >
               <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                <FontAwesome name="image" size={22} color="black" />
-                <Text style={{ fontSize: 16, marginLeft: 10 }}>Replace Image</Text>
+                <FontAwesome name="image" size={22} color={theme.textMain} />
+                <Text style={{ color: theme.textMain, fontSize: 16, marginLeft: 10 }}>Replace Image</Text>
               </View>
             </TouchableOpacity>
 
@@ -171,8 +175,8 @@ const FileItem = ({ file, onOpen, isTrash, fetchFiles, onRestore }) => {
                 }}
             >
               <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                <Feather name="edit" size={24} color="black" />
-                <Text style={{ fontSize: 16, marginLeft: 10 }}>Edit Content</Text>
+                <Feather name="edit" size={24} color={theme.textMain} />
+                <Text style={{ color: theme.textMain, fontSize: 16, marginLeft: 10 }}>Edit Content</Text>
               </View>
             </TouchableOpacity>
 
@@ -184,8 +188,8 @@ const FileItem = ({ file, onOpen, isTrash, fetchFiles, onRestore }) => {
                 }}
             >
               <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                <Ionicons name="person-add-outline" size={24} color="black" />
-                <Text style={{ fontSize: 16, marginLeft: 10 }}>Share</Text>
+                <Ionicons name="person-add-outline" size={24} color={theme.textMain} />
+                <Text style={{ color: theme.textMain, fontSize: 16, marginLeft: 10 }}>Share</Text>
               </View>
             </TouchableOpacity>
 
@@ -197,8 +201,8 @@ const FileItem = ({ file, onOpen, isTrash, fetchFiles, onRestore }) => {
                 }}
             >
               <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                <Ionicons name="folder-open-outline" size={24} color="black" />
-                <Text style={{ fontSize: 16, marginLeft: 10 }}>Move to...</Text>
+                <Ionicons name="folder-open-outline" size={24} color={theme.textMain} />
+                <Text style={{ color: theme.textMain, fontSize: 16, marginLeft: 10 }}>Move to...</Text>
               </View>
             </TouchableOpacity>
 

@@ -1,7 +1,7 @@
 import { StyleSheet } from 'react-native';
-import { Colors, Spacing, BorderRadius } from '../constants/theme'; 
+import { Spacing, BorderRadius } from '../constants/theme'; 
 
-export const styles = StyleSheet.create({
+export const createActionSheetStyles = (theme) => StyleSheet.create({
   // The dark, semi-transparent background behind the menu
   overlay: {
     flex: 1,
@@ -11,7 +11,7 @@ export const styles = StyleSheet.create({
 
   // The main white container of the bottom sheet
   sheetContainer: {
-    backgroundColor: Colors.light.surface,
+    backgroundColor: theme.surface,
     borderTopLeftRadius: BorderRadius.lg * 2, // Gives the rounded "sheet" look
     borderTopRightRadius: BorderRadius.lg * 2,
     padding: Spacing.lg,
@@ -29,7 +29,7 @@ export const styles = StyleSheet.create({
   handle: {
     width: 40,
     height: 5,
-    backgroundColor: Colors.light.border,
+    backgroundColor: theme.border,
     borderRadius: BorderRadius.round,
     alignSelf: 'center',
     marginBottom: Spacing.md,
@@ -39,7 +39,7 @@ export const styles = StyleSheet.create({
   title: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: Colors.light.textMain,
+    color: theme.textMain,
     textAlign: 'center',
     marginBottom: Spacing.lg,
     paddingHorizontal: Spacing.md,
@@ -54,13 +54,13 @@ export const styles = StyleSheet.create({
   closeButton: {
     marginTop: Spacing.md,
     padding: Spacing.md,
-    backgroundColor: Colors.light.background,
+    backgroundColor: theme.background,
     borderRadius: BorderRadius.md,
     alignItems: 'center',
   },
 
   closeButtonText: {
-    color: '#d9534f', // Reddish color for destructive/cancel actions
+    color: theme.error, // Reddish color for destructive/cancel actions
     fontWeight: '600',
     fontSize: 16,
   },
@@ -70,8 +70,10 @@ export const styles = StyleSheet.create({
   simpleButton: {
     paddingVertical: Spacing.md,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.light.border,
+    borderBottomColor: theme.border,
     flexDirection: 'row',
     alignItems: 'center',
   }
 });
+
+export const styles = createActionSheetStyles;

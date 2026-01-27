@@ -3,9 +3,12 @@ import { View, Text, Modal, TouchableOpacity, Image, Pressable } from 'react-nat
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { router } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-import { profileStyles } from '../styles/Profile.styles';
+import { createProfileStyles } from '../styles/Profile.styles';
+import { useAppTheme } from '../context/ThemeContext';
 
 export default function ProfileModal({ visible, onClose, user }) {
+  const { theme } = useAppTheme();
+  const styles = createProfileStyles(theme);
   
   const handleLogout = async () => {
     try {
@@ -53,40 +56,40 @@ export default function ProfileModal({ visible, onClose, user }) {
       animationType="slide"
       onRequestClose={onClose}
     >
-      <Pressable style={profileStyles.overlay} onPress={onClose}>
+      <Pressable style={[styles.overlay, { backgroundColor: 'rgba(0,0,0,0.5)' }]} onPress={onClose}>
         
         {/* Stop click propagation so clicking the sheet doesn't close it */}
-        <Pressable style={profileStyles.sheetContainer} onPress={() => {}}>
+        <Pressable style={[styles.sheetContainer, { backgroundColor: theme.surface }]} onPress={() => {}}>
           
-          <View style={profileStyles.handle} />
+          <View style={styles.handle} />
 
           {/* Header */}
-          <View style={profileStyles.header}>
-            <View style={[profileStyles.avatarContainer, { backgroundColor: imageSource ? 'transparent' : avatarColor }]}>
+          <View style={styles.header}>
+            <View style={[styles.avatarContainer, { backgroundColor: imageSource ? 'transparent' : avatarColor }]}>
               {imageSource ? (
                 <Image 
                   source={{ uri: imageSource }} 
-                  style={profileStyles.avatarImageLarge} 
+                  style={styles.avatarImageLarge} 
                 />
               ) : (
-                <Text style={profileStyles.avatarText}>{displayName.charAt(0).toUpperCase()}</Text>
+                <Text style={styles.avatarText}>{displayName.charAt(0).toUpperCase()}</Text>
               )}
             </View>
-            <Text style={profileStyles.greeting}>Hello, {displayName}!</Text>
-            <Text style={profileStyles.email}>{displayEmail}</Text>
+            <Text style={[styles.greeting, { color: theme.textMain }]}>Hello, {displayName}!</Text>
+            <Text style={[styles.email, { color: theme.textMuted }]}>{displayEmail}</Text>
           </View>
 
-          <View style={profileStyles.divider} />
+          <View style={[styles.divider, { backgroundColor: theme.border }]} />
 
           {/* Actions */}
-          <View style={profileStyles.actions}>
-            <TouchableOpacity style={profileStyles.logoutButton} onPress={handleLogout}>
-              <Ionicons name="log-out-outline" size={20} color='#277d3f' />
-              <Text style={profileStyles.logoutText}>Logout</Text>
+          <View style={styles.actions}>
+            <TouchableOpacity style={[styles.logoutButton, { backgroundColor: theme.rowHover }]} onPress={handleLogout}>
+              <Ionicons name="log-out-outline" size={20} color={theme.error} />
+              <Text style={[styles.logoutText, { color: theme.error }]}>Logout</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity style={profileStyles.doneButton} onPress={onClose}>
-              <Text style={profileStyles.doneText}>Done</Text>
+            <TouchableOpacity style={[styles.doneButton, { backgroundColor: theme.primary }]} onPress={onClose}>
+              <Text style={[styles.doneText, { color: theme.white }]}>Done</Text>
             </TouchableOpacity>
           </View>
 

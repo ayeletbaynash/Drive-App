@@ -1,15 +1,14 @@
 import { StyleSheet } from 'react-native';
-import { Colors } from '../constants/theme'; 
 
-export const styles = StyleSheet.create({
+export const createFolderItemStyles = (theme) => StyleSheet.create({
   container: {
     flexDirection: 'row',
     paddingVertical: 12, 
     paddingHorizontal: 16,
     alignItems: 'center',
-    backgroundColor: Colors.light.surface,
+    backgroundColor: theme.surface,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.light.border,
+    borderBottomColor: theme.border,
   },
   textContainer: {
     flex: 1,
@@ -28,11 +27,11 @@ export const styles = StyleSheet.create({
   folderName: {
     fontSize: 16,
     fontWeight: '600',
-    color: Colors.light.textMain,
+    color: theme.textMain,
   },
   subText: {
     fontSize: 12,
-    color: Colors.light.textMuted,
+    color: theme.textMuted,
     marginTop: 2,
   },
   chevronIcon: {
@@ -40,3 +39,5 @@ export const styles = StyleSheet.create({
     marginLeft: 8,
   }
 });
+
+export const styles = createFolderItemStyles;

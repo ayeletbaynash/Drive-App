@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { View, Text, Image, ScrollView, ActivityIndicator, Alert, TouchableOpacity } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
 import * as WebBrowser from 'expo-web-browser';
 import { API_URL } from '../config'; 
 import authorizedFetch from '../services/authorizedFetch'; 
-import { styles } from '../styles/FileViewer.styles';
+import { createFileViewerStyles } from '../styles/FileViewer.styles';
+import { useAppTheme } from '../context/ThemeContext';
 import { Colors } from '../constants/theme';
 import { decode as atob } from 'base-64';
 import * as Sharing from 'expo-sharing';
@@ -14,6 +15,9 @@ export default function FileViewer() {
     const { id, name } = useLocalSearchParams();
     const [content, setContent] = useState('');
     const [loading, setLoading] = useState(true);
+    
+    const { theme } = useAppTheme();
+    const styles = useMemo(() => createFileViewerStyles(theme), [theme]);
 
     useEffect(() => {
         fetchFileContent();

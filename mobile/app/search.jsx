@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { View, TextInput, FlatList, TouchableOpacity, Text, ActivityIndicator, DeviceEventEmitter } from 'react-native'; // <-- הוספנו DeviceEventEmitter
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
@@ -8,7 +8,7 @@ import authorizedFetch from '../services/authorizedFetch';
 import { useFileActions } from '../context/FileContext';
 import FileItem from '../components/FileItem';
 import FolderItem from '../components/FolderItem';
-import { searchStyles } from '../styles/searchStyles';
+import { createSearchStyles } from '../styles/searchStyles';
 import { API_URL } from '../config';
 
 export default function SearchScreen() {
@@ -17,6 +17,7 @@ export default function SearchScreen() {
   const [isSearching, setIsSearching] = useState(false);
   
   const { theme } = useAppTheme();
+  const searchStyles = useMemo(() => createSearchStyles(theme), [theme]);
   const router = useRouter();
   const { deletedFiles } = useFileActions();
   
@@ -190,17 +191,17 @@ export default function SearchScreen() {
   return (
     <SafeAreaView 
        edges={['left', 'right', 'bottom']}
-       style={[searchStyles.container, { backgroundColor: theme.background }]}
+       style={searchStyles.container}
     >
-      <View style={[searchStyles.header, { borderBottomColor: theme.border }]}>
+      <View style={searchStyles.header}>
         <TouchableOpacity onPress={() => router.back()} style={searchStyles.backBtn}>
           <Ionicons name="arrow-back" size={24} color={theme.textMuted} />
         </TouchableOpacity>
 
-        <View style={[searchStyles.inputWrapper, { backgroundColor: theme.surface }]}>
+        <View style={searchStyles.inputWrapper}>
           <Ionicons name="search" size={20} color={theme.textMuted} />
           <TextInput
-            style={[searchStyles.input, { color: theme.textMain }]}
+            style={searchStyles.input}
             placeholder="Search in Drive"
             placeholderTextColor={theme.textMuted}
             autoFocus={true}
@@ -222,7 +223,7 @@ export default function SearchScreen() {
           !isSearching && query.length > 0 && (
             <View style={searchStyles.emptyContainer}>
               <Ionicons name="search-outline" size={48} color={theme.textMuted} style={{ opacity: 0.5 }} />
-              <Text style={[searchStyles.emptyText, { color: theme.textMuted }]}>No results found</Text>
+              <Text style={searchStyles.emptyText}>No results found</Text>
             </View>
           )
         }

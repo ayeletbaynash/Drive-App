@@ -1,6 +1,6 @@
 import { StyleSheet } from 'react-native';
 
-export const profileStyles = StyleSheet.create({
+export const createProfileStyles = (theme) => StyleSheet.create({
   // Profile Button (Top Bar)
   buttonContainer: {
     padding: 2,
@@ -11,7 +11,7 @@ export const profileStyles = StyleSheet.create({
     height: 32,
     borderRadius: 16,
     borderWidth: 1,
-    borderColor: '#ddd',
+    borderColor: theme.border,
   },
 
   // Modal Overlay
@@ -23,7 +23,7 @@ export const profileStyles = StyleSheet.create({
   
   // The Sheet Itself 
   sheetContainer: {
-    backgroundColor: 'white',
+    backgroundColor: theme.surface,
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
     padding: 24,
@@ -39,7 +39,7 @@ export const profileStyles = StyleSheet.create({
   handle: {
     width: 40,
     height: 5,
-    backgroundColor: '#e0e0e0',
+    backgroundColor: theme.border,
     borderRadius: 3,
     marginBottom: 24,
   },
@@ -58,31 +58,32 @@ export const profileStyles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 16,
     overflow: 'hidden',
+    backgroundColor: theme.primary,
   },
   avatarImageLarge: {
     width: '100%',
     height: '100%',
   },
   avatarText: {
-    color: 'white',
+    color: theme.white,
     fontSize: 36,
     fontWeight: '600',
   },
   greeting: {
     fontSize: 20,
     fontWeight: '700',
-    color: '#202124',
+    color: theme.textMain,
     marginBottom: 4,
   },
   email: {
     fontSize: 14,
-    color: '#5f6368', 
+    color: theme.textMuted, 
   },
 
   divider: {
     width: '100%',
     height: 1,
-    backgroundColor: '#f0f0f0',
+    backgroundColor: theme.border,
     marginBottom: 24,
   },
 
@@ -97,10 +98,10 @@ export const profileStyles = StyleSheet.create({
     justifyContent: 'center',
     paddingVertical: 14,
     borderRadius: 30, 
-    backgroundColor: '#c8eed3', 
+    backgroundColor: theme.successIcon, 
   },
   logoutText: {
-    color: '#277d3f', 
+    color: theme.primary, 
     fontSize: 16,
     fontWeight: '600',
     marginLeft: 8,
@@ -110,10 +111,10 @@ export const profileStyles = StyleSheet.create({
     justifyContent: 'center',
     paddingVertical: 14,
     borderRadius: 30,
-    backgroundColor: '#f1f3f4', 
+    backgroundColor: theme.rowBackground, 
   },
   doneText: {
-    color: '#202124',
+    color: theme.textMain,
     fontSize: 16,
     fontWeight: '600',
   }

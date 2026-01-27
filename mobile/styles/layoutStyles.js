@@ -1,22 +1,22 @@
 import { StyleSheet } from 'react-native';
-import { Colors, Fonts } from '../constants/theme';
+import { Fonts } from '../constants/theme';
 
-export const layoutStyles = StyleSheet.create({
+export const createLayoutStyles = (theme) => StyleSheet.create({
   container: {
     flex: 1,
-    //backgroundColor: Colors.light.background,
+    backgroundColor: theme.background,
   },
   safeArea: {
-    backgroundColor: Colors.light.background,
+    backgroundColor: theme.background,
   },
   topBar: {
     height: 60,
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: 15,
-    backgroundColor: Colors.light.surface, 
+    backgroundColor: theme.surface, 
     borderBottomWidth: 1,
-    borderBottomColor: Colors.light.border,
+    borderBottomColor: theme.border,
     elevation: 2, 
     shadowColor: '#000', 
     shadowOffset: { width: 0, height: 1 },
@@ -31,18 +31,15 @@ export const layoutStyles = StyleSheet.create({
   },
   backIcon: {
     fontSize: 24,
-    color: Colors.light.primary,
+    color: theme.primary,
     fontWeight: 'bold',
   },
   headerTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#333',
+    color: theme.textMain,
     fontFamily: Fonts.sans,
     flex: 1, 
-  },
-  safeArea: {
-    backgroundColor: Colors.light.background,
   },
   topBarContainer: {
     flexDirection: 'row',     
@@ -81,16 +78,15 @@ export const layoutStyles = StyleSheet.create({
     paddingBottom: 25,
     paddingTop: 10,
     borderTopWidth: 1,
+    borderTopColor: theme.border,
     elevation: 0,
     shadowOpacity: 0,
   },
-  activeColor: Colors.light.tabActive,
-  inactiveColor: Colors.light.tabInactive,
   fab: {
     position: 'absolute',
     right: 20,
     bottom: 100, 
-    backgroundColor: Colors.light.primary,
+    backgroundColor: theme.primary,
     width: 60,
     height: 60,
     borderRadius: 30,
@@ -109,7 +105,7 @@ export const layoutStyles = StyleSheet.create({
     width: 48, 
     height: 48, 
     borderRadius: 24,
-    backgroundColor: Colors.light.primary, 
+    backgroundColor: theme.primary, 
     opacity: 0.9, 
     zIndex: 10,
   },
@@ -126,7 +122,7 @@ export const layoutStyles = StyleSheet.create({
     marginBottom: 15,
   },
   iconCircle: {
-    backgroundColor: Colors.light.primary,
+    backgroundColor: theme.primary,
     width: 45,
     height: 45,
     borderRadius: 22.5,
@@ -137,15 +133,18 @@ export const layoutStyles = StyleSheet.create({
   optionText: {
     fontSize: 14,
     fontWeight: 'bold',
-    color: '#333',
-    backgroundColor: Colors.light.surface,
+    color: theme.textMain,
+    backgroundColor: theme.surface,
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: Colors.light.border,
+    borderColor: theme.border,
     overflow: 'hidden',
   },
 });
-export const activeTabColor = Colors.light.tabActive;
-export const inactiveTabColor = Colors.light.tabInactive;
+
+export const createTabColors = (theme) => ({
+  active: theme.primary,
+  inactive: theme.textMuted,
+});

@@ -1,8 +1,8 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useMemo } from 'react';
 import { Tabs, useRouter, useGlobalSearchParams } from 'expo-router';
 import { View, Text, TouchableOpacity} from 'react-native';
 import { Ionicons } from '@expo/vector-icons'; 
-import { layoutStyles } from '../../styles/layoutStyles';
+import { createLayoutStyles } from '../../styles/layoutStyles';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import ProfileButton from '../../components/ProfileButton';
 import ThemeToggle from '../../components/ThemeToggle'; 
@@ -19,6 +19,7 @@ import { Colors } from '../../constants/theme';
 
 export default function TabsLayout() {
   const { theme } = useAppTheme();
+  const layoutStyles = useMemo(() => createLayoutStyles(theme), [theme]);
   const router = useRouter();
   const { folderId } = useGlobalSearchParams();
 

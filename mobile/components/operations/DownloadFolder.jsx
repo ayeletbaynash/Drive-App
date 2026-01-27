@@ -4,10 +4,13 @@ import * as FileSystem from 'expo-file-system/legacy';
 import * as Sharing from 'expo-sharing';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { API_URL } from '../../config';
-import { styles } from '../../styles/FolderItem.styles';
+import { createFolderItemStyles } from '../../styles/FolderItem.styles';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
+import { useAppTheme } from '../../context/ThemeContext';
 
 const DownloadFolder = ({ folder, onSuccess }) => {
+    const { theme } = useAppTheme();
+    const styles = createFolderItemStyles(theme);
     const [isLoading, setIsLoading] = useState(false);
     const isCancelled = useRef(false);
 
@@ -107,11 +110,11 @@ const DownloadFolder = ({ folder, onSuccess }) => {
             style={{ flexDirection: 'row', alignItems: 'center', padding: 10 }}
         >
             {isLoading ? (
-                <ActivityIndicator color="#489f1c72" />
+                <ActivityIndicator color={theme.primary} />
             ) : (
                 <>
-        <MaterialCommunityIcons name="folder-download-outline" size={24} color="black" />
-        <Text style={{ color: 'black' }}> Download Folder Content</Text>
+        <MaterialCommunityIcons name="folder-download-outline" size={24} color={theme.textMain} />
+        <Text style={{ color: theme.textMain }}> Download Folder Content</Text>
     </>
             )}
         </TouchableOpacity>

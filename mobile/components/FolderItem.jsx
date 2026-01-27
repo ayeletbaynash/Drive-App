@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { TouchableOpacity, Text, View, DeviceEventEmitter } from 'react-native';
 import { Ionicons, MaterialIcons } from '@expo/vector-icons';
-import { styles } from '../styles/FolderItem.styles';
+import { createFolderItemStyles } from '../styles/FolderItem.styles';
 import ActionSheet from './ActionSheet';
 import RemoveFile from './operations/Remove'; 
 import HardDelete from './operations/HardDelete'; 
@@ -9,12 +9,15 @@ import Rename from './operations/Rename';
 import FileDetailsModal from './FileDetailsModal'; 
 import { useFileActions } from '../context/FileContext';
 import DownloadFolder from './operations/DownloadFolder';
+import { useAppTheme } from '../context/ThemeContext';
 
 const FolderItem = ({ folder, isTrash, onFolderPress }) => {
   const [isMenuVisible, setIsMenuVisible] = useState(false);
   const [isRenameModalVisible, setIsRenameModalVisible] = useState(false); 
   const [isDetailsVisible, setIsDetailsVisible] = useState(false);
   const { restoreFromFileDeletionList } = useFileActions();
+  const { theme } = useAppTheme();
+  const styles = createFolderItemStyles(theme);
 
   const handleRestore = async () => {
       const folderId = folder._id || folder.id;
@@ -38,7 +41,7 @@ const FolderItem = ({ folder, isTrash, onFolderPress }) => {
         activeOpacity={0.7}
       >
         <View style={styles.iconContainer}>
-          <Ionicons name="folder" size={24} color="#FFCA28" />
+          <Ionicons name="folder" size={24} color={theme.folderIcon} />
         </View>
 
         <View style={styles.textContainer}>
@@ -54,7 +57,7 @@ const FolderItem = ({ folder, isTrash, onFolderPress }) => {
           onPress={() => setIsMenuVisible(true)}
           hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
         >
-          <Ionicons name="ellipsis-vertical" size={20} color="#666" />
+          <Ionicons name="ellipsis-vertical" size={20} color={theme.menuIcon} />
         </TouchableOpacity>
       </TouchableOpacity>
 
@@ -68,8 +71,8 @@ const FolderItem = ({ folder, isTrash, onFolderPress }) => {
           // for trash
           <>
             <TouchableOpacity style={[styles.simpleButton, menuButtonStyle]} onPress={handleRestore}>
-              <MaterialIcons name="restore" size={24} color="green" style={{ marginRight: 12 }} />
-              <Text style={{ color: 'green', fontSize: 16 }}>Restore</Text>
+              <MaterialIcons name="restore" size={24} color={theme.successIcon} style={{ marginRight: 12 }} />
+              <Text style={{ color: theme.successIcon, fontSize: 16 }}>Restore</Text>
             </TouchableOpacity>
 
             <HardDelete 
@@ -87,8 +90,8 @@ const FolderItem = ({ folder, isTrash, onFolderPress }) => {
                     setTimeout(() => setIsDetailsVisible(true), 100);
                 }}
             >
-              <Ionicons name="information-circle-outline" size={24} color="black" style={{ marginRight: 12 }} />
-              <Text style={{ fontSize: 16 }}>Details</Text>
+              <Ionicons name="information-circle-outline" size={24} color={theme.textMain} style={{ marginRight: 12 }} />
+              <Text style={{ color: theme.textMain, fontSize: 16 }}>Details</Text>
             </TouchableOpacity>
 
             <TouchableOpacity 
@@ -98,8 +101,8 @@ const FolderItem = ({ folder, isTrash, onFolderPress }) => {
                     setIsRenameModalVisible(true);
                 }}
             >
-              <MaterialIcons name="drive-file-rename-outline" size={24} color="black" style={{ marginRight: 12 }} />
-                 <Text style={{ fontSize: 16 }}>Rename</Text>
+              <MaterialIcons name="drive-file-rename-outline" size={24} color={theme.textMain} style={{ marginRight: 12 }} />
+                 <Text style={{ color: theme.textMain, fontSize: 16 }}>Rename</Text>
             </TouchableOpacity>
 
             <DownloadFolder 

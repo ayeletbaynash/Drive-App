@@ -1,6 +1,6 @@
 import { StyleSheet } from 'react-native';
 
-export const shareStyles = StyleSheet.create({
+export const createShareStyles = (theme) => StyleSheet.create({
     overlay: {
         flex: 1,
         backgroundColor: 'rgba(0,0,0,0.5)',
@@ -8,7 +8,7 @@ export const shareStyles = StyleSheet.create({
         padding: 20,
     },
     modalContainer: {
-        backgroundColor: 'white',
+        backgroundColor: theme.surface,
         padding: 20,
         borderRadius: 12,
         maxHeight: '80%',
@@ -17,35 +17,38 @@ export const shareStyles = StyleSheet.create({
         fontWeight: 'bold',
         fontSize: 18,
         marginBottom: 15,
+        color: theme.textMain,
     },
     addSection: {
         marginBottom: 20,
     },
     input: {
         borderBottomWidth: 1,
-        borderColor: '#ccc',
+        borderColor: theme.border,
         marginBottom: 10,
         padding: 8,
+        color: theme.textMain,
     },
     rolePickerButton: {
         padding: 10,
-        backgroundColor: '#f0f0f0',
+        backgroundColor: theme.rowBackground,
         borderRadius: 5,
     },
     inviteButton: {
         marginTop: 15,
-        backgroundColor: '#007AFF',
+        backgroundColor: theme.primary,
         padding: 12,
         borderRadius: 8,
     },
     inviteButtonText: {
-        color: 'white',
+        color: theme.white,
         textAlign: 'center',
         fontWeight: 'bold',
     },
     listHeader: {
         fontWeight: '600',
         marginBottom: 10,
+        color: theme.textMain,
     },
     list: {
         maxHeight: 200,
@@ -56,21 +59,22 @@ export const shareStyles = StyleSheet.create({
         alignItems: 'center',
         paddingVertical: 10,
         borderBottomWidth: 0.5,
-        borderBottomColor: '#eee',
+        borderBottomColor: theme.border,
     },
     usernameText: {
         fontSize: 14,
         flex: 1,
+        color: theme.textMain,
     },
     itemActions: {
         flexDirection: 'row',
     },
     editText: {
-        color: '#007AFF',
+        color: theme.primary,
         marginHorizontal: 10,
     },
     deleteText: {
-        color: '#FF3B30',
+        color: theme.error,
     },
     closeButton: {
         marginTop: 20,
@@ -78,7 +82,7 @@ export const shareStyles = StyleSheet.create({
     },
     closeButtonText: {
         textAlign: 'center',
-        color: '#555',
+        color: theme.textMain,
         fontWeight: '600',
     }
 });
