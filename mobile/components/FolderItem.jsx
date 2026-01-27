@@ -3,6 +3,7 @@ import { TouchableOpacity, Text, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { styles } from '../styles/FolderItem.styles';
 import ActionSheet from './ActionSheet';
+import DownloadFolder from './operations/DownloadFolder';
 
 const FolderItem = ({ folder, isTrash, onFolderPress }) => {
   const [isMenuVisible, setIsMenuVisible] = useState(false);
@@ -56,6 +57,11 @@ const FolderItem = ({ folder, isTrash, onFolderPress }) => {
         ) : (
           // regular
           <>
+            <DownloadFolder 
+              folder={folder} 
+              onSuccess={() => setIsMenuVisible(false)} 
+            />
+
             <TouchableOpacity style={styles.simpleButton} onPress={() => alert('Rename')}>
               <Text style={{ fontSize: 16 }}>Rename</Text>
             </TouchableOpacity>
