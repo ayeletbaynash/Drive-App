@@ -22,7 +22,7 @@ Before running the system, the mobile client must know the host machine's local 
 1. To find your IP address, run the following command based on your OS:
 * **On Windows:** Run `ipconfig` in the Command Prompt and look for "IPv4 Address" under your Wi-Fi adapter.
 * **On Linux / WSL:** Run `ifconfig` or `hostname -I` in the terminal and look for the `inet` address.
-2. Update the configuration file located at `mobile/config.js`  with this IP.
+2. Update the configuration file located at `mobile/config.js`  with your own IP.
 
 
 ![WhatsApp Image 2026-01-27 at 22 44 41](https://github.com/user-attachments/assets/089d975d-ad75-40fe-86f1-55ee892e88f2)
@@ -59,6 +59,7 @@ Once scanned, you will be redirected directly to the **Login page**, and you’r
 The web version will be available via your browser.
 * Open your browser and go to: **`http://localhost:3001`**
 * You will be directed to the **Login page** to access your account.
+
 
 
 
