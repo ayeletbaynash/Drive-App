@@ -45,32 +45,32 @@ export const layoutStyles = StyleSheet.create({
     backgroundColor: Colors.light.background,
   },
   topBarContainer: {
-    flexDirection: 'row',     // מסדר את ההמבורגר, החיפוש והפרופיל בשורה
-    alignItems: 'center',     // ממקם אותם באמצע הגובה
+    flexDirection: 'row',     // sort the items in a row
+    alignItems: 'center',     // set vertical alignment to center
     paddingHorizontal: 16,
     paddingVertical: 10,
     //backgroundColor: Colors.light.background,
-    gap: 12,                  // רווח בין האלמנטים
+    gap: 12,                  // room between items
     borderBottomWidth: 1,
-    //borderBottomColor: '#f0f0f0', // קו הפרדה עדין מאוד
+    //borderBottomColor: '#f0f0f0', // very light gray border
   },
   iconButton: {
     padding: 4,
   },
   searchContainer: {
-    flex: 1,                  // לוקח את כל המקום הפנוי באמצע
+    flex: 1,                  // take up all available space
     flexDirection: 'row',
     alignItems: 'center',
-    //backgroundColor: '#f1f3f4', // אפור בהיר ספציפי של גוגל (אפשר להוסיף ל-theme בהמשך)
-    paddingVertical: 10,      // קצת יותר גבוה
+    //backgroundColor: '#f1f3f4', // light gray background like Google
+    paddingVertical: 10,      // a bit higher
     paddingHorizontal: 16,
-    borderRadius: 30,         // עיגול מלא בקצוות (Pill shape)
+    borderRadius: 30,         // pill shape
   },
   searchPlaceholder: {
-    //color: '#5f6368',         // אפור טקסט של גוגל
+    //color: '#5f6368',         // Google's gray text
     fontSize: 16,
     marginLeft: 8,
-    fontFamily: Fonts.sans,   // שימוש בפונט שלך
+    fontFamily: Fonts.sans,  
   },
   rightActions: {
     flexDirection: 'row',
@@ -79,7 +79,6 @@ export const layoutStyles = StyleSheet.create({
   },
   profileButton: {
     padding: 2,
-    // אם תרצי מסגרת לתמונה בעתיד, זה המקום
   },
   tabBarCustom: {
     height: 85,
@@ -154,4 +153,5 @@ export const layoutStyles = StyleSheet.create({
     overflow: 'hidden',
   },
 });
-
+export const activeTabColor = Colors.light.tabActive;
+export const inactiveTabColor = Colors.light.tabInactive;

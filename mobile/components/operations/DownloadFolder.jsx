@@ -5,10 +5,19 @@ import * as Sharing from 'expo-sharing';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { API_URL } from '../../config';
 import { styles } from '../../styles/FolderItem.styles';
+import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 
 const DownloadFolder = ({ folder, onSuccess }) => {
     const [isLoading, setIsLoading] = useState(false);
     const isCancelled = useRef(false);
+
+    const getExtensionFromMime = (dataUri) => {
+        const mime = dataUri.match(/data:([^;]+);/);
+        if (mime && mime[1]) {
+            return mime[1].split('/')[1];
+        }
+        return 'txt';
+    };
 
     // function to download a single file by ID
     const downloadSingleFile = async (id, fileName) => {
@@ -21,7 +30,19 @@ const DownloadFolder = ({ folder, onSuccess }) => {
         const data = await response.json();
 
         if (response.ok && data.content) {
-            const fileUri = FileSystem.cacheDirectory + fileName;
+            let finalFileName = fileName;
+
+            if (data.content.startsWith('data:')) {
+                const extension = getExtensionFromMime(data.content);
+                if (!finalFileName.toLowerCase().endsWith(`.${extension}`)) {
+                    finalFileName = `${finalFileName}.${extension}`;
+                }
+            } else if (!finalFileName.includes('.')) {
+                finalFileName = `${finalFileName}.txt`;
+            }
+
+            const fileUri = FileSystem.cacheDirectory + finalFileName;
+
             const isBase64 = data.content.startsWith('data:') || (data.content.length > 100 && !data.content.includes(" "));
             
             if (isBase64) {
@@ -86,9 +107,12 @@ const DownloadFolder = ({ folder, onSuccess }) => {
             style={{ flexDirection: 'row', alignItems: 'center', padding: 10 }}
         >
             {isLoading ? (
-                <ActivityIndicator color="#0000ff" />
+                <ActivityIndicator color="#489f1c72" />
             ) : (
-                <Text style={{ color: 'blue' }}>📁 Download Folder Content</Text>
+                <>
+        <MaterialCommunityIcons name="folder-download-outline" size={24} color="black" />
+        <Text style={{ color: 'black' }}> Download Folder Content</Text>
+    </>
             )}
         </TouchableOpacity>
     );

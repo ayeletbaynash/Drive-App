@@ -11,7 +11,6 @@ import MaterialIcons from '@expo/vector-icons/MaterialIcons'
 import EditContent from './operations/EditContent'
 import Feather from '@expo/vector-icons/Feather';
 import HardDelete from './operations/HardDelete';
-import Feather from '@expo/vector-icons/Feather'
 import CopyFile from './operations/CopyFile'
 import ChangeImage from './operations/ChangeImage'
 import Share from './operations/Share';
