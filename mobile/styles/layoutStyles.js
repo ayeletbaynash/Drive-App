@@ -147,4 +147,5 @@ export const layoutStyles = StyleSheet.create({
     overflow: 'hidden',
   },
 });
-
+export const activeTabColor = Colors.light.tabActive;
+export const inactiveTabColor = Colors.light.tabInactive;
