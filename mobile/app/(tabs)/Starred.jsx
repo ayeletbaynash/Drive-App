@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { View, DeviceEventEmitter, ActivityIndicator } from 'react-native';
-import { useRouter } from 'expo-router';
 import EmptyState from '../../components/EmptyState';
 import FileViewList from '../../components/FileViewList';
 import { layoutStyles } from '../../styles/layoutStyles'; 
@@ -8,9 +7,11 @@ import { useFileActions } from '../../context/FileContext';
 import { Colors } from '../../constants/theme'; 
 import authorizedFetch from '../../services/authorizedFetch';
 import { API_URL } from '../../config';
+import { useLocalSearchParams, useRouter } from 'expo-router'
 
 export default function Starred() {
   const router = useRouter();
+  const { folderId } = useLocalSearchParams()
   
   // Context & State
   const { starredFiles, deletedFiles, refreshStarredFiles } = useFileActions();
@@ -95,14 +96,16 @@ export default function Starred() {
       pathname: '/file-viewer',
       params: { 
           id: realId, 
-          name: file.name 
+          name: file.name,
+          parentId: folderId
       }
     });
   };
 
   const handleNavigate = (item) => {
     if (item.type === 'folder') {
-        router.push({ pathname: '/', params: { folderId: item.id, folderName: item.name } });
+      const targetId = item._id || item.id
+        router.push({ pathname: '/(tabs)/Starred', params: { folderId: targetId, folderName: item.name, parentId: folderId } });
     }
   };
 

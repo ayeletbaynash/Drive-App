@@ -44,7 +44,7 @@ const FileItem = ({ file, onOpen, isTrash, fetchFiles, onRestore }) => {
     if (fileName.endsWith('.pdf')) return <FontAwesome6 name="file-pdf" size={24} color="red" />
     if (fileName.endsWith('.txt')) return <AntDesign name="file-text" size={24} color="blue" />
     if (fileName.endsWith('.jpg') || fileName.endsWith('.jpeg') || fileName.endsWith('.png')) {
-        return <Ionicons name="image" size={24} color="green" />; // ירוק לתמונות
+        return <Ionicons name="image" size={24} color="green" />; 
     }
     return <AntDesign name="file" size={24} color="gray" />;
   };
