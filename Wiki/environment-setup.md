@@ -28,5 +28,24 @@ Before running the system, the mobile client must know the host machine's local 
 We use a single-command deployment strategy to lift the entire environment. This command sets the environment variables and executes `docker-compose`.
 
 ### For Windows (PowerShell):
-```powershell
-$env:MY_IP = (Get-NetRoute -DestinationPrefix 0.0.0.0/0 | Sort-Object RouteMetric | Get-NetIPAddress -AddressFamily IPv4 | Select-Object -First 1).IPAddress; Write-Host "Selected Network IP: $env:MY_IP"; docker-compose up --build
+* **For Windows (PowerShell):**
+    ```powershell
+    $env:MY_IP = (Get-NetRoute -DestinationPrefix 0.0.0.0/0 | Sort-Object RouteMetric | Get-NetIPAddress -AddressFamily IPv4 | Select-Object -First 1).IPAddress; Write-Host "Selected Network IP: $env:MY_IP"; docker-compose up --build
+    ```
+
+* **For Linux / WSL / macOS (Bash):**
+    ```bash
+    export MY_IP=$(hostname -I | awk '{print $1}'); echo "Selected Network IP: $MY_IP"; docker-compose up --build
+    ```
+
+## 5. Accessing the Applications
+After running the command, the terminal will start building the environment and display a lot of logs. This is normal.
+
+Once the process finishes, scroll up slightly in your terminal to find the **QR Code**. 
+* Open the **Expo Go** app on your phone.
+* Scan the QR code to be redirected directly to the **Login page**.
+
+### Web Application
+The web version will be available via your browser.
+* Open your browser and go to: **`http://localhost:3001`**
+* You will be directed to the **Login page** to access your account.
