@@ -20,7 +20,8 @@ const loginUser = async (req, res) => {
                 id: user._id,
                 username: user.username, 
                 image: user.image,
-                firstName: user.firstName
+                firstName: user.firstName,
+                emailAddress: user.emailAddress
             });
         } else {
             // If no - return error

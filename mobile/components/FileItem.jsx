@@ -1,5 +1,5 @@
 import { View, Text, TouchableOpacity } from 'react-native';
-import { Ionicons, FontAwesome6, AntDesign, FontAwesome } from '@expo/vector-icons';
+import { Ionicons, FontAwesome6, AntDesign, FontAwesome, MaterialCommunityIcons } from '@expo/vector-icons';
 import { styles } from '../styles/FileItem.styles';
 import ActionSheet from './ActionSheet'
 import React, { useState, useRef } from 'react' 
@@ -9,15 +9,16 @@ import StarFile from './operations/StarFile'
 import Rename from './operations/Rename'
 import MaterialIcons from '@expo/vector-icons/MaterialIcons'
 import EditContent from './operations/EditContent'
+import Feather from '@expo/vector-icons/Feather';
+import HardDelete from './operations/HardDelete';
 import Feather from '@expo/vector-icons/Feather'
 import CopyFile from './operations/CopyFile'
 import ChangeImage from './operations/ChangeImage'
 import Share from './operations/Share';
 import MoveFile from './operations/MoveFile'
-
 import DownloadFile from './operations/DownloadFile';
 
-const FileItem = ({ file, onOpen, isTrash, fetchFiles }) => {
+const FileItem = ({ file, onOpen, isTrash, fetchFiles, onRestore }) => {
   const [isMenuVisible, setIsMenuVisible] = useState(false)
   const [isRenameModalVisible, setIsRenameModalVisible] = useState(false)
  
@@ -29,12 +30,22 @@ const FileItem = ({ file, onOpen, isTrash, fetchFiles }) => {
   const changeImageRef = useRef(null);
 
   const { starredFiles } = useFileActions();
+  if (!file) return null;
   const isStarred = starredFiles.some(f => f.id === file.id)
 
-  const getFileIcon = (fileName) => {
+  const getFileIcon = (item) => {
+    const fileName = item.name || "";
+    const isFolder = item.type === 'folder' || (fileName.length > 0 && !fileName.includes('.'));
+    
+    if (isFolder) {
+        return <Ionicons name="folder" size={28} color="#FFCA28" />; 
+    }
     if (fileName.endsWith('.pdf')) return <FontAwesome6 name="file-pdf" size={24} color="red" />
     if (fileName.endsWith('.txt')) return <AntDesign name="file-text" size={24} color="blue" />
-    return <AntDesign name="file-image" size={24} color="green" />
+    if (fileName.endsWith('.jpg') || fileName.endsWith('.jpeg') || fileName.endsWith('.png')) {
+        return <Ionicons name="image" size={24} color="green" />; // ירוק לתמונות
+    }
+    return <AntDesign name="file" size={24} color="gray" />;
   };
 
   return (
@@ -47,7 +58,7 @@ const FileItem = ({ file, onOpen, isTrash, fetchFiles }) => {
       >
         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
           <View style={styles.iconContainer}>
-            {getFileIcon(file.name)}
+            {getFileIcon(file)}
           </View>
           
           <View style={{ flex: 1 }}>
@@ -75,15 +86,25 @@ const FileItem = ({ file, onOpen, isTrash, fetchFiles }) => {
         onClose={() => setIsMenuVisible(false)}
         fileName={file.name}
       >
-        {isTrash === 'true' ? (
+        {isTrash ? (
           <>
-            <TouchableOpacity style={styles.simpleButton} onPress={() => alert('Restore')}>
+            {/* --- כפתור שחזור (Restore) --- */}
+            <TouchableOpacity 
+                style={styles.simpleButton} 
+                onPress={() => {
+                    setIsMenuVisible(false); // סגירת התפריט
+                    if (onRestore) onRestore(); // הפעלת פעולת השחזור
+                }}
+            >
+              <MaterialIcons name="restore" size={24} color="green" style={{ marginRight: 8 }} />
               <Text style={{ color: 'green', fontSize: 16 }}>Restore</Text>
             </TouchableOpacity>
             
-            <TouchableOpacity style={styles.simpleButton} onPress={() => alert('Delete')}>
-              <Text style={{ color: 'red', fontSize: 16 }}>Delete Forever</Text>
-            </TouchableOpacity>
+            {/* הרכיב החדש למחיקה סופית */}
+            <HardDelete 
+                file={file} 
+                onComplete={() => setIsMenuVisible(false)}
+            />
           </>
         ) : (
           <>
