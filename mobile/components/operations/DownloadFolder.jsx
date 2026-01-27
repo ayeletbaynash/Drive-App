@@ -107,7 +107,7 @@ const DownloadFolder = ({ folder, onSuccess }) => {
         <TouchableOpacity 
             onPress={handleFolderDownload}
             disabled={isLoading}
-            style={{ flexDirection: 'row', alignItems: 'center', padding: 10 }}
+            style={styles.simpleButton}
         >
             {isLoading ? (
                 <ActivityIndicator color={theme.primary} />

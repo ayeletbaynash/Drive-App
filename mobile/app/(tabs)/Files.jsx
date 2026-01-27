@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { View, ActivityIndicator, DeviceEventEmitter } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useRouter } from 'expo-router';
+import { useRouter, useLocalSearchParams } from 'expo-router';
 import EmptyState from '../../components/EmptyState';
 import FileViewList from '../../components/FileViewList';
 import { createLayoutStyles } from '../../styles/layoutStyles';
@@ -17,13 +17,15 @@ export default function FilesScreen() {
   const layoutStyles = useMemo(() => createLayoutStyles(theme), [theme]);
   
   // 1. Local State
+  const { folderId } = useLocalSearchParams();  
+  // Local State
   const [allFiles, setAllFiles] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [currentUserId, setCurrentUserId] = useState(null);
 
   const [refreshKey, setRefreshKey] = useState(0);
 
-  // 2. Fetch current User ID (to identify "my files" later)
+  //  Fetch current User ID (to identify "my files" later)
   useEffect(() => {
     const getUserId = async () => {
         try {
@@ -36,7 +38,7 @@ export default function FilesScreen() {
     getUserId();
   }, []);
 
-  // 3. Fetch all files from server
+  //Fetch all files from server
   const fetchFiles = async () => {
     setIsLoading(true);
     try {
@@ -56,7 +58,7 @@ export default function FilesScreen() {
     }
   };
 
-  // 4. Listen for global updates (uploads, deletions, etc.)
+  // Listen for global updates (uploads, deletions, etc.)
   useEffect(() => {
     fetchFiles();
 
@@ -68,7 +70,7 @@ export default function FilesScreen() {
     return () => listener.remove();
   }, []);
 
-  // 5. Filter Logic: Only show files owned by the current user
+  // Filter Logic: Only show files owned by the current user
   const myRawFiles = useMemo(() => {
     if (!currentUserId) return [];
 
@@ -88,7 +90,8 @@ export default function FilesScreen() {
       pathname: '/file-viewer',
       params: { 
           id: realId, 
-          name: file.name 
+          name: file.name,
+          parentId: folderId  
       }
     });
   };
@@ -96,7 +99,8 @@ export default function FilesScreen() {
   // 6. Navigation Handlers
   const handleNavigate = (item) => {
     if (item.type === 'folder') {
-        router.push({ pathname: '/', params: { folderId: item.id, folderName: item.name } });
+      const targetId = item._id || item.id;
+        router.push({ pathname: '/(tabs)/Files', params: { folderId: targetId, folderName: item.name, parentId: folderId } });
     }
   };
 

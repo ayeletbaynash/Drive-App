@@ -12,7 +12,7 @@ import { useLocalSearchParams, useRouter } from 'expo-router'
 import { useFileFilter } from '../../context/useFileFilter';
 
 export default function HomeScreen() {
-    const { folderId, folderName } = useLocalSearchParams(); 
+    const { folderId, folderName, parentId } = useLocalSearchParams(); 
     const router = useRouter()
     const { theme } = useAppTheme();
     const layoutStyles = useMemo(() => createLayoutStyles(theme), [theme]);
@@ -20,7 +20,7 @@ export default function HomeScreen() {
     
     const [files, setFiles] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
-    const [currentFolder, setCurrentFolder] = useState({ id: null, name: null });
+    const [currentFolder, setCurrentFolder] = useState({ id: null, name: null, parentId: null });
 
     // 1. Data Fetching Logic
     const onRefresh = async () => {
@@ -34,10 +34,10 @@ export default function HomeScreen() {
                 const data = await response.json();
                 if (folderId) {
                     setFiles(data.children || []);
-                    setCurrentFolder({ id: data.id, name: data.name });
+                    setCurrentFolder({ id: data.id, name: data.name, parentId: data.parent_id });
                 } else {
                     setFiles(data.files || data);
-                    setCurrentFolder({ id: null, name: null });
+                    setCurrentFolder({ id: null, name: null, parentId: null });
                 }
             } else if (response) {
                 const errorData = await response.json().catch(() => ({}));
@@ -70,33 +70,12 @@ export default function HomeScreen() {
     // 4. Navigation
     const handleNavigate = (item) => {
         if (item.type === 'folder') {
-            router.push({ pathname: '/', params: { folderId: item.id, folderName: item.name } });
+            router.push({ pathname: '/', params: { folderId: item.id, folderName: item.name, parentId: folderId } });
         }
     };
 
     return (
         <View style={layoutStyles.container}>
-           {folderId ? (
-        <View style={layoutStyles.headerContainer}>
-            <TouchableOpacity 
-                onPress={() => {
-                    if (router.canGoBack()) {
-                        router.back();
-                    } else {
-                        router.replace('/'); 
-                    }
-                }} 
-                style={layoutStyles.backButton}
-                hitSlop={{ top: 15, bottom: 15, left: 15, right: 15 }}
-            >
-                <Text style={layoutStyles.backIcon}>←</Text>
-            </TouchableOpacity>
-            
-            <Text style={layoutStyles.headerTitle} numberOfLines={1}>
-                {folderName || currentFolder.name || (isLoading ? 'Loading...' : 'Folder')}
-            </Text>
-        </View>
-    ) : null}
 
         <View style={{ flex: 1 }}>
             {isLoading ? (

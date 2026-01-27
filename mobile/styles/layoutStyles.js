@@ -142,6 +142,24 @@ export const createLayoutStyles = (theme) => StyleSheet.create({
     borderColor: theme.border,
     overflow: 'hidden',
   },
+  breadcrumbContainer: {
+  flexDirection: 'row',
+  alignItems: 'center',
+  paddingHorizontal: 15,
+  paddingVertical: 10,
+  borderBottomWidth: 1,
+},
+backButtonRow: {
+  padding: 5,
+  justifyContent: 'center',
+  alignItems: 'center',
+},
+breadcrumbTitle: {
+  marginLeft: 10,
+  fontSize: 17,
+  fontWeight: '600',
+  flex: 1,
+},
 });
 
 export const createTabColors = (theme) => ({
