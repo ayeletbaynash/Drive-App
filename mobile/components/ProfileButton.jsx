@@ -5,6 +5,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import authorizedFetch from '../services/authorizedFetch'; 
 import ProfileModal from './ProfileModal';
 import { profileStyles } from '../styles/Profile.styles';
+import { API_URL } from '../config';
 
 export default function ProfileButton() {
   const [modalVisible, setModalVisible] = useState(false);
@@ -31,11 +32,11 @@ export default function ProfileButton() {
 
         // 2. FETCH FRESH DATA (Background update)
         if (storedUserId) {
-          const response = await authorizedFetch(`/users/${storedUserId}`);
+          const response = await authorizedFetch(`${API_URL}/users/${storedUserId}`);
           
           if (response && response.ok) {
             const serverData = await response.json();
-            console.log("🔎 Server Response for User:", serverData);
+            console.log(" Server Response for User:", serverData);
             const realEmail = serverData.email || serverData.emailAddress;
             // Merge server data with local state
             setUser(prev => ({ 

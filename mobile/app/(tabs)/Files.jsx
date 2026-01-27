@@ -80,10 +80,21 @@ export default function FilesScreen() {
 
   const myFinalFiles = useFileFilter(myRawFiles);
 
+  const handleOpenFile = (file) => {
+    const realId = file._id || file.id;
+    router.push({
+      pathname: '/file-viewer',
+      params: { 
+          id: realId, 
+          name: file.name 
+      }
+    });
+  };
+
   // 6. ניווט
   const handleNavigate = (item) => {
     if (item.type === 'folder') {
-        router.push({ pathname: '/', params: { folderId: item.id } });
+        router.push({ pathname: '/', params: { folderId: item.id, folderName: item.name } });
     }
   };
 
@@ -107,6 +118,7 @@ export default function FilesScreen() {
             items={myFinalFiles} 
             isTrash={false} 
             onFolderPress={handleNavigate}
+            onFilePress={handleOpenFile}
         />
       )}
     </View>

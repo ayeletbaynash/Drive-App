@@ -6,9 +6,8 @@ import FileViewList from '../../components/FileViewList'
 import  authorizedFetch  from '../../services/authorizedFetch'
 import { API_URL } from '../../config';
 import { useFileActions } from '../../context/FileContext'
-import EmptyState from '../../components/EmptyState'; // הייבוא החדש
+import EmptyState from '../../components/EmptyState'; 
 import { useLocalSearchParams, useRouter } from 'expo-router'
-import { Ionicons } from '@expo/vector-icons';
 import { useFileFilter } from '../../context/useFileFilter';
 
 export default function HomeScreen() {

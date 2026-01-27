@@ -93,10 +93,20 @@ export default function Starred() {
     runFilter();
   }, [starredFiles, deletedFiles]);
 
+  const handleOpenFile = (file) => {
+    const realId = file._id || file.id; // נרמול מזהה
+    router.push({
+      pathname: '/file-viewer',
+      params: { 
+          id: realId, 
+          name: file.name 
+      }
+    });
+  };
 
   const handleNavigate = (item) => {
     if (item.type === 'folder') {
-        router.push({ pathname: '/', params: { folderId: item.id } });
+        router.push({ pathname: '/', params: { folderId: item.id, folderName: item.name } });
     }
   };
 
@@ -118,6 +128,7 @@ export default function Starred() {
             items={visibleFiles} 
             isTrash={false} 
             onFolderPress={handleNavigate}
+            onFilePress={handleOpenFile}
         />
       )}
     </View>
