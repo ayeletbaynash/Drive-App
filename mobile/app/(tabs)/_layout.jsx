@@ -5,8 +5,8 @@ import { Ionicons } from '@expo/vector-icons';
 import { layoutStyles } from '../../styles/layoutStyles';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import ProfileButton from '../../components/ProfileButton';
-import ThemeToggle from '../../components/ThemeToggle'; // הכפתור החדש
-import { useAppTheme } from '../../context/ThemeContext'; // ה-Hook שלנו
+import ThemeToggle from '../../components/ThemeToggle'; 
+import { useAppTheme } from '../../context/ThemeContext'; 
 import SideMenu from '../../components/SideMenu';
 import CreateFile from '../../components/operations/CreateFile'
 import CreateFolder from '../../components/operations/CreateFolder'

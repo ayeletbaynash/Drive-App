@@ -7,6 +7,7 @@ import { useFileActions } from '../context/FileContext';
 export default function Index() {
     const { userId, setUserId } = useFileActions();
     const [isLoading, setIsLoading] = useState(true);
+    const [hasToken, setHasToken] = useState(false);
 
     useEffect(() => {
         const checkAuth = async () => {
@@ -18,6 +19,7 @@ export default function Index() {
                     const user = JSON.parse(savedUser);
                     // Update the Global Context so the app knows the user is logged in
                     setUserId(user.id);
+                    setHasToken(true);
                 }
             } catch (e) {
                 console.error("Error checking auth", e);
@@ -34,13 +36,13 @@ export default function Index() {
     if (isLoading) {
         return (
             <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-                <ActivityIndicator size="large" color="#0000ff" />
+                <ActivityIndicator size="large" color="#0b3d19" />
             </View>
         );
     }
 
     // Decide where to go:
-    // If we have a userId -> Redirect to Tabs (Home)
-    // If no userId -> Redirect to Login
-    return userId !== null ? <Redirect href="/(tabs)" /> : <Redirect href="/login" />
+    // If we have a token -> Redirect to Tabs (Home)
+    // If no token -> Redirect to Login
+    return hasToken !== null ? <Redirect href="/(tabs)" /> : <Redirect href="/login" />
 }
