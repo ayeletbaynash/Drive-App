@@ -25,7 +25,8 @@ Before running the system, the mobile client must know the host machine's local 
 2. Update the configuration file located at `mobile/config.js`  with this IP.
 
 
-![WhatsApp Image 2026-01-27 at 22 24 11](https://github.com/user-attachments/assets/a41c27d5-6a60-4a79-a5a1-06790dcd47c4)  
+![WhatsApp Image 2026-01-27 at 22 44 41](https://github.com/user-attachments/assets/089d975d-ad75-40fe-86f1-55ee892e88f2)
+  
 
 ## 4. Execution Commands
 We use a single-command deployment strategy to lift the entire environment. This command sets the environment variables and executes `docker-compose`.
@@ -55,5 +56,6 @@ Once the process finishes, scroll up slightly in your terminal to find the **QR 
 The web version will be available via your browser.
 * Open your browser and go to: **`http://localhost:3001`**
 * You will be directed to the **Login page** to access your account.
+
 
 
