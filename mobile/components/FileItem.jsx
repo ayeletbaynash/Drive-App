@@ -13,12 +13,15 @@ import Feather from '@expo/vector-icons/Feather'
 import CopyFile from './operations/CopyFile'
 import ChangeImage from './operations/ChangeImage'
 import Feather from '@expo/vector-icons/Feather';
+import MoveFile from './operations/MoveFile'
+
 import DownloadFile from './operations/DownloadFile';
 
 const FileItem = ({ file, onOpen, isTrash, fetchFiles }) => {
   const [isMenuVisible, setIsMenuVisible] = useState(false)
   const [isRenameModalVisible, setIsRenameModalVisible] = useState(false)
   const [isEditModalVisible, setIsEditModalVisible] = useState(false);
+  const [isMoveModalVisible, setIsMoveModalVisible] = useState(false);
   
   // Ref for ChangeImage component
   const changeImageRef = useRef(null);
@@ -132,12 +135,19 @@ const FileItem = ({ file, onOpen, isTrash, fetchFiles }) => {
                 <Text style={{ fontSize: 16, marginLeft: 10 }}>Edit Content</Text>
               </View>
             </TouchableOpacity>
+            <TouchableOpacity 
+                style={styles.simpleButton} 
+                onPress={() => {
+                    setIsMenuVisible(false);
+                    setIsMoveModalVisible(true);
+                }}
+            >
+              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                <Ionicons name="folder-open-outline" size={24} color="black" />
+                <Text style={{ fontSize: 16, marginLeft: 10 }}>Move to...</Text>
+              </View>
+            </TouchableOpacity>
 
-            <DownloadFile 
-              file={file} 
-              onComplete={() => setIsMenuVisible(false)} 
-            />
-            
             <TouchableOpacity style={styles.simpleButton} onPress={() => alert('Share')}>
               <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                  <Ionicons name="share-outline" size={24} color="black" />
@@ -171,6 +181,15 @@ const FileItem = ({ file, onOpen, isTrash, fetchFiles }) => {
           visible={isEditModalVisible} 
           onClose={() => setIsEditModalVisible(false)} 
       />
+      <MoveFile 
+          file={file} 
+          visible={isMoveModalVisible} 
+          onClose={() => setIsMoveModalVisible(false)} 
+      />
+      <DownloadFile 
+              file={file} 
+              onComplete={() => setIsMenuVisible(false)} 
+            />
     </View>
   );
 };
