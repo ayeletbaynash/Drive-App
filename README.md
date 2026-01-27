@@ -40,7 +40,7 @@ Run the following command in your terminal to automatically set your IP environm
     ```
     
 **3. Explore:**  **Web App:** Open your browser and go to **`http://localhost:3001`**.
-* **Mobile App:** Scan the QR code appearing in the terminal using the **Expo Go** app to start exploring!
+* **Mobile App:** Scan the terminal's QR code using the Expo Go app (Android) or your native Camera app (iOS) to launch the drive!
 
 ### Project Documentation
 For a more detailed look at the project, including screenshots of the app in action, and step-by-step guides, check out our local Wiki:
