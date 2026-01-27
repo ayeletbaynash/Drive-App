@@ -45,4 +45,4 @@ Run the following command in your terminal to automatically set your IP environm
 ### Project Documentation
 For a more detailed look at the project, including screenshots of the app in action, and step-by-step guides, check out our local Wiki:
 
-👉 **[View the Wiki Directory](./wiki/index.md)**
+👉 **[View the Wiki Directory](./wiki)**
