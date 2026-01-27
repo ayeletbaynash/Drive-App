@@ -13,14 +13,14 @@ import { useFileFilter } from '../../context/useFileFilter';
 export default function FilesScreen() {
   const router = useRouter();
   
-  // 1. נתונים מהקונטקסט
+  // 1. Local State
   const [allFiles, setAllFiles] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [currentUserId, setCurrentUserId] = useState(null);
 
   const [refreshKey, setRefreshKey] = useState(0);
 
-  // 2. שליפת ה-ID של המשתמש המחובר (כדי לדעת מה "שלי")
+  // 2. Fetch current User ID (to identify "my files" later)
   useEffect(() => {
     const getUserId = async () => {
         try {
@@ -33,16 +33,14 @@ export default function FilesScreen() {
     getUserId();
   }, []);
 
-  // 3. משיכת כל הקבצים
+  // 3. Fetch all files from server
   const fetchFiles = async () => {
     setIsLoading(true);
     try {
-        // מביאים את כל הקבצים (נניח שזה הנתיב שמחזיר הכל)
         const response = await authorizedFetch(`${API_URL}/files`);
         
         if (response.ok) {
             const data = await response.json();
-            // אם ה-API מחזיר אובייקט עם files, נשתמש בו, אחרת בדאטה עצמו
             const filesList = data.files || data; 
             setAllFiles(Array.isArray(filesList) ? filesList : []);
         } else {
@@ -55,7 +53,7 @@ export default function FilesScreen() {
     }
   };
 
-  // 4. האזנה לשינויים
+  // 4. Listen for global updates (uploads, deletions, etc.)
   useEffect(() => {
     fetchFiles();
 
@@ -67,7 +65,7 @@ export default function FilesScreen() {
     return () => listener.remove();
   }, []);
 
-  // 5. ה"מסנן החכם" - בעלות + מחיקות + היררכיה
+  // 5. Filter Logic: Only show files owned by the current user
   const myRawFiles = useMemo(() => {
     if (!currentUserId) return [];
 
@@ -78,6 +76,7 @@ export default function FilesScreen() {
     });
   }, [allFiles, currentUserId]);
 
+  // Apply hierarchy and soft-delete filters
   const myFinalFiles = useFileFilter(myRawFiles);
 
   const handleOpenFile = (file) => {
@@ -91,7 +90,7 @@ export default function FilesScreen() {
     });
   };
 
-  // 6. ניווט
+  // 6. Navigation Handlers
   const handleNavigate = (item) => {
     if (item.type === 'folder') {
         router.push({ pathname: '/', params: { folderId: item.id, folderName: item.name } });
@@ -106,14 +105,14 @@ export default function FilesScreen() {
             <ActivityIndicator size="large" color={Colors.light.primary} />
         </View>
       ) : myFinalFiles.length === 0 ? (
-        // מצב ריק
+        // Empty State
         <EmptyState 
             iconName="folder-open-outline" 
             title="No files found" 
             message="Files you upload or create will appear here."
         />
       ) : (
-        // רשימת הקבצים
+        // Files List
         <FileViewList 
             items={myFinalFiles} 
             isTrash={false} 

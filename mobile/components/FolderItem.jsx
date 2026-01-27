@@ -11,7 +11,7 @@ import { useFileActions } from '../context/FileContext';
 
 const FolderItem = ({ folder, isTrash, onFolderPress }) => {
   const [isMenuVisible, setIsMenuVisible] = useState(false);
-  const [isRenameModalVisible, setIsRenameModalVisible] = useState(false); // 👇 סטייט למודאל שינוי שם
+  const [isRenameModalVisible, setIsRenameModalVisible] = useState(false); 
   const [isDetailsVisible, setIsDetailsVisible] = useState(false);
   const { restoreFromFileDeletionList } = useFileActions();
 
@@ -19,14 +19,13 @@ const FolderItem = ({ folder, isTrash, onFolderPress }) => {
       const folderId = folder._id || folder.id;
       await restoreFromFileDeletionList(folderId);
       setIsMenuVisible(false);
-      // עדכון המסך שהתיקייה שוחזרה
       DeviceEventEmitter.emit('somethingChange'); 
   };
 
   const menuButtonStyle = {
-      flexDirection: 'row',   // זה מה ששם את האייקון והטקסט באותה שורה
-      alignItems: 'center',   // מיישר אותם לגובה האמצע
-      paddingVertical: 12,    // נותן קצת אוויר מלמעלה ולמטה
+      flexDirection: 'row',   
+      alignItems: 'center',   
+      paddingVertical: 12,   
   };
 
   return (
@@ -73,7 +72,7 @@ const FolderItem = ({ folder, isTrash, onFolderPress }) => {
             </TouchableOpacity>
 
             <HardDelete 
-                file={folder} // שולחים את התיקייה כ-"file"
+                file={folder} 
                 onComplete={() => setIsMenuVisible(false)}
             />
           </>
@@ -83,7 +82,7 @@ const FolderItem = ({ folder, isTrash, onFolderPress }) => {
             <TouchableOpacity 
                 style={[styles.simpleButton, menuButtonStyle]} 
                 onPress={() => {
-                    setIsMenuVisible(false); // סוגר את התפריט
+                    setIsMenuVisible(false); 
                     setTimeout(() => setIsDetailsVisible(true), 100);
                 }}
             >

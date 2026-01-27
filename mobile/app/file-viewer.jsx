@@ -45,7 +45,7 @@ export default function FileViewer() {
         
         const base64Code = base64Data.replace(/^data:application\/pdf;base64,/, "");
 
-        // שימוש ב-FileSystem מה-legacy import
+        // Write the Base64 data to the local file system
         await FileSystem.writeAsStringAsync(fileUri, base64Code, {
             encoding: 'base64', 
         });

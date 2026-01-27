@@ -18,9 +18,10 @@ export default function SharedScreen() {
   const [isLoading, setIsLoading] = useState(true);
   const [currentUserId, setCurrentUserId] = useState(null);
   
-  // טריגר לרענון
+  // Trigger for forcing updates
   const [refreshKey, setRefreshKey] = useState(0);
 
+  // 1. Retrieve logged-in user ID to distinguish "my files" from "shared files"
   useEffect(() => {
     const getUserId = async () => {
         try {
@@ -33,11 +34,10 @@ export default function SharedScreen() {
     getUserId();
   }, []);
 
-  // 2. פונקציית משיכת נתונים (קבצים ששותפו איתי)
+  // 2. Fetch all accessible files from the server
   const fetchFiles = async () => {
     setIsLoading(true);
     try {
-        // הערה: ודאי שיש לך את הנתיב הזה בשרת, או שתשני למה שרלוונטי אצלך
         const response = await authorizedFetch(`${API_URL}/files`);
         
         if (response.ok) {
@@ -45,7 +45,6 @@ export default function SharedScreen() {
             const list = data.files || data;
             setAllFiles(Array.isArray(list) ? list : []);
         } else {
-            // אם אין עדיין את הנתיב בשרת, זה לא יקריס את האפליקציה
             console.log("Failed to fetch files"); 
             setAllFiles([]);
         }
@@ -56,30 +55,30 @@ export default function SharedScreen() {
     }
   };
 
-  // 3. שימוש ב-Effect לטעינה ראשונית והאזנה לשינויים
+  // 3. Initial fetch and event listener for global updates (uploads, renames, etc.)
   useEffect(() => {
     fetchFiles();
 
     const listener = DeviceEventEmitter.addListener('somethingChange', () => {
-      fetchFiles(); // רענון מהשרת
-      setRefreshKey(prev => prev + 1); // רענון פנימי לפילטר
+      fetchFiles();
+      setRefreshKey(prev => prev + 1); 
     });
 
     return () => listener.remove();
   }, []);
 
+  // 4. Core Logic: Filter files NOT owned by the current user (Shared with me)
   const sharedRawFiles = useMemo(() => {
     if (!currentUserId) return [];
 
     return allFiles.filter(file => {
-        // בדיקת הבעלים (תומך בכמה מבנים שהשרת עשוי להחזיר)
         const ownerId = file.user_id || file.owner?._id || file.owner;
         
-        // אנחנו רוצים רק את מה ש**שונה** מה-ID שלי
         return String(ownerId) !== String(currentUserId);
     });
   }, [allFiles, currentUserId]);
 
+  // Apply additional hierarchy/soft-delete filters
   const visibleSharedFiles = useFileFilter(sharedRawFiles);
 
   const handleOpenFile = (file) => {
@@ -93,7 +92,7 @@ export default function SharedScreen() {
     });
   };
 
-  // 5. ניווט
+  // 5. Navigation Handlers
   const handleNavigate = (item) => {
     if (item.type === 'folder') {
         router.push({ pathname: '/', params: { folderId: item.id, folderName: item.name } });
@@ -108,17 +107,17 @@ export default function SharedScreen() {
             <ActivityIndicator size="large" color={Colors.light.primary} />
         </View>
       ) : visibleSharedFiles.length === 0 ? (
-        // מצב ריק
+        // Empty State
         <EmptyState 
             iconName="people-outline" 
             title="No shared files" 
             message="Files shared with you will appear here."
         />
       ) : (
-        // רשימת הקבצים
+        // Empty State
         <FileViewList 
             items={visibleSharedFiles} 
-            isTrash={false} // במסך שיתוף לא מציגים אשפה
+            isTrash={false}
             onFolderPress={handleNavigate}
             onFilePress={handleOpenFile}
         />

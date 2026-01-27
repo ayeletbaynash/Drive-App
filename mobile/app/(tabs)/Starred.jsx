@@ -12,31 +12,29 @@ import { API_URL } from '../../config';
 export default function Starred() {
   const router = useRouter();
   
-  // 1. שליפת המידע והפונקציה החדשה
+  // Context & State
   const { starredFiles, deletedFiles, refreshStarredFiles } = useFileActions();
   
   const [visibleFiles, setVisibleFiles] = useState([]);
   const [loading, setLoading] = useState(true);
   
-  // Cache לחיסכון בביצועים
+  // Optimization: Cache folder ancestry checks to reduce server calls
   const folderCache = useRef(new Map());
 
-  // --- פונקציית הסינון החכם (בודקת גם הורים וסבים) ---
+  // Logic: Check if any ancestor folder is deleted
   const isUnderDeletedFolder = async (file) => {
-    // 1. האם הקובץ עצמו במחוקים המקומיים?
     if (deletedFiles.some(d => d.id === file.id)) return true;
 
     let currentId = file.parent_id;
 
-    // מטפסים למעלה בעץ התיקיות
+    // Climb up the directory tree
     while (currentId !== null) {
-      // האם האבא במחוקים המקומיים?
       if (deletedFiles.some(d => d.id === currentId)) {
         folderCache.current.set(currentId, { isDeleted: true, parentId: null });
         return true; 
       }
 
-      // האם בדקנו אותו כבר?
+      // Check cache to avoid re-fetching known folders
       if (folderCache.current.has(currentId)) {
         const cached = folderCache.current.get(currentId);
         if (cached.isDeleted) return true;
@@ -44,7 +42,7 @@ export default function Starred() {
         continue;
       }
 
-      // בדיקה מול השרת ליתר ביטחון (למקרים של סבא שנמחק במכשיר אחר)
+      // Verify parent existence on server (handles deletions made on other devices)
       try {
         const response = await authorizedFetch(`${API_URL}/files/${currentId}`);
         if (!response.ok) {
@@ -61,20 +59,18 @@ export default function Starred() {
     return false;
   };
 
-  // --- אפקט שמאזין לשינויים ומרענן מהשרת ---
+  // Sync with Server & Event Listeners
   useEffect(() => {
-    // טעינה ראשונית מהשרת (פותר את בעיית הכניסה מחדש)
     if (refreshStarredFiles) refreshStarredFiles();
 
     const listener = DeviceEventEmitter.addListener('somethingChange', async () => {
-      // כשיש שינוי, נרענן מהשרת כדי לוודא שאין יתומים
       if (refreshStarredFiles) await refreshStarredFiles();
     });
 
     return () => listener.remove();
   }, []);
 
-  // --- אפקט שמסנן את הרשימה המוצגת ---
+  // Filter Logic: Process files asynchronously
   useEffect(() => {
     const runFilter = async () => {
         setLoading(true);
@@ -94,7 +90,7 @@ export default function Starred() {
   }, [starredFiles, deletedFiles]);
 
   const handleOpenFile = (file) => {
-    const realId = file._id || file.id; // נרמול מזהה
+    const realId = file._id || file.id; 
     router.push({
       pathname: '/file-viewer',
       params: { 

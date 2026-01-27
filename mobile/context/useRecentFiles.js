@@ -9,7 +9,7 @@ export const useRecentFiles = () => {
   const [isLoading, setIsLoading] = useState(true);
   const { deletedFiles } = useFileActions();
 
-  // --- Recursive Fetch Logic ---
+  // Recursive Fetch Logic
   const fetchAllFilesRecursive = async (folderId = null) => {
     const url = folderId === null ? `${API_URL}/files` : `${API_URL}/files/${folderId}`;
 
@@ -51,7 +51,6 @@ export const useRecentFiles = () => {
         const dateA = new Date(a.updated_at || a.created_at || 0);
         const dateB = new Date(b.updated_at || b.created_at || 0);
         
-        // b - a נותן סדר יורד (הכי חדש למעלה)
         return dateB - dateA;
       });
 
@@ -63,7 +62,7 @@ export const useRecentFiles = () => {
     }
   }, [deletedFiles]); // Re-run if deletedFiles changes
 
-  // --- Listeners ---
+  // Listeners 
   useEffect(() => {
     onRefresh();
 

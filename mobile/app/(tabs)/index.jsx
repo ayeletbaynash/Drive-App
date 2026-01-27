@@ -19,9 +19,11 @@ export default function HomeScreen() {
     const [isLoading, setIsLoading] = useState(true);
     const [currentFolder, setCurrentFolder] = useState({ id: null, name: null });
 
+    // 1. Data Fetching Logic
     const onRefresh = async () => {
         setIsLoading(true);
         try {
+            // Determine API endpoint: Root vs Specific Folder
             const url = folderId ? `${API_URL}/files/${folderId}` : `${API_URL}/files`;
             const response = await authorizedFetch(url);
 
@@ -46,6 +48,7 @@ export default function HomeScreen() {
         }
     };
 
+    // 2. Side Effects & Listeners 
     useEffect(() => {
         onRefresh();
 
@@ -58,8 +61,10 @@ export default function HomeScreen() {
         };
     }, [folderId]);
 
+    // 3. Filtering (Soft Delete)
     const visibleFiles = useFileFilter(files);
 
+    // 4. Navigation
     const handleNavigate = (item) => {
         if (item.type === 'folder') {
             router.push({ pathname: '/', params: { folderId: item.id, folderName: item.name } });

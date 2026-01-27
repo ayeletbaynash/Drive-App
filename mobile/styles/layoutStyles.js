@@ -45,32 +45,28 @@ export const layoutStyles = StyleSheet.create({
     backgroundColor: Colors.light.background,
   },
   topBarContainer: {
-    flexDirection: 'row',     // מסדר את ההמבורגר, החיפוש והפרופיל בשורה
-    alignItems: 'center',     // ממקם אותם באמצע הגובה
+    flexDirection: 'row',     
+    alignItems: 'center',     
     paddingHorizontal: 16,
     paddingVertical: 10,
-    //backgroundColor: Colors.light.background,
-    gap: 12,                  // רווח בין האלמנטים
+    gap: 12,                 
     borderBottomWidth: 1,
-    //borderBottomColor: '#f0f0f0', // קו הפרדה עדין מאוד
   },
   iconButton: {
     padding: 4,
   },
   searchContainer: {
-    flex: 1,                  // לוקח את כל המקום הפנוי באמצע
+    flex: 1,                 
     flexDirection: 'row',
     alignItems: 'center',
-    //backgroundColor: '#f1f3f4', // אפור בהיר ספציפי של גוגל (אפשר להוסיף ל-theme בהמשך)
-    paddingVertical: 10,      // קצת יותר גבוה
+    paddingVertical: 10,      
     paddingHorizontal: 16,
-    borderRadius: 30,         // עיגול מלא בקצוות (Pill shape)
+    borderRadius: 30,       
   },
   searchPlaceholder: {
-    //color: '#5f6368',         // אפור טקסט של גוגל
     fontSize: 16,
     marginLeft: 8,
-    fontFamily: Fonts.sans,   // שימוש בפונט שלך
+    fontFamily: Fonts.sans,   
   },
   rightActions: {
     flexDirection: 'row',
@@ -79,15 +75,12 @@ export const layoutStyles = StyleSheet.create({
   },
   profileButton: {
     padding: 2,
-    // אם תרצי מסגרת לתמונה בעתיד, זה המקום
   },
   tabBarCustom: {
     height: 85,
     paddingBottom: 25,
     paddingTop: 10,
-    //backgroundColor: Colors.light.surface,
     borderTopWidth: 1,
-    //borderTopColor: Colors.light.border,
     elevation: 0,
     shadowOpacity: 0,
   },

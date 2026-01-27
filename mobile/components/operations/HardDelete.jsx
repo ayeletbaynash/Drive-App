@@ -10,8 +10,7 @@ const HardDelete = ({ file, onComplete }) => {
     const [isModalVisible, setModalVisible] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     
-    // אנו משתמשים בפונקציה הזו כדי להסיר את הקובץ מרשימת ה-deletedFiles הלוקאלית
-    // ברגע שהוא נמחק מהשרת, אנחנו לא צריכים לראות אותו יותר באשפה
+    // Using these functions to remove the file from local context lists (e.g., trash bin)
     const { 
         restoreFromFileDeletionList, 
         starredFiles, 
@@ -21,24 +20,24 @@ const HardDelete = ({ file, onComplete }) => {
     const handleDeleteForever = async () => {
         setIsLoading(true);
         try {
-            // קריאה לשרת למחיקה פיזית
             const response = await authorizedFetch(`${API_URL}/files/${file.id}`, {
                 method: 'DELETE',
             });
 
             if (response && response.ok) {
-                // 1. מעדכנים את הקונטקסט הלוקאלי (מסירים מהרשימה)
+                // 1. Update local context: Remove from "deleted files" list
                 await restoreFromFileDeletionList(file.id);
 
+                // If the file was starred, remove it from the starred list as well
                 const isStarred = starredFiles.some(f => f.id === file.id);
                 if (isStarred) {
                     await toggleStarFile(file); 
                 }
                 
-                // 2. מודיעים לשאר האפליקציה (אם צריך רענון)
+                // 2. Notify other parts of the app to refresh data
                 DeviceEventEmitter.emit('somethingChange');
                 
-                // 3. סוגרים את הכל
+                // 3. Close modal and trigger completion callback
                 setModalVisible(false);
                 if (onComplete) onComplete();
             } else {
@@ -54,7 +53,7 @@ const HardDelete = ({ file, onComplete }) => {
 
     return (
         <>
-            {/* הכפתור שמופיע בתוך ה-ActionSheet */}
+            {/* Button inside ActionSheet */}
             <TouchableOpacity 
                 style={styles.menuButton} 
                 onPress={() => setModalVisible(true)}
@@ -63,7 +62,7 @@ const HardDelete = ({ file, onComplete }) => {
                 <Text style={styles.menuText}>Delete Forever</Text>
             </TouchableOpacity>
 
-            {/* חלון האישור (Modal) */}
+            {/* Confirmation Modal */}
             <Modal
                 visible={isModalVisible}
                 transparent={true}
@@ -73,13 +72,13 @@ const HardDelete = ({ file, onComplete }) => {
                 <View style={styles.overlay}>
                     <View style={styles.modalContent}>
                         
-                        {/* כותרת */}
+                        {/* Header */}
                         <View style={styles.headerContainer}>
                             <Ionicons name="warning" size={40} color="#dc3545" />
                             <Text style={styles.title}>Delete Forever?</Text>
                         </View>
 
-                        {/* תוכן */}
+                        {/* Body Text */}
                         <Text style={styles.bodyText}>
                             Are you sure you want to permanently delete <Text style={styles.bold}>"{file.name}"</Text>?
                         </Text>
@@ -87,7 +86,7 @@ const HardDelete = ({ file, onComplete }) => {
                             This action cannot be undone.
                         </Text>
 
-                        {/* כפתורים */}
+                        {/* Buttons */}
                         <View style={styles.actions}>
                             <TouchableOpacity 
                                 style={styles.btnCancel} 

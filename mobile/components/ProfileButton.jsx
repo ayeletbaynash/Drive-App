@@ -42,11 +42,10 @@ export default function ProfileButton() {
             setUser(prev => ({ 
                 ...prev, 
                 ...serverData,
-                // אנו דורסים את המייל באופן מפורש כדי שהמודל יראה אותו
                 userEmail: realEmail || prev.userEmail 
             }));
             
-            // Optional: Update cache if image changed
+            // Update cache if image changed
             if (serverData.image) await AsyncStorage.setItem('userImage', serverData.image);
             if (realEmail) await AsyncStorage.setItem('userEmail', realEmail);
           }

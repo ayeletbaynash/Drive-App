@@ -79,12 +79,12 @@ const FileItem = ({ file, onOpen, isTrash, onRestore }) => {
       >
         {isTrash ? (
           <>
-            {/* --- כפתור שחזור (Restore) --- */}
+            {/* Restore Button */}
             <TouchableOpacity 
                 style={styles.simpleButton} 
                 onPress={() => {
-                    setIsMenuVisible(false); // סגירת התפריט
-                    if (onRestore) onRestore(); // הפעלת פעולת השחזור
+                    setIsMenuVisible(false); 
+                    if (onRestore) onRestore(); 
                 }}
             >
               <View style={{ flexDirection: 'row', alignItems: 'center' }}></View>
@@ -92,7 +92,7 @@ const FileItem = ({ file, onOpen, isTrash, onRestore }) => {
               <Text style={{ color: 'green', fontSize: 16 }}>Restore</Text>
             </TouchableOpacity>
             
-            {/* הרכיב החדש למחיקה סופית */}
+            {/* Hard Delete Component */}
             <HardDelete 
                 file={file} 
                 onComplete={() => setIsMenuVisible(false)}
@@ -100,7 +100,7 @@ const FileItem = ({ file, onOpen, isTrash, onRestore }) => {
           </>
         ) : (
           <>
-            {/* 1. כפתור פרטים (Details) - חדש! */}
+            {/* Details Button */}
              <TouchableOpacity 
                 style={styles.simpleButton} 
                 onPress={() => {

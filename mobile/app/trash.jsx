@@ -13,7 +13,6 @@ export default function TrashScreen() {
   const router = useRouter();
   const styles = createTrashStyles(theme);
   
-  // שימוש בלוגיקה
   const { deletedFiles, handleRestore } = useTrashFiles();
 
   return (
@@ -34,9 +33,9 @@ export default function TrashScreen() {
         renderItem={({ item }) => (
           <FileItem 
             file={item} 
-            isTrash={true} // מסמנים שזה קובץ באשפה
-            onRestore={() => handleRestore(item.id)} // מעבירים את פעולת השחזור
-            onOpen={() => alert("Cannot open deleted file")} // אי אפשר לפתוח קובץ מחוק
+            isTrash={true} 
+            onRestore={() => handleRestore(item.id)} 
+            onOpen={() => alert("Cannot open deleted file")} 
           />
         )}
         ListEmptyComponent={

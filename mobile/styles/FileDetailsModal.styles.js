@@ -3,19 +3,17 @@ import { StyleSheet, Dimensions } from 'react-native';
 const { height } = Dimensions.get('window');
 
 export const styles = StyleSheet.create({
-    // הרקע הכהה מאחור
     overlay: {
         flex: 1,
         backgroundColor: 'rgba(0,0,0,0.5)',
         justifyContent: 'flex-end',
     },
-    // הקופסה הלבנה שעולה מלמטה
     sheetContainer: {
         backgroundColor: '#fff',
         borderTopLeftRadius: 24,
         borderTopRightRadius: 24,
         paddingHorizontal: 24,
-        maxHeight: height * 0.85, // מקסימום 85% גובה מסך
+        maxHeight: height * 0.85, 
         paddingBottom: 30,
         shadowColor: "#000",
         shadowOffset: {
@@ -26,7 +24,6 @@ export const styles = StyleSheet.create({
         shadowRadius: 3.84,
         elevation: 5,
     },
-    // הפס הקטן למעלה לגרירה
     handleWrapper: {
         alignItems: 'center',
         paddingVertical: 12,
@@ -37,7 +34,6 @@ export const styles = StyleSheet.create({
         backgroundColor: '#E0E0E0',
         borderRadius: 3,
     },
-    // כותרת עליונה (אייקון + שם)
     header: {
         alignItems: 'center',
         marginBottom: 24,
@@ -52,7 +48,6 @@ export const styles = StyleSheet.create({
         textAlign: 'center',
         color: '#333',
     },
-    // כותרות של מקטעים (System Properties / Access)
     sectionTitle: {
         fontSize: 13,
         fontWeight: '700',
@@ -62,7 +57,6 @@ export const styles = StyleSheet.create({
         textTransform: 'uppercase',
         letterSpacing: 0.5,
     },
-    // הקופסה האפורה שמכילה את המידע
     infoBox: {
         backgroundColor: '#F8F9FA',
         borderRadius: 16,
@@ -71,7 +65,6 @@ export const styles = StyleSheet.create({
         borderWidth: 1,
         borderColor: '#EDEEF0',
     },
-    // שורת מידע (Label + Value)
     row: {
         flexDirection: 'row',
         justifyContent: 'space-between',
@@ -88,7 +81,6 @@ export const styles = StyleSheet.create({
         fontSize: 14,
         fontWeight: '600',
     },
-    // --- עיצוב למשתמשים ---
     userRow: {
         flexDirection: 'row',
         alignItems: 'center',
@@ -103,10 +95,10 @@ export const styles = StyleSheet.create({
         marginRight: 14,
     },
     avatarOwner: {
-        backgroundColor: '#198754', // ירוק לבעלים
+        backgroundColor: '#198754',
     },
     avatarCollab: {
-        backgroundColor: '#6c757d', // אפור לאחרים
+        backgroundColor: '#6c757d', 
     },
     avatarText: {
         fontWeight: 'bold',

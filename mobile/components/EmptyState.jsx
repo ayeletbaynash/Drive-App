@@ -27,7 +27,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     paddingHorizontal: 40,
-    marginTop: -height * 0.1, // קצת מעל האמצע הוויזואלי
+    marginTop: -height * 0.1, 
   },
   content: {
     alignItems: 'center',

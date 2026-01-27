@@ -60,13 +60,12 @@ export const FileProvider = ({ children }) => {
     const refreshStarredFiles = async () => {
         if (!userId) return;
         try {
-            // מבקשים מהשרת את הרשימה המעודכנת (בלי קבצים שהאבא שלהם נמחק)
             const response = await authorizedFetch(`${API_URL}/files/starred`);
             if (response.ok) {
                 const data = await response.json();
-                setStarredFiles(data); // מעדכן את ה-State
+                setStarredFiles(data); 
                 const { starred } = getKeys(userId);
-                await saveData(starred, data); // מעדכן את ה-Storage
+                await saveData(starred, data); 
             }
         } catch (error) {
             console.error("Error refreshing starred files:", error);

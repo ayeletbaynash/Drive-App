@@ -3,15 +3,13 @@ import { View, Text, Modal, Pressable, ScrollView, ActivityIndicator } from 'rea
 import { Ionicons } from '@expo/vector-icons';
 import authorizedFetch from '../services/authorizedFetch';
 import { API_URL } from '../config';
-
-// 👇 ייבוא העיצוב מהקובץ הנפרד
 import { styles } from '../styles/FileDetailsModal.styles';
 
 const FileDetailsModal = ({ file, visible, onClose }) => {
     const [permissions, setPermissions] = useState([]);
     const [loading, setLoading] = useState(false);
 
-    // --- Helper Functions ---
+    // Helper Functions
     const formatSize = (bytes) => {
         if (bytes === 0 || !bytes) return '0 B';
         const k = 1024;
@@ -26,7 +24,7 @@ const FileDetailsModal = ({ file, visible, onClose }) => {
                new Date(dateString).toLocaleTimeString('he-IL', { hour: '2-digit', minute: '2-digit' });
     };
 
-    // --- API Logic ---
+    // API Logic
     useEffect(() => {
         if (visible && file?.id) {
             fetchPermissions();
@@ -36,7 +34,7 @@ const FileDetailsModal = ({ file, visible, onClose }) => {
     const fetchPermissions = async () => {
         setLoading(true);
         try {
-            // התאמה לכתובת השרת
+            // Fetch permissions from server
             const response = await authorizedFetch(`${API_URL}/files/${file.id}/permissions`);
             if (response.ok) {
                 const data = await response.json();
@@ -63,15 +61,15 @@ const FileDetailsModal = ({ file, visible, onClose }) => {
             onRequestClose={onClose}
         >
             <Pressable style={styles.overlay} onPress={onClose}>
-                {/* לחיצה בתוך המודאל לא תסגור אותו */}
+                {/* Prevent closing when clicking inside the modal content*/}
                 <View style={styles.sheetContainer} onStartShouldSetResponder={() => true}> 
                     
-                    {/* פס גרירה קטן */}
+                    {/* Drag Handle */}
                     <View style={styles.handleWrapper}>
                         <View style={styles.handle} />
                     </View>
 
-                    {/* כותרת ואייקון */}
+                    {/* Header with Icon */}
                     <View style={styles.header}>
                         <Ionicons 
                             name={isFolder ? "folder" : "document-text"} 
@@ -83,7 +81,7 @@ const FileDetailsModal = ({ file, visible, onClose }) => {
 
                     <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
                         
-                        {/* --- חלק 1: פרטים טכניים --- */}
+                        {/* Section 1: Technical Details */}
                         <Text style={styles.sectionTitle}>System Properties</Text>
                         <View style={styles.infoBox}>
                             <InfoRow label="Type" value={isFolder ? "Folder" : file?.name.split('.').pop().toUpperCase() + " File"} />
@@ -92,10 +90,10 @@ const FileDetailsModal = ({ file, visible, onClose }) => {
                             <InfoRow label="Modified" value={formatDate(file?.updated_at || file?.updatedAt)} />
                         </View>
 
-                        {/* --- חלק 2: הרשאות --- */}
+                        {/* Section 2: Permissions */}
                         <Text style={styles.sectionTitle}>Who has access</Text>
                         <View style={styles.infoBox}>
-                            {/* בעלים */}
+                            {/* Owner */}
                             {owner && (
                                 <UserRow 
                                     username={owner.username} 
@@ -128,8 +126,7 @@ const FileDetailsModal = ({ file, visible, onClose }) => {
     );
 };
 
-// --- רכיבי עזר קטנים ---
-// (השארתי אותם כאן כי הם פשוטים, אבל הם משתמשים ב-styles המיובא)
+// Small Helper Components
 
 const InfoRow = ({ label, value }) => (
     <View style={styles.row}>
