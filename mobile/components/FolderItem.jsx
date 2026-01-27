@@ -1,11 +1,33 @@
 import React, { useState } from 'react';
-import { TouchableOpacity, Text, View } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
+import { TouchableOpacity, Text, View, DeviceEventEmitter } from 'react-native';
+import { Ionicons, MaterialIcons } from '@expo/vector-icons';
 import { styles } from '../styles/FolderItem.styles';
 import ActionSheet from './ActionSheet';
+import RemoveFile from './operations/Remove'; 
+import HardDelete from './operations/HardDelete'; 
+import Rename from './operations/Rename';
+import FileDetailsModal from './FileDetailsModal'; 
+import { useFileActions } from '../context/FileContext';
+import DownloadFolder from './operations/DownloadFolder';
 
 const FolderItem = ({ folder, isTrash, onFolderPress }) => {
   const [isMenuVisible, setIsMenuVisible] = useState(false);
+  const [isRenameModalVisible, setIsRenameModalVisible] = useState(false); 
+  const [isDetailsVisible, setIsDetailsVisible] = useState(false);
+  const { restoreFromFileDeletionList } = useFileActions();
+
+  const handleRestore = async () => {
+      const folderId = folder._id || folder.id;
+      await restoreFromFileDeletionList(folderId);
+      setIsMenuVisible(false);
+      DeviceEventEmitter.emit('somethingChange'); 
+  };
+
+  const menuButtonStyle = {
+      flexDirection: 'row',   
+      alignItems: 'center',   
+      paddingVertical: 12,   
+  };
 
   return (
     <View>
@@ -23,7 +45,7 @@ const FolderItem = ({ folder, isTrash, onFolderPress }) => {
           <Text style={styles.folderName} numberOfLines={1}>
             {folder.name}
           </Text>
-          <Text style={styles.subText}>{ 'Folder'}</Text>
+          <Text style={styles.subText}>{'Folder'}</Text>
         </View>
 
         {/* 3 points*/}
@@ -45,27 +67,66 @@ const FolderItem = ({ folder, isTrash, onFolderPress }) => {
         {isTrash ? (
           // for trash
           <>
-            <TouchableOpacity style={styles.simpleButton} onPress={() => alert('Restore')}>
+            <TouchableOpacity style={[styles.simpleButton, menuButtonStyle]} onPress={handleRestore}>
+              <MaterialIcons name="restore" size={24} color="green" style={{ marginRight: 12 }} />
               <Text style={{ color: 'green', fontSize: 16 }}>Restore</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity style={styles.simpleButton} onPress={() => alert('Delete Forever')}>
-              <Text style={{ color: 'red', fontSize: 16 }}>Delete Forever</Text>
-            </TouchableOpacity>
+            <HardDelete 
+                file={folder} 
+                onComplete={() => setIsMenuVisible(false)}
+            />
           </>
         ) : (
           // regular
           <>
-            <TouchableOpacity style={styles.simpleButton} onPress={() => alert('Rename')}>
-              <Text style={{ fontSize: 16 }}>Rename</Text>
+            <TouchableOpacity 
+                style={[styles.simpleButton, menuButtonStyle]} 
+                onPress={() => {
+                    setIsMenuVisible(false); 
+                    setTimeout(() => setIsDetailsVisible(true), 100);
+                }}
+            >
+              <Ionicons name="information-circle-outline" size={24} color="black" style={{ marginRight: 12 }} />
+              <Text style={{ fontSize: 16 }}>Details</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity style={styles.simpleButton} onPress={() => alert('Move to Trash')}>
-              <Text style={{ color: 'red', fontSize: 16 }}>Move to Trash</Text>
+            <TouchableOpacity 
+                style={[styles.simpleButton, menuButtonStyle]} 
+                onPress={() => {
+                    setIsMenuVisible(false);
+                    setIsRenameModalVisible(true);
+                }}
+            >
+              <MaterialIcons name="drive-file-rename-outline" size={24} color="black" style={{ marginRight: 12 }} />
+                 <Text style={{ fontSize: 16 }}>Rename</Text>
             </TouchableOpacity>
+
+            <DownloadFolder 
+              folder={folder} 
+              onSuccess={() => setIsMenuVisible(false)} 
+            />             
+
+            <RemoveFile 
+                file={folder} 
+                onComplete={() => setIsMenuVisible(false)}
+            />
           </>
         )}
       </ActionSheet>
+
+      <Rename 
+          file={folder} 
+          visible={isRenameModalVisible} 
+          onClose={() => setIsRenameModalVisible(false)} 
+      />
+
+      <FileDetailsModal 
+        file={folder}
+        visible={isDetailsVisible}
+        onClose={() => setIsDetailsVisible(false)}
+      />
+      
     </View>
   );
 };

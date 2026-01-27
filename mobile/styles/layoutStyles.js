@@ -4,9 +4,12 @@ import { Colors, Fonts } from '../constants/theme';
 export const layoutStyles = StyleSheet.create({
   container: {
     flex: 1,
+    //backgroundColor: Colors.light.background,
+  },
+  safeArea: {
     backgroundColor: Colors.light.background,
   },
-  headerContainer: {
+  topBar: {
     height: 60,
     flexDirection: 'row',
     alignItems: 'center',
@@ -39,29 +42,45 @@ export const layoutStyles = StyleSheet.create({
     flex: 1, 
   },
   safeArea: {
-    backgroundColor: Colors.light.primary,
+    backgroundColor: Colors.light.background,
   },
-  topBar: {
-    height: 60,
-    justifyContent: 'center',
-    paddingHorizontal: 20,
-    backgroundColor: Colors.light.primary,
+  topBarContainer: {
+    flexDirection: 'row',     
+    alignItems: 'center',     
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+    gap: 12,                 
     borderBottomWidth: 1,
-    borderBottomColor: 'rgba(0,0,0,0.1)',
   },
-  topBarText: {
-    color: Colors.light.surface,
-    fontSize: 20,
-    fontWeight: 'bold',
-    fontFamily: Fonts.sans,
+  iconButton: {
+    padding: 4,
+  },
+  searchContainer: {
+    flex: 1,                 
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 10,      
+    paddingHorizontal: 16,
+    borderRadius: 30,       
+  },
+  searchPlaceholder: {
+    fontSize: 16,
+    marginLeft: 8,
+    fontFamily: Fonts.sans,   
+  },
+  rightActions: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12, 
+  },
+  profileButton: {
+    padding: 2,
   },
   tabBarCustom: {
     height: 85,
     paddingBottom: 25,
     paddingTop: 10,
-    backgroundColor: Colors.light.surface,
     borderTopWidth: 1,
-    borderTopColor: Colors.light.border,
     elevation: 0,
     shadowOpacity: 0,
   },
@@ -128,4 +147,5 @@ export const layoutStyles = StyleSheet.create({
     overflow: 'hidden',
   },
 });
-
+export const activeTabColor = Colors.light.tabActive;
+export const inactiveTabColor = Colors.light.tabInactive;

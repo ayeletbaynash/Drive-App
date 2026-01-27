@@ -1,9 +1,12 @@
-import { Tabs, useGlobalSearchParams, router } from 'expo-router';
-import { View, Text, TouchableOpacity } from 'react-native';
+import React, { useState, useRef } from 'react';
+import { Tabs, useRouter, useGlobalSearchParams, router } from 'expo-router';
+import { View, Text, TouchableOpacity} from 'react-native';
 import { Ionicons } from '@expo/vector-icons'; 
 import { layoutStyles } from '../../styles/layoutStyles';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import React, { useState, useRef } from 'react'
+import ProfileButton from '../../components/ProfileButton';
+import ThemeToggle from '../../components/ThemeToggle';
+import SideMenu from '../../components/SideMenu';
 import CreateFile from '../../components/operations/CreateFile'
 import CreateFolder from '../../components/operations/CreateFolder'
 import AntDesign from '@expo/vector-icons/AntDesign';
@@ -13,10 +16,14 @@ import CameraUpload from '../../components/operations/CameraUpload';
 
 
 export default function TabsLayout() {
+  const { theme } = useAppTheme();
+  const router = useRouter();
+  const { folderId } = useGlobalSearchParams();
+
+  const [isMenuVisible, setMenuVisible] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [isCreateFileVisible, setIsCreateFileVisible] = useState(false)
   const [isCreateFolderVisible, setIsCreateFolderVisible] = useState(false)
-  const { folderId } = useGlobalSearchParams();
 
   const fileUploadRef = useRef(null);  // ref to access FileUpload methods
   const cameraUploadRef = useRef(null);
@@ -27,68 +34,111 @@ export default function TabsLayout() {
   }
 
   return (
-    <View style={layoutStyles.container}>
+    <>
+      {/* 1. Side Menu (External to main view to float above) */}
+      <SideMenu 
+        visible={isMenuVisible} 
+        onClose={() => setMenuVisible(false)} 
+      />
+    {/* <View style={[layoutStyles.container, { backgroundColor: theme.background }]}>
+
+      <View style={layoutStyles.container}> */}
       {/* logic only - not taking space */}
       <CreateFile visible={isCreateFileVisible} parentId={folderId || null} onClose={() => setIsCreateFileVisible(false)} />
       <CreateFolder visible={isCreateFolderVisible} parentId={folderId || null} onClose={() => setIsCreateFolderVisible(false)} />
       <FileUpload ref={fileUploadRef} folderId={folderId} />
       <CameraUpload ref={cameraUploadRef} folderId={folderId} />
 
+      {/* 2. Main Container */}
+      <View style={[layoutStyles.container, { backgroundColor: theme.background }]}>
+
       {/* Top Bar & Tabs */}
-      <SafeAreaView edges={['top']} style={layoutStyles.safeArea}>
-         <View style={layoutStyles.topBar}><Text style={layoutStyles.topBarText}>top bar</Text></View>
+      {/* <SafeAreaView edges={['top']} style={layoutStyles.safeArea}></SafeAreaView> */}
+
+      <SafeAreaView edges={['top']} style={{ backgroundColor: theme.background }}> 
+        <View style={[layoutStyles.topBarContainer, { backgroundColor: theme.background, borderBottomColor: theme.border }]}>
+          
+          {/* Hamburger Button */}
+            <TouchableOpacity 
+              style={layoutStyles.iconButton}
+              onPress={() => setMenuVisible(true)} 
+            >
+              <Ionicons name="menu" size={28} color={theme.textMuted} />
+            </TouchableOpacity>
+
+          {/* Search Bar Button */}
+          <TouchableOpacity 
+            style={[layoutStyles.searchContainer, { backgroundColor: theme.surface, flex: 1 }]} 
+            onPress={() => router.push('/search')} // Navigate to Search Screen
+            activeOpacity={0.7}
+          >
+            <Ionicons name="search" size={20} color={theme.textMuted} />
+            <Text style={[layoutStyles.searchPlaceholder, { color: theme.textMuted }]}>
+              Search in Drive
+            </Text>
+          </TouchableOpacity>
+
+          {/* Right Actions */}
+          <View style={layoutStyles.rightActions}>
+            <ThemeToggle />
+            <ProfileButton />
+          </View>
+
+        </View>
+    
+         {/* <View style={layoutStyles.topBar}><Text style={layoutStyles.topBarText}>top bar</Text></View> */}
       </SafeAreaView>
 
+      {/* Tabs Area - ONE Tabs component only */}
       <View style={{ flex: 1 }}>
-        <Tabs screenOptions={{ 
-            headerShown: false,
+      <Tabs screenOptions={{ 
+        headerShown: false,
             unmountOnBlur: true, 
-            tabBarActiveTintColor: layoutStyles.activeColor,   
-            tabBarInactiveTintColor: layoutStyles.inactiveColor, 
-            tabBarStyle: layoutStyles.tabBarCustom,
+        tabBarActiveTintColor: theme.tabActive, 
+          tabBarInactiveTintColor: theme.tabInactive,
+          tabBarStyle: [layoutStyles.tabBarCustom, { 
+            backgroundColor: theme.surface, 
+            borderTopColor: theme.border 
+          }]
         }}>
-          <Tabs.Screen
-            name="index"
-            options={{
-              title: 'Home',
-              tabBarIcon: ({ color }) => <Ionicons name="home" size={24} color={color} />,
-            }}
-            listeners={{
-              tabPress: (e) => handleTabPress(e, '/(tabs)/'),
-            }}
-          />
-          <Tabs.Screen
-            name="Files"
-            options={{
-              title: 'Files',
-              tabBarIcon: ({ color }) => <Ionicons name="folder" size={24} color={color} />,
-            }}
-            listeners={{
-              tabPress: (e) => handleTabPress(e, '/(tabs)/Files'),
-            }}
-          />
-          <Tabs.Screen
-            name="Shared"
-            options={{
-              title: 'Shared',
-              tabBarIcon: ({ color }) => <Ionicons name="people" size={24} color={color} />,
-            }}
-            listeners={{
-              tabPress: (e) => handleTabPress(e, '/(tabs)/Shared'),
-            }}
-          />
-          <Tabs.Screen
-            name="Starred"
-            options={{
-              title: 'Starred',
-              tabBarIcon: ({ color }) => <Ionicons name="star" size={24} color={color} />,
-            }}
-            listeners={{
-              tabPress: (e) => handleTabPress(e, '/(tabs)/Starred'),
-            }}
-          />
-        </Tabs>
-      </View>
+        
+        <Tabs.Screen 
+          name="index" 
+          options={{
+            tabBarLabel: 'Home',
+            tabBarIcon: ({ color, size, focused }) => (
+              <Ionicons name={focused ? 'home' : 'home-outline'} size={size} color={color} />
+            ),
+            unmountOnBlur: true,
+          }} 
+        />
+
+          <Tabs.Screen name="Starred" options={{
+              tabBarLabel: 'Starred',
+              tabBarIcon: ({ color, size, focused }) => (
+                <Ionicons name={focused ? 'star' : 'star-outline'} size={size} color={color} />
+              ),
+              unmountOnBlur: true,
+          }} />
+
+          <Tabs.Screen name="Shared" options={{
+              tabBarLabel: 'Shared',
+              tabBarIcon: ({ color, size, focused }) => (
+                <Ionicons name={focused ? 'people' : 'people-outline'} size={size} color={color} />
+              ),
+              unmountOnBlur: true,
+          }} />
+
+          <Tabs.Screen name="Files" options={{
+              tabBarLabel: 'Files',
+              tabBarIcon: ({ color, size, focused }) => (
+                <Ionicons name={focused ? 'folder' : 'folder-outline'} size={size} color={color} />
+              ),
+              unmountOnBlur: true,
+          }} />
+
+      </Tabs>
+    </View>
 
       {/* options menu - must be above everything */}
       {isOpen && (
@@ -114,6 +164,7 @@ export default function TabsLayout() {
       <TouchableOpacity 
         style={[layoutStyles.fab, layoutStyles.cameraFab]} 
         onPress={() => cameraUploadRef.current?.handleCamera()}
+        activeOpacity={0.8}
       >
         <Ionicons name="camera" size={24} color="white" />
       </TouchableOpacity>
@@ -122,9 +173,11 @@ export default function TabsLayout() {
       <TouchableOpacity 
         style={layoutStyles.fab} 
         onPress={() => setIsOpen(!isOpen)}
+        activeOpacity={0.8}
       >
         <Ionicons name={isOpen ? "close" : "add"} size={35} color="white" />
       </TouchableOpacity>
     </View>
+    </>
   );
 }

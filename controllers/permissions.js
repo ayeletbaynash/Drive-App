@@ -50,6 +50,7 @@ exports.getPermissionByFileId = async (req, res) => {
 
             return {
                 ...p.toObject(),
+                pId: p._id,
                 username: username
             };
         }));
@@ -105,7 +106,7 @@ exports.postPermission = async (req, res) => {
 
         const newPerm = await permissionService.postPermission(fileID, userID, permission)
         res.status(201).json({
-            pId: newPerm._Id 
+            pId: newPerm._id 
         })
     } catch (error) {
         res.status(500).json({ error: error.message });

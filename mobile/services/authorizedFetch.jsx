@@ -32,7 +32,8 @@ const authorizedFetch = async (url, options = {}) => {
                 'userId', 
                 'firstName', 
                 'username', 
-                'userImage'
+                'userImage',
+                'userEmail'
             ]);
 
             // Redirect to login and reset navigation stack
@@ -43,7 +44,12 @@ const authorizedFetch = async (url, options = {}) => {
         return response;
 
     } catch (error) {
-        console.error("AuthorizedFetch Error:", error);
+        if (error.name === 'AbortError') {
+            console.log("Request aborted (search typing)"); 
+        } else {
+            console.error("AuthorizedFetch Error:", error);
+        }
+        
         throw error;
     }
 }
