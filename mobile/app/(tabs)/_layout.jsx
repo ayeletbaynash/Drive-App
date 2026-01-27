@@ -1,4 +1,4 @@
-import { Tabs, useGlobalSearchParams } from 'expo-router';
+import { Tabs, useGlobalSearchParams, router } from 'expo-router';
 import { View, Text, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons'; 
 import { layoutStyles } from '../../styles/layoutStyles';
@@ -10,7 +10,6 @@ import AntDesign from '@expo/vector-icons/AntDesign';
 import FileUpload from '../../components/FileUpload';
 import Entypo from '@expo/vector-icons/Entypo';
 import CameraUpload from '../../components/operations/CameraUpload';
-import { Colors } from '../../constants/theme'; 
 
 
 export default function TabsLayout() {
@@ -21,6 +20,11 @@ export default function TabsLayout() {
 
   const fileUploadRef = useRef(null);  // ref to access FileUpload methods
   const cameraUploadRef = useRef(null);
+
+  const handleTabPress = (e, path) => {
+    e.preventDefault()
+    router.replace(path)
+  }
 
   return (
     <View style={layoutStyles.container}>
@@ -37,7 +41,8 @@ export default function TabsLayout() {
 
       <View style={{ flex: 1 }}>
         <Tabs screenOptions={{ 
-            headerShown: false, 
+            headerShown: false,
+            unmountOnBlur: true, 
             tabBarActiveTintColor: layoutStyles.activeColor,   
             tabBarInactiveTintColor: layoutStyles.inactiveColor, 
             tabBarStyle: layoutStyles.tabBarCustom,
@@ -48,12 +53,18 @@ export default function TabsLayout() {
               title: 'Home',
               tabBarIcon: ({ color }) => <Ionicons name="home" size={24} color={color} />,
             }}
+            listeners={{
+              tabPress: (e) => handleTabPress(e, '/(tabs)/'),
+            }}
           />
           <Tabs.Screen
             name="Files"
             options={{
               title: 'Files',
               tabBarIcon: ({ color }) => <Ionicons name="folder" size={24} color={color} />,
+            }}
+            listeners={{
+              tabPress: (e) => handleTabPress(e, '/(tabs)/Files'),
             }}
           />
           <Tabs.Screen
@@ -62,12 +73,18 @@ export default function TabsLayout() {
               title: 'Shared',
               tabBarIcon: ({ color }) => <Ionicons name="people" size={24} color={color} />,
             }}
+            listeners={{
+              tabPress: (e) => handleTabPress(e, '/(tabs)/Shared'),
+            }}
           />
           <Tabs.Screen
             name="Starred"
             options={{
               title: 'Starred',
               tabBarIcon: ({ color }) => <Ionicons name="star" size={24} color={color} />,
+            }}
+            listeners={{
+              tabPress: (e) => handleTabPress(e, '/(tabs)/Starred'),
             }}
           />
         </Tabs>

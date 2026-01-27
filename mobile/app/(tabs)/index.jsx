@@ -16,7 +16,7 @@ export default function HomeScreen() {
     
     const [files, setFiles] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
-    const [currentFolder, setCurrentFolder] = useState({ id: null, name: null });
+    const [currentFolder, setCurrentFolder] = useState({ id: null, name: null, parentId: null });
 
     const onRefresh = async () => {
         setIsLoading(true);
@@ -28,10 +28,10 @@ export default function HomeScreen() {
                 const data = await response.json();
                 if (folderId) {
                     setFiles(data.children || []);
-                    setCurrentFolder({ id: data.id, name: data.name });
+                    setCurrentFolder({ id: data.id, name: data.name, parentId: data.parent_id });
                 } else {
                     setFiles(data.files || data);
-                    setCurrentFolder({ id: null, name: null });
+                    setCurrentFolder({ id: null, name: null, parentId: null });
                 }
             } else if (response) {
                 const errorData = await response.json().catch(() => ({}));
@@ -75,8 +75,8 @@ export default function HomeScreen() {
         <View style={layoutStyles.headerContainer}>
             <TouchableOpacity 
                 onPress={() => {
-                    if (router.canGoBack()) {
-                        router.back();
+                    if (currentFolder.parentId) {
+                        router.push({ pathname: '/', params: { folderId: currentFolder.parentId } });
                     } else {
                         router.replace('/'); 
                     }
