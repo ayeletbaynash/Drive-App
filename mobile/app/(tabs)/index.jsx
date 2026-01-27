@@ -6,11 +6,13 @@ import FileViewList from '../../components/FileViewList'
 import  authorizedFetch  from '../../services/authorizedFetch'
 import { API_URL } from '../../config';
 import { useFileActions } from '../../context/FileContext'
-
+import EmptyState from '../../components/EmptyState'; // הייבוא החדש
 import { useLocalSearchParams, useRouter } from 'expo-router'
+import { Ionicons } from '@expo/vector-icons';
+import { useFileFilter } from '../../context/useFileFilter';
 
 export default function HomeScreen() {
-    const { folderId } = useLocalSearchParams(); 
+    const { folderId, folderName } = useLocalSearchParams(); 
     const router = useRouter()
     const { deletedFiles } = useFileActions();
     
@@ -57,23 +59,11 @@ export default function HomeScreen() {
         };
     }, [folderId]);
 
-    const visibleFiles = useMemo(() => {
-        return files.filter(file => {
-            const fileId = file.id || file._id;
-            const isFileDeleted = deletedFiles.some(deleted => deleted.id === fileId);
-            if (isFileDeleted) return false;
-
-            if (file.parent_id) {
-                const isParentDeleted = deletedFiles.some(deleted => deleted.id === file.parent_id);
-                if (isParentDeleted) return false;
-            }
-            return true;
-        });
-    }, [files, deletedFiles]);
+    const visibleFiles = useFileFilter(files);
 
     const handleNavigate = (item) => {
         if (item.type === 'folder') {
-            router.push({ pathname: '/', params: { folderId: item.id } });
+            router.push({ pathname: '/', params: { folderId: item.id, folderName: item.name } });
         }
     };
 
@@ -96,15 +86,22 @@ export default function HomeScreen() {
             </TouchableOpacity>
             
             <Text style={layoutStyles.headerTitle} numberOfLines={1}>
-                {isLoading ? 'Loading...' : currentFolder.name}
+                {folderName || currentFolder.name || (isLoading ? 'Loading...' : 'Folder')}
             </Text>
         </View>
     ) : null}
 
+        <View style={{ flex: 1 }}>
             {isLoading ? (
                 <View style={{ flex: 1, justifyContent: 'center' }}>
                     <ActivityIndicator size="large" color={Colors.light.primary} />
                 </View>
+            ) : visibleFiles.length === 0 ? (
+                <EmptyState 
+                    iconName={folderId ? "folder-open-outline" : "cloud-upload-outline"} 
+                        title={folderId ? "Empty Folder" : "No files yet"} 
+                        message={folderId ? "This folder is empty." : "Use the + button to upload files or create new folders."}
+                />
             ) : (
                 <FileViewList 
                     items={visibleFiles} 
@@ -112,6 +109,7 @@ export default function HomeScreen() {
                     onFolderPress={handleNavigate} 
                 />
             )}
+        </View>
         </View>
     );
 }

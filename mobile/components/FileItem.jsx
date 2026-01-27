@@ -1,5 +1,5 @@
-import { View, Text, TouchableOpacity } from 'react-native';
-import { Ionicons, FontAwesome6, AntDesign, FontAwesome, MaterialCommunityIcons } from '@expo/vector-icons';
+import { View, Text, TouchableOpacity, DeviceEventEmitter } from 'react-native';
+import { Ionicons, FontAwesome6, AntDesign, FontAwesome } from '@expo/vector-icons';
 import { styles } from '../styles/FileItem.styles';
 import ActionSheet from './ActionSheet'
 import React, { useState } from 'react'
@@ -11,11 +11,13 @@ import MaterialIcons from '@expo/vector-icons/MaterialIcons'
 import EditContent from './operations/EditContent'
 import Feather from '@expo/vector-icons/Feather';
 import HardDelete from './operations/HardDelete';
+import FileDetailsModal from './FileDetailsModal';
 
 const FileItem = ({ file, onOpen, isTrash, onRestore }) => {
   const [isMenuVisible, setIsMenuVisible] = useState(false)
   const [isRenameModalVisible, setIsRenameModalVisible] = useState(false)
   const [isEditModalVisible, setIsEditModalVisible] = useState(false);
+  const [isDetailsVisible, setIsDetailsVisible] = useState(false);
   const { starredFiles } = useFileActions();
   if (!file) return null;
   const isStarred = starredFiles.some(f => f.id === file.id)
@@ -85,6 +87,7 @@ const FileItem = ({ file, onOpen, isTrash, onRestore }) => {
                     if (onRestore) onRestore(); // הפעלת פעולת השחזור
                 }}
             >
+              <View style={{ flexDirection: 'row', alignItems: 'center' }}></View>
               <MaterialIcons name="restore" size={24} color="green" style={{ marginRight: 8 }} />
               <Text style={{ color: 'green', fontSize: 16 }}>Restore</Text>
             </TouchableOpacity>
@@ -97,6 +100,20 @@ const FileItem = ({ file, onOpen, isTrash, onRestore }) => {
           </>
         ) : (
           <>
+            {/* 1. כפתור פרטים (Details) - חדש! */}
+             <TouchableOpacity 
+                style={styles.simpleButton} 
+                onPress={() => {
+                    setIsMenuVisible(false);
+                    setTimeout(() => setIsDetailsVisible(true), 100);
+                }}
+            >
+              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                  <Ionicons name="information-circle-outline" size={24} color="black" style={{ marginRight: 8 }} />
+                  <Text style={{ fontSize: 16 }}>Details</Text>
+              </View>
+            </TouchableOpacity>
+
             {/* Added Star option to menu */}
             <StarFile 
                 file={file} 
@@ -151,6 +168,11 @@ const FileItem = ({ file, onOpen, isTrash, onRestore }) => {
           file={file} 
           visible={isEditModalVisible} 
           onClose={() => setIsEditModalVisible(false)} 
+      />
+      <FileDetailsModal 
+        file={file}
+        visible={isDetailsVisible}
+        onClose={() => setIsDetailsVisible(false)}
       />
     </View>
   );

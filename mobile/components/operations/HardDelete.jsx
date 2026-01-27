@@ -12,7 +12,11 @@ const HardDelete = ({ file, onComplete }) => {
     
     // אנו משתמשים בפונקציה הזו כדי להסיר את הקובץ מרשימת ה-deletedFiles הלוקאלית
     // ברגע שהוא נמחק מהשרת, אנחנו לא צריכים לראות אותו יותר באשפה
-    const { restoreFromFileDeletionList } = useFileActions();
+    const { 
+        restoreFromFileDeletionList, 
+        starredFiles, 
+        toggleStarFile 
+    } = useFileActions();
 
     const handleDeleteForever = async () => {
         setIsLoading(true);
@@ -25,6 +29,11 @@ const HardDelete = ({ file, onComplete }) => {
             if (response && response.ok) {
                 // 1. מעדכנים את הקונטקסט הלוקאלי (מסירים מהרשימה)
                 await restoreFromFileDeletionList(file.id);
+
+                const isStarred = starredFiles.some(f => f.id === file.id);
+                if (isStarred) {
+                    await toggleStarFile(file); 
+                }
                 
                 // 2. מודיעים לשאר האפליקציה (אם צריך רענון)
                 DeviceEventEmitter.emit('somethingChange');

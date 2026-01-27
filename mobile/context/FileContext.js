@@ -1,6 +1,8 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
 import { DeviceEventEmitter } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import authorizedFetch from '../services/authorizedFetch'; // ודאי שהנתיב תקין
+import { API_URL } from '../config';
 
 const FileContext = createContext();
 
@@ -55,6 +57,22 @@ export const FileProvider = ({ children }) => {
         }
     };
 
+    const refreshStarredFiles = async () => {
+        if (!userId) return;
+        try {
+            // מבקשים מהשרת את הרשימה המעודכנת (בלי קבצים שהאבא שלהם נמחק)
+            const response = await authorizedFetch(`${API_URL}/files/starred`);
+            if (response.ok) {
+                const data = await response.json();
+                setStarredFiles(data); // מעדכן את ה-State
+                const { starred } = getKeys(userId);
+                await saveData(starred, data); // מעדכן את ה-Storage
+            }
+        } catch (error) {
+            console.error("Error refreshing starred files:", error);
+        }
+    };
+
     const addToFileDeletionList = async (file) => {
         if (userId === null) return;
         const isAlreadyDeleted = deletedFiles.some(f => f.id === file.id);
@@ -64,6 +82,8 @@ export const FileProvider = ({ children }) => {
         setDeletedFiles(newState);
         const { trash } = getKeys(userId);
         await saveData(trash, newState);
+
+        refreshStarredFiles();
     };
 
     const restoreFromFileDeletionList = async (fileId) => {
@@ -72,6 +92,8 @@ export const FileProvider = ({ children }) => {
         setDeletedFiles(newState);
         const { trash } = getKeys(userId);
         await saveData(trash, newState);
+
+        refreshStarredFiles();
     };
 
     const toggleStarFile = async (file) => {
@@ -88,6 +110,12 @@ export const FileProvider = ({ children }) => {
         setStarredFiles(newState);
         const { starred } = getKeys(userId);
         await saveData(starred, newState);
+
+        try {
+             const endpoint = `${API_URL}/files/${file.id}/star`;
+             const method = isStarred ? 'DELETE' : 'POST';
+             await authorizedFetch(endpoint, { method });
+        } catch (e) { console.error(e); }
     };
 
     const updateFileInStarred = async (fileId, newData) => {
@@ -110,7 +138,8 @@ export const FileProvider = ({ children }) => {
             restoreFromFileDeletionList,
             starredFiles, 
             toggleStarFile,
-            updateFileInStarred
+            updateFileInStarred,
+            refreshStarredFiles
         }}>
             {children}
         </FileContext.Provider>
