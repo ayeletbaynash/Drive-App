@@ -74,7 +74,10 @@ export default function SharedScreen() {
     return allFiles.filter(file => {
         const ownerId = file.user_id || file.owner?._id || file.owner;
         
-        return String(ownerId) !== String(currentUserId);
+        const isNotMine = String(ownerId) !== String(currentUserId);
+        const isNotDeletedByOwner = !file.is_deleted && !file.isDeleted;
+
+        return isNotMine && isNotDeletedByOwner;
     });
   }, [allFiles, currentUserId]);
 
@@ -114,7 +117,7 @@ export default function SharedScreen() {
             message="Files shared with you will appear here."
         />
       ) : (
-        // Empty State
+        // File List
         <FileViewList 
             items={visibleSharedFiles} 
             isTrash={false}
