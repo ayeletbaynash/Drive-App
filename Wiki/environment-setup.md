@@ -47,8 +47,11 @@ We use a single-command deployment strategy to lift the entire environment. This
 After running the command, the terminal will start building the environment and display a lot of logs. This is normal.
 
 Once the process finishes, scroll up slightly in your terminal to find the **QR Code**. 
-* Open the **Expo Go** app on your phone.
-* Scan the QR code to be redirected directly to the **Login page**.
+
+**For Android:** Open the **Expo Go** app on your phone and use the "Scan QR Code" feature within the app.                                                 
+**For iOS (iPhone):** Open your native **Camera app**, point it at the QR code, and tap the notification link that appears to launch the app via Expo Go.
+
+Once scanned, you will be redirected directly to the **Login page**, and you’re ready to go!
   <img width="1752" height="958" alt="image" src="https://github.com/user-attachments/assets/10524bd3-ff7a-45b3-9446-f85f46221c6b" />  
 
 
@@ -56,6 +59,7 @@ Once the process finishes, scroll up slightly in your terminal to find the **QR 
 The web version will be available via your browser.
 * Open your browser and go to: **`http://localhost:3001`**
 * You will be directed to the **Login page** to access your account.
+
 
 
 
