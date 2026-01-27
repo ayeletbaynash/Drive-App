@@ -2,7 +2,7 @@ import { View, Text, TouchableOpacity, DeviceEventEmitter } from 'react-native';
 import { Ionicons, FontAwesome6, AntDesign, FontAwesome } from '@expo/vector-icons';
 import { styles } from '../styles/FileItem.styles';
 import ActionSheet from './ActionSheet'
-import React, { useState } from 'react'
+import React, { useState, useRef } from 'react' 
 import RemoveFile from './operations/Remove'
 import { useFileActions } from '../context/FileContext'
 import StarFile from './operations/StarFile'
@@ -12,12 +12,25 @@ import EditContent from './operations/EditContent'
 import Feather from '@expo/vector-icons/Feather';
 import HardDelete from './operations/HardDelete';
 import FileDetailsModal from './FileDetailsModal';
+import Feather from '@expo/vector-icons/Feather'
+import CopyFile from './operations/CopyFile'
+import ChangeImage from './operations/ChangeImage'
+import Share from './operations/Share';
+import MoveFile from './operations/MoveFile'
+import DownloadFile from './operations/DownloadFile';
 
-const FileItem = ({ file, onOpen, isTrash, onRestore }) => {
+const FileItem = ({ file, onOpen, isTrash, fetchFiles, onRestore }) => {
   const [isMenuVisible, setIsMenuVisible] = useState(false)
   const [isRenameModalVisible, setIsRenameModalVisible] = useState(false)
+ 
+  const [isShareModalVisible, setIsShareModalVisible] = useState(false);
   const [isEditModalVisible, setIsEditModalVisible] = useState(false);
   const [isDetailsVisible, setIsDetailsVisible] = useState(false);
+  const [isMoveModalVisible, setIsMoveModalVisible] = useState(false);
+  
+  // Ref for ChangeImage component
+  const changeImageRef = useRef(null);
+
   const { starredFiles } = useFileActions();
   if (!file) return null;
   const isStarred = starredFiles.some(f => f.id === file.id)
@@ -51,14 +64,12 @@ const FileItem = ({ file, onOpen, isTrash, onRestore }) => {
           </View>
           
           <View style={{ flex: 1 }}>
-            {/* File name and Star icon row */}
             <View style={{ flexDirection: 'row', alignItems: 'center' }}>
               <Text style={styles.fileName} numberOfLines={1}>{file.name}</Text>
               {isStarred && (
                 <FontAwesome name="star" size={14} color="#ffc107" style={{ marginLeft: 6 }} />
               )}
             </View>
-            {/* Modification date below the name */}
             <Text style={styles.dateText}>Modified: {new Date(file.updatedAt).toLocaleDateString('he-IL')} {new Date(file.updatedAt).toLocaleTimeString('he-IL', { hour: '2-digit', minute: '2-digit' })}</Text>
           </View>
         </View>
@@ -129,11 +140,30 @@ const FileItem = ({ file, onOpen, isTrash, onRestore }) => {
             >
               <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                 <MaterialIcons name="drive-file-rename-outline" size={24} color="black" />
-                <Text style={{ fontSize: 16 }}>Rename</Text>
+                <Text style={{ fontSize: 16, marginLeft: 10 }}>Rename</Text>
               </View>
             </TouchableOpacity>
 
-            {/* Edit Content Button */}
+            <CopyFile 
+              file={file} 
+              onAction={() => setIsMenuVisible(false)} 
+              onSuccess={fetchFiles} 
+            />
+
+            
+            <TouchableOpacity 
+                style={styles.simpleButton} 
+                onPress={() => {
+                    setIsMenuVisible(false);
+                    changeImageRef.current?.open(); 
+                }}
+            >
+              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                <FontAwesome name="image" size={22} color="black" />
+                <Text style={{ fontSize: 16, marginLeft: 10 }}>Replace Image</Text>
+              </View>
+            </TouchableOpacity>
+
             <TouchableOpacity 
                 style={styles.simpleButton} 
                 onPress={() => {
@@ -143,14 +173,41 @@ const FileItem = ({ file, onOpen, isTrash, onRestore }) => {
             >
               <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                 <Feather name="edit" size={24} color="black" />
-                <Text style={{ fontSize: 16 }}>Edit Content</Text>
+                <Text style={{ fontSize: 16, marginLeft: 10 }}>Edit Content</Text>
               </View>
             </TouchableOpacity>
-            
-            <TouchableOpacity style={styles.simpleButton} onPress={() => alert('Share')}>
-              <Ionicons name="share-social-outline" size={22} color="black" style={{ marginRight: 8 }} />
-              <Text style={{ fontSize: 16 }}>Share</Text>
+
+            <TouchableOpacity 
+                style={styles.simpleButton} 
+                onPress={() => {
+                    setIsMenuVisible(false);
+                    setIsShareModalVisible(true);
+                }}
+            >
+              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                <Ionicons name="person-add-outline" size={24} color="black" />
+                <Text style={{ fontSize: 16, marginLeft: 10 }}>Share</Text>
+              </View>
             </TouchableOpacity>
+
+            <TouchableOpacity 
+                style={styles.simpleButton} 
+                onPress={() => {
+                    setIsMenuVisible(false);
+                    setIsMoveModalVisible(true);
+                }}
+            >
+              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                <Ionicons name="folder-open-outline" size={24} color="black" />
+                <Text style={{ fontSize: 16, marginLeft: 10 }}>Move to...</Text>
+              </View>
+            </TouchableOpacity>
+
+            <DownloadFile 
+              file={file} 
+              onComplete={() => setIsMenuVisible(false)} 
+            />
+            
             
             <RemoveFile 
               file={file} 
@@ -159,11 +216,20 @@ const FileItem = ({ file, onOpen, isTrash, onRestore }) => {
           </>
         )}
       </ActionSheet>
+
+      {/*modals*/}
       <Rename 
           file={file} 
           visible={isRenameModalVisible} 
           onClose={() => setIsRenameModalVisible(false)} 
       />
+
+      <ChangeImage 
+          ref={changeImageRef} // חיבור ה-Ref
+          file={file} 
+          onAction={() => setIsMenuVisible(false)} 
+      />
+
       <EditContent 
           file={file} 
           visible={isEditModalVisible} 
@@ -174,6 +240,17 @@ const FileItem = ({ file, onOpen, isTrash, onRestore }) => {
         visible={isDetailsVisible}
         onClose={() => setIsDetailsVisible(false)}
       />
+      <Share 
+          file={file} 
+          visible={isShareModalVisible} 
+          onClose={() => setIsShareModalVisible(false)} 
+      />
+      <MoveFile 
+          file={file} 
+          visible={isMoveModalVisible} 
+          onClose={() => setIsMoveModalVisible(false)} 
+      />
+     
     </View>
   );
 };

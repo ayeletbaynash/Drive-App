@@ -8,6 +8,7 @@ import HardDelete from './operations/HardDelete';
 import Rename from './operations/Rename';
 import FileDetailsModal from './FileDetailsModal'; 
 import { useFileActions } from '../context/FileContext';
+import DownloadFolder from './operations/DownloadFolder';
 
 const FolderItem = ({ folder, isTrash, onFolderPress }) => {
   const [isMenuVisible, setIsMenuVisible] = useState(false);
@@ -98,8 +99,13 @@ const FolderItem = ({ folder, isTrash, onFolderPress }) => {
                 }}
             >
               <MaterialIcons name="drive-file-rename-outline" size={24} color="black" style={{ marginRight: 12 }} />
-              <Text style={{ fontSize: 16 }}>Rename</Text>
+                 <Text style={{ fontSize: 16 }}>Rename</Text>
             </TouchableOpacity>
+
+            <DownloadFolder 
+              folder={folder} 
+              onSuccess={() => setIsMenuVisible(false)} 
+            />             
 
             <RemoveFile 
                 file={folder} 
