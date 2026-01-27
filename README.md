@@ -1,4 +1,4 @@
-# Welcome to AweSoMe Drive! 
+# Welcome to AweSoMe Drive!    <img src="https://github.com/user-attachments/assets/2b66d57d-9ba8-4aec-972c-d5aeebb53cf4" width="300" />
 
 **AweSoMe Drive** is a user-friendly app for managing and storing your files. We built this to be a comprehensive file management simulation where you can easily organize your digital life.
 
@@ -45,4 +45,4 @@ Run the following command in your terminal to automatically set your IP environm
 ### Project Documentation
 For a more detailed look at the project, including screenshots of the app in action, and step-by-step guides, check out our local Wiki:
 
-👉 **[View the Wiki Directory](./wiki)**
+👉 **[View the Wiki Directory](./Wiki)**
