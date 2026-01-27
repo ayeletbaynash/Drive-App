@@ -12,6 +12,8 @@ import EditContent from './operations/EditContent'
 import Feather from '@expo/vector-icons/Feather'
 import CopyFile from './operations/CopyFile'
 import ChangeImage from './operations/ChangeImage'
+import Feather from '@expo/vector-icons/Feather';
+import DownloadFile from './operations/DownloadFile';
 
 const FileItem = ({ file, onOpen, isTrash, fetchFiles }) => {
   const [isMenuVisible, setIsMenuVisible] = useState(false)
@@ -130,6 +132,11 @@ const FileItem = ({ file, onOpen, isTrash, fetchFiles }) => {
                 <Text style={{ fontSize: 16, marginLeft: 10 }}>Edit Content</Text>
               </View>
             </TouchableOpacity>
+
+            <DownloadFile 
+              file={file} 
+              onComplete={() => setIsMenuVisible(false)} 
+            />
             
             <TouchableOpacity style={styles.simpleButton} onPress={() => alert('Share')}>
               <View style={{ flexDirection: 'row', alignItems: 'center' }}>

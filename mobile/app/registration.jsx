@@ -18,23 +18,23 @@ const RegisterScreen = () => {
 
         // Validation - just like in WEB 
         if (formData.username.includes(' ')) {
-            setError("Username cannot contain spaces");
+            showError("Username cannot contain spaces");
             return;
         }
 
         if (formData.password !== formData.confirmPassword) {
-            setError("Passwords do not match!");
+            showError("Passwords do not match!");
             return;
         }
 
         if (formData.password.length < 8) {
-            setError("Password must be at least 8 characters long");
+            showError("Password must be at least 8 characters long");
             return;
         }
 
         const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$/;
         if (!passwordRegex.test(formData.password)) {
-            setError("Password must include at least one uppercase letter, one lowercase letter, and one number.");
+            showError("Password must include at least one uppercase letter, one lowercase letter, and one number.");
             return;
         }
 
@@ -51,10 +51,10 @@ const RegisterScreen = () => {
                 alert("Account created successfully!");
                 router.push('/login');
             } else {
-                setError(data.error || "Registration failed");
+                showError(data.error || "Registration failed");
             }
         } catch (err) {
-            setError("Connection failed. Check server and IP address.");
+            showError("Connection failed. Check server and IP address.");
         }
 
     };
@@ -114,6 +114,10 @@ const RegisterScreen = () => {
     // refs for scrolling and input focus
     const scrollRef = useRef();
 
+    const showError = (message) => {
+        setError(message);
+        scrollRef.current?.scrollTo({ y: 0, animated: true });
+    };
 
     return (
         <KeyboardAvoidingView 
