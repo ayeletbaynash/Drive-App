@@ -48,9 +48,12 @@ After running the command, the terminal will start building the environment and 
 Once the process finishes, scroll up slightly in your terminal to find the **QR Code**. 
 * Open the **Expo Go** app on your phone.
 * Scan the QR code to be redirected directly to the **Login page**.
+  <img width="1752" height="958" alt="image" src="https://github.com/user-attachments/assets/10524bd3-ff7a-45b3-9446-f85f46221c6b" />  
+
 
 ### Web Application
 The web version will be available via your browser.
 * Open your browser and go to: **`http://localhost:3001`**
 * You will be directed to the **Login page** to access your account.
+
 
