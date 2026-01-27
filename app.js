@@ -16,7 +16,7 @@ mongoose.connect(connectionString)
 .then(() => console.log('Connected to MongoDB via Mongoose!'))
 .catch(err => console.error('Could not connect to MongoDB...', err));
 
-app.use(cors()); 
+app.use(cors({ origin: true, credentials: true }))
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ limit: '50mb', extended: true }));
 app.use('/api/files/:id/permissions', permissionsRoutes)

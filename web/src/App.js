@@ -20,7 +20,7 @@ import { FileProvider } from './components/FileContext';
           'user-id': userId
       };
 
-      const response = await fetch(url, { ...options, headers });
+      const response = await fetch(url, { ...options, headers, credentials: 'include' });
 
       // if the id/token not there delete them from the webpage and sent the user back to login
       if (response.status === 401) {
