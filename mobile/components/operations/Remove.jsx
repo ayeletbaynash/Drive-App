@@ -16,7 +16,7 @@ const RemoveFile = ({ file, onComplete }) => {
 
   return (
     <TouchableOpacity style={styles.simpleButton} onPress={handleRemove}>
-        <Feather name="trash-2" size={18} color="black" style={{ marginRight: 8 }} />
+        <Feather name="trash-2" size={24} color="black" />
       <Text style={{ fontSize: 16 }}>Remove</Text>
     </TouchableOpacity>
   );

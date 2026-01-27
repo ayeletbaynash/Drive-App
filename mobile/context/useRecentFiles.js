@@ -48,8 +48,8 @@ export const useRecentFiles = () => {
       
       // Sort by updated_at (Newest first)
       const sortedFiles = allFetchedFiles.sort((a, b) => {
-        const dateA = new Date(a.updated_at || a.created_at || 0);
-        const dateB = new Date(b.updated_at || b.created_at || 0);
+        const dateA = new Date(a.updatedAt || a.createdAt || 0);
+        const dateB = new Date(b.updatedAt || b.createdAt || 0);
         
         return dateB - dateA;
       });

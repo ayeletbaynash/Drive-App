@@ -38,5 +38,17 @@ export const styles = StyleSheet.create({
   chevronIcon: {
     opacity: 0.3,
     marginLeft: 8,
+  },
+  menuButton: {
+    padding: 8,
+    borderRadius: 20,
+  },
+  simpleButton: {
+    flexDirection: 'row', 
+    alignItems: 'center',
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    width: '100%', 
+    gap: 12,
   }
 });

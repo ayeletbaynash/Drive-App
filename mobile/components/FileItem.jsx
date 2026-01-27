@@ -34,6 +34,16 @@ const FileItem = ({ file, onOpen, isTrash, fetchFiles, onRestore }) => {
   if (!file) return null;
   const isStarred = starredFiles.some(f => f.id === file.id)
 
+  // Permission Logic
+  const userPermission = file.permission || 'read'; 
+  const isOwner = userPermission === 'owner';
+  const canWrite = isOwner || userPermission === 'write';
+
+  // File Type Checks 
+  const fileName = file.name || "";
+  const isTextFile = fileName.toLowerCase().endsWith('.txt');
+  const isImageFile = /\.(jpg|jpeg|png)$/i.test(fileName);
+
   const getFileIcon = (item) => {
     const fileName = item.name || "";
     const isFolder = item.type === 'folder' || (fileName.length > 0 && !fileName.includes('.'));
@@ -89,7 +99,8 @@ const FileItem = ({ file, onOpen, isTrash, fetchFiles, onRestore }) => {
       >
         {isTrash ? (
           <>
-            {/* Restore Button */}
+            {/* TRASH MODE (Owner Only) */}
+            {isOwner && (
             <TouchableOpacity 
                 style={styles.simpleButton} 
                 onPress={() => {
@@ -97,19 +108,22 @@ const FileItem = ({ file, onOpen, isTrash, fetchFiles, onRestore }) => {
                     if (onRestore) onRestore(); 
                 }}
             >
-              <View style={{ flexDirection: 'row', alignItems: 'center' }}></View>
-              <MaterialIcons name="restore" size={24} color="green" style={{ marginRight: 8 }} />
-              <Text style={{ color: 'green', fontSize: 16 }}>Restore</Text>
+              <MaterialIcons name="restore" size={22} color="green" />
+              <Text style={{ color: 'green', fontSize: 16, fontWeight: '600' }}>Restore</Text>
             </TouchableOpacity>
+            )}
             
             {/* Hard Delete Component */}
+            {isOwner && (
             <HardDelete 
                 file={file} 
                 onComplete={() => setIsMenuVisible(false)}
             />
+            )}
           </>
         ) : (
           <>
+          {/* 1. UNIVERSAL ACTIONS (Everyone) */}
             {/* Details Button */}
              <TouchableOpacity 
                 style={styles.simpleButton} 
@@ -129,65 +143,12 @@ const FileItem = ({ file, onOpen, isTrash, fetchFiles, onRestore }) => {
                 file={file} 
                 onComplete={() => setIsMenuVisible(false)} 
             />
-            
-            <TouchableOpacity 
-                style={styles.simpleButton} 
-                onPress={() => {
-                    setIsMenuVisible(false)
-                    setIsRenameModalVisible(true)
-                }}
-            >
-              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                <MaterialIcons name="drive-file-rename-outline" size={24} color="black" />
-                <Text style={{ fontSize: 16, marginLeft: 10 }}>Rename</Text>
-              </View>
-            </TouchableOpacity>
-
+          
             <CopyFile 
               file={file} 
               onAction={() => setIsMenuVisible(false)} 
               onSuccess={fetchFiles} 
             />
-
-            
-            <TouchableOpacity 
-                style={styles.simpleButton} 
-                onPress={() => {
-                    setIsMenuVisible(false);
-                    changeImageRef.current?.open(); 
-                }}
-            >
-              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                <FontAwesome name="image" size={22} color="black" />
-                <Text style={{ fontSize: 16, marginLeft: 10 }}>Replace Image</Text>
-              </View>
-            </TouchableOpacity>
-
-            <TouchableOpacity 
-                style={styles.simpleButton} 
-                onPress={() => {
-                    setIsMenuVisible(false);
-                    setIsEditModalVisible(true);
-                }}
-            >
-              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                <Feather name="edit" size={24} color="black" />
-                <Text style={{ fontSize: 16, marginLeft: 10 }}>Edit Content</Text>
-              </View>
-            </TouchableOpacity>
-
-            <TouchableOpacity 
-                style={styles.simpleButton} 
-                onPress={() => {
-                    setIsMenuVisible(false);
-                    setIsShareModalVisible(true);
-                }}
-            >
-              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                <Ionicons name="person-add-outline" size={24} color="black" />
-                <Text style={{ fontSize: 16, marginLeft: 10 }}>Share</Text>
-              </View>
-            </TouchableOpacity>
 
             <TouchableOpacity 
                 style={styles.simpleButton} 
@@ -206,12 +167,75 @@ const FileItem = ({ file, onOpen, isTrash, fetchFiles, onRestore }) => {
               file={file} 
               onComplete={() => setIsMenuVisible(false)} 
             />
+
+            {/* 2. WRITE PERMISSIONS (Editor/Owner) */}
+            {canWrite && (
+             <TouchableOpacity 
+                style={styles.simpleButton} 
+                onPress={() => {
+                    setIsMenuVisible(false)
+                    setIsRenameModalVisible(true)
+                }}
+            >
+              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                <MaterialIcons name="drive-file-rename-outline" size={24} color="black" />
+                <Text style={{ fontSize: 16, marginLeft: 10 }}>Rename</Text>
+              </View>
+            </TouchableOpacity>
+            )}
+
+            {canWrite && isTextFile && (
+            <TouchableOpacity 
+                style={styles.simpleButton} 
+                onPress={() => {
+                    setIsMenuVisible(false);
+                    changeImageRef.current?.open(); 
+                }}
+            >
+              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                <FontAwesome name="image" size={22} color="black" />
+                <Text style={{ fontSize: 16, marginLeft: 10 }}>Replace Image</Text>
+              </View>
+            </TouchableOpacity>
+            )}
+
+            {canWrite && isTextFile && (
+            <TouchableOpacity 
+                style={styles.simpleButton} 
+                onPress={() => {
+                    setIsMenuVisible(false);
+                    setIsEditModalVisible(true);
+                }}
+            >
+              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                <Feather name="edit" size={24} color="black" />
+                <Text style={{ fontSize: 16, marginLeft: 10 }}>Edit Content</Text>
+              </View>
+            </TouchableOpacity>
+            )}
+
+            {/* 3. OWNER PERMISSIONS */}
+            {isOwner && (
+             <TouchableOpacity 
+                style={styles.simpleButton} 
+                onPress={() => {
+                    setIsMenuVisible(false);
+                    setIsShareModalVisible(true);
+                }}
+            >
+              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                <Ionicons name="person-add-outline" size={24} color="black" />
+                <Text style={{ fontSize: 16, marginLeft: 10 }}>Share</Text>
+              </View>
+            </TouchableOpacity>
+            )}
             
-            
+            {isOwner && (
             <RemoveFile 
               file={file} 
               onComplete={() => setIsMenuVisible(false)}
             />
+            )}
           </>
         )}
       </ActionSheet>
@@ -224,7 +248,7 @@ const FileItem = ({ file, onOpen, isTrash, fetchFiles, onRestore }) => {
       />
 
       <ChangeImage 
-          ref={changeImageRef} // חיבור ה-Ref
+          ref={changeImageRef} 
           file={file} 
           onAction={() => setIsMenuVisible(false)} 
       />
