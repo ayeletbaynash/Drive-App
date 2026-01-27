@@ -14,6 +14,7 @@ import AntDesign from '@expo/vector-icons/AntDesign';
 import FileUpload from '../../components/FileUpload';
 import Entypo from '@expo/vector-icons/Entypo';
 import CameraUpload from '../../components/operations/CameraUpload';
+import { Colors } from '../../constants/theme'; 
 
 
 export default function TabsLayout() {

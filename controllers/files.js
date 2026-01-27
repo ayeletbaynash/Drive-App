@@ -313,7 +313,7 @@ exports.patchFile = async (req, res) => {
             }
         }
 
-        if(data.name || data.parent_id || data.content !== undefined){
+        if(data.name || data.parent_id !== undefined || data.content !== undefined){
             // Service handles updatedAt automatically via Mongoose timestamps
             const updated = await fileService.patchFile(fileId, data)
             if (!updated) {

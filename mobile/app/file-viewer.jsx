@@ -45,7 +45,7 @@ export default function FileViewer() {
         
         const base64Code = base64Data.replace(/^data:application\/pdf;base64,/, "");
 
-        // שימוש ב-FileSystem מה-legacy import
+        // using FileSystem to write the PDF file
         await FileSystem.writeAsStringAsync(fileUri, base64Code, {
             encoding: 'base64', 
         });
@@ -101,25 +101,34 @@ export default function FileViewer() {
         }
 
         // 3. txt
-        try {
-            let displayText = content;
-            if (content.includes(',')) displayText = content.split(',')[1];
-            
-            // Decode Base64 to text
-            try {
-                displayText = atob(displayText);
-            } catch(e) {
-                // If decoding fails, keep original
-            }
+        if (fileName.endsWith('.txt')) {
+        let displayText = content;
 
-            return (
-                <ScrollView style={styles.textContainer}>
-                    <Text style={styles.textContent}>{displayText}</Text>
-                </ScrollView>
-            );
-        } catch (e) {
-            return <Text style={styles.textContent}>{content}</Text>;
+        // check if file was uploaded as Base64 or created as plain text
+        if (content.startsWith('data:text/plain;base64,')) {
+            try {
+                const base64Part = content.split(',')[1];
+                displayText = atob(base64Part);
+            } catch (e) {
+                console.error("Base64 decode failed", e);
+            }
+        } 
+        // we check if there are no spaces and it looks like encoded content
+        else if (!content.includes(' ') && content.length > 20) {
+            try {
+                displayText = atob(content);
+            } catch (e) {
+                // if failed, it's probably just a long text without spaces, so we keep it as is
+                displayText = content;
+            }
         }
+
+        return (
+            <ScrollView style={styles.textContainer}>
+                <Text style={styles.textContent}>{displayText}</Text>
+            </ScrollView>
+        );
+    }
     };
 
     return (
