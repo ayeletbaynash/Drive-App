@@ -24,6 +24,9 @@ Before running the system, the mobile client must know the host machine's local 
 * **On Linux / WSL:** Run `ifconfig` or `hostname -I` in the terminal and look for the `inet` address.
 2. Update the configuration file located at `mobile/config.js`  with this IP.
 
+
+![WhatsApp Image 2026-01-27 at 22 24 11](https://github.com/user-attachments/assets/a41c27d5-6a60-4a79-a5a1-06790dcd47c4)  
+
 ## 4. Execution Commands
 We use a single-command deployment strategy to lift the entire environment. This command sets the environment variables and executes `docker-compose`.
 
@@ -36,8 +39,9 @@ We use a single-command deployment strategy to lift the entire environment. This
 * **For Linux / WSL / macOS (Bash):**
     ```bash
     export MY_IP=$(hostname -I | awk '{print $1}'); echo "Selected Network IP: $MY_IP"; docker-compose up --build
-    ```
-
+    ```  
+<img width="2312" height="716" alt="image" src="https://github.com/user-attachments/assets/a0f8918e-252d-43fd-b893-486b6d00de40" />
+  
 ## 5. Accessing the Applications
 After running the command, the terminal will start building the environment and display a lot of logs. This is normal.
 
@@ -49,3 +53,4 @@ Once the process finishes, scroll up slightly in your terminal to find the **QR 
 The web version will be available via your browser.
 * Open your browser and go to: **`http://localhost:3001`**
 * You will be directed to the **Login page** to access your account.
+
