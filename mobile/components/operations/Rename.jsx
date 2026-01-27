@@ -1,14 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, TouchableOpacity, Modal, DeviceEventEmitter, Alert } from 'react-native';
 import authorizedFetch from '../../services/authorizedFetch';
-import styles from '../../styles/CreateFileStyles'
+import createCreateFileStyles from '../../styles/CreateFileStyles'
 import { API_URL } from '../../config';
 import { useFileActions } from '../../context/FileContext';
+import { useAppTheme } from '../../context/ThemeContext';
 
 const Rename = ({ file, visible, onClose }) => {
     const [nameWithoutExt, setNameWithoutExt] = useState("");
     const [extension, setExtension] = useState("");
     const { updateFileInStarred } = useFileActions();
+    const { theme } = useAppTheme();
+    const styles = createCreateFileStyles(theme);
 
     // Split name and extension when modal opens
     useEffect(() => {
@@ -63,27 +66,28 @@ const Rename = ({ file, visible, onClose }) => {
             animationType="fade"
             onRequestClose={onClose}
         >
-            <View style={styles.modalOverlay}>
-                <View style={styles.modalContent}>
-                    <Text style={styles.modalTitle}>Rename File</Text>
+            <View style={[styles.modalOverlay, { backgroundColor: 'rgba(0,0,0,0.5)' }]}>
+                <View style={[styles.modalContent, { backgroundColor: theme.surface }]}>
+                    <Text style={[styles.modalTitle, { color: theme.textMain }]}>Rename File</Text>
                     
                     <View style={styles.inputGroup}>
                         <TextInput 
-                            style={styles.input}
+                            style={[styles.input, { color: theme.textMain, borderColor: theme.border, backgroundColor: theme.rowBackground }]}
                             value={nameWithoutExt} 
                             onChangeText={setNameWithoutExt} 
                             placeholder="File name" 
+                            placeholderTextColor={theme.placeholder}
                             autoFocus 
                         />
-                        <Text style={styles.extension}>{extension}</Text>
+                        <Text style={[styles.extension, { color: theme.textMuted }]}>{extension}</Text>
                     </View>
 
                     <View style={styles.modalActions}>
-                        <TouchableOpacity style={styles.btnSecondary} onPress={onClose}>
-                            <Text style={styles.btnTextSecondary}>Cancel</Text>
+                        <TouchableOpacity style={[styles.btnSecondary, { backgroundColor: theme.rowHover }]} onPress={onClose}>
+                            <Text style={[styles.btnTextSecondary, { color: theme.textMain }]}>Cancel</Text>
                         </TouchableOpacity>
-                        <TouchableOpacity style={styles.btnPrimary} onPress={handleRename}>
-                            <Text style={styles.btnTextPrimary}>Save</Text>
+                        <TouchableOpacity style={[styles.btnPrimary, { backgroundColor: theme.primary }]} onPress={handleRename}>
+                            <Text style={[styles.btnTextPrimary, { color: theme.white }]}>Save</Text>
                         </TouchableOpacity>
                     </View>
                 </View>

@@ -4,7 +4,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import EmptyState from '../../components/EmptyState';
 import FileViewList from '../../components/FileViewList';
-import { layoutStyles } from '../../styles/layoutStyles'; 
+import { createLayoutStyles } from '../../styles/layoutStyles';
+import { useAppTheme } from '../../context/ThemeContext'; 
 import { useFileActions } from '../../context/FileContext';
 import authorizedFetch from '../../services/authorizedFetch';
 import { API_URL } from '../../config';
@@ -14,6 +15,8 @@ import { useFileFilter } from '../../context/useFileFilter';
 export default function SharedScreen() {
   const router = useRouter();
   const { folderId } = useLocalSearchParams();
+  const { theme } = useAppTheme();
+  const layoutStyles = useMemo(() => createLayoutStyles(theme), [theme]);
   
   const [allFiles, setAllFiles] = useState([]);
   const [isLoading, setIsLoading] = useState(true);

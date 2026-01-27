@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, TouchableOpacity, Modal, DeviceEventEmitter, Alert, ActivityIndicator } from 'react-native';
 import authorizedFetch from '../../services/authorizedFetch';
-import styles from '../../styles/CreateFileStyles';
+import createCreateFileStyles from '../../styles/CreateFileStyles';
 import { API_URL } from '../../config';
-import { Colors } from '../../constants/theme'; 
+import { useAppTheme } from '../../context/ThemeContext';
 
 const EditContent = ({ file, visible, onClose }) => {
     const [content, setContent] = useState("");
     const [isLoading, setIsLoading] = useState(false);
+    const { theme } = useAppTheme();
+    const styles = createCreateFileStyles(theme);
 
     const fetchFileContent = async () => {
         setIsLoading(true);
@@ -54,13 +56,13 @@ const EditContent = ({ file, visible, onClose }) => {
 
     return (
         <Modal visible={visible} transparent={true} animationType="fade" onRequestClose={onClose}>
-            <View style={styles.modalOverlay}>
-                <View style={[styles.modalContent, { width: '90%', maxHeight: '80%' }]}>
-                    <Text style={styles.modalTitle}>Edit "{file?.name}"</Text>
+            <View style={[styles.modalOverlay, { backgroundColor: 'rgba(0,0,0,0.5)' }]}>
+                <View style={[styles.modalContent, { width: '90%', maxHeight: '80%', backgroundColor: theme.surface }]}>
+                    <Text style={[styles.modalTitle, { color: theme.textMain }]}>Edit "{file?.name}"</Text>
 
                     {isLoading ? (
                         <View style={{ padding: 50, alignItems: 'center' }}>
-                            <ActivityIndicator size="large" color= {Colors.light.primary} />
+                            <ActivityIndicator size="large" color={theme.primary} />
                         </View>
                     ) : (
                         <View style={{ width: '100%' }}>
@@ -71,7 +73,10 @@ const EditContent = ({ file, visible, onClose }) => {
                                     { 
                                         height: 250, 
                                         textAlignVertical: 'top',
-                                        marginBottom: 20 
+                                        marginBottom: 20,
+                                        color: theme.textMain,
+                                        borderColor: theme.border,
+                                        backgroundColor: theme.rowBackground
                                     }
                                 ]}
                                 value={content} 
@@ -79,14 +84,15 @@ const EditContent = ({ file, visible, onClose }) => {
                                 multiline={true}
                                 scrollEnabled={true}
                                 autoFocus
+                                placeholderTextColor={theme.placeholder}
                             />
 
                             <View style={[styles.modalActions, { marginTop: 0 }]}>
-                                <TouchableOpacity style={styles.btnSecondary} onPress={onClose}>
-                                    <Text style={styles.btnTextSecondary}>Cancel</Text>
+                                <TouchableOpacity style={[styles.btnSecondary, { backgroundColor: theme.rowHover }]} onPress={onClose}>
+                                    <Text style={[styles.btnTextSecondary, { color: theme.textMain }]}>Cancel</Text>
                                 </TouchableOpacity>
-                                <TouchableOpacity style={styles.btnPrimary} onPress={handleEditContent}>
-                                    <Text style={styles.btnTextPrimary}>Save</Text>
+                                <TouchableOpacity style={[styles.btnPrimary, { backgroundColor: theme.primary }]} onPress={handleEditContent}>
+                                    <Text style={[styles.btnTextPrimary, { color: theme.white }]}>Save</Text>
                                 </TouchableOpacity>
                             </View>
                         </View>

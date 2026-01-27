@@ -2,14 +2,16 @@ import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, ActivityIndicator, Alert, Modal, DeviceEventEmitter } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { API_URL } from '../../config';
-import { theme } from '../../constants/theme'; 
-import styles from '../../styles/CreateFileStyles'; 
+import createCreateFileStyles from '../../styles/CreateFileStyles'; 
 import FontAwesome from '@expo/vector-icons/FontAwesome';
+import { useAppTheme } from '../../context/ThemeContext';
 
 const CopyFile = ({ file, onAction, onSuccess }) => {
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [isCopying, setIsCopying] = useState(false);
     const [newName, setNewName] = useState('');
+    const { theme } = useAppTheme();
+    const styles = createCreateFileStyles(theme);
 
     // make the copy modal visible and suggest a name
     const openCopyModal = () => {
@@ -88,16 +90,16 @@ const CopyFile = ({ file, onAction, onSuccess }) => {
                 style={{ 
                     flexDirection: 'row', 
                     alignItems: 'center', 
-                    paddingVertical: theme.spacing.md,
-                    paddingHorizontal: theme.spacing.md
+                    paddingVertical: theme.spacing?.md || 16,
+                    paddingHorizontal: theme.spacing?.md || 16
                 }}
             >
                 {/* icon */}
-                <FontAwesome name="copy" size={20} color={theme.colors.textMain} />
+                <FontAwesome name="copy" size={20} color={theme.textMain} />
 
                 <Text style={{ 
-                    color: theme.colors.textMain, 
-                    fontSize: theme.fontSize.md,
+                    color: theme.textMain, 
+                    fontSize: theme.fontSize?.md || 16,
                     marginLeft: 10 
                 }}>
                     Make a Copy
@@ -106,42 +108,42 @@ const CopyFile = ({ file, onAction, onSuccess }) => {
 
             {/* Modal for entering the copy name */}
             <Modal visible={isModalVisible} transparent animationType="fade">
-                <View style={styles.modalOverlay}>
-                    <View style={styles.modalContent}>
-                        <Text style={styles.modalTitle}>Copy File</Text>
+                <View style={[styles.modalOverlay, { backgroundColor: 'rgba(0,0,0,0.5)' }]}>
+                    <View style={[styles.modalContent, { backgroundColor: theme.surface }]}>
+                        <Text style={[styles.modalTitle, { color: theme.textMain }]}>Copy File</Text>
 
                         <View style={styles.inputGroup}>
                             <TextInput
-                                style={styles.input}
+                                style={[styles.input, { color: theme.textMain, borderColor: theme.border }]}
                                 value={newName}
                                 onChangeText={setNewName}
                                 placeholder="New name"
-                                placeholderTextColor={theme.colors.textMuted}
+                                placeholderTextColor={theme.placeholder}
                                 autoFocus
                             />
                             {file.name.includes('.') && (
-                                <Text style={styles.extension}>.{file.name.split('.').pop()}</Text>
+                                <Text style={[styles.extension, { color: theme.textMuted }]}>.{file.name.split('.').pop()}</Text>
                             )}
                         </View>
 
                         <View style={styles.modalActions}>
                             <TouchableOpacity 
-                                style={styles.btnSecondary} 
+                                style={[styles.btnSecondary, { backgroundColor: theme.rowHover }]} 
                                 onPress={() => setIsModalVisible(false)}
                                 disabled={isCopying}
                             >
-                                <Text style={styles.btnTextSecondary}>Cancel</Text>
+                                <Text style={[styles.btnTextSecondary, { color: theme.textMain }]}>Cancel</Text>
                             </TouchableOpacity>
 
                             <TouchableOpacity 
-                                style={styles.btnPrimary} 
+                                style={[styles.btnPrimary, { backgroundColor: theme.primary }]} 
                                 onPress={handleCopy}
                                 disabled={isCopying || !newName.trim()}
                             >
                                 {isCopying ? (
-                                    <ActivityIndicator color={theme.colors.white} />
+                                    <ActivityIndicator color={theme.white} />
                                 ) : (
-                                    <Text style={styles.btnTextPrimary}>Copy</Text>
+                                    <Text style={[styles.btnTextPrimary, { color: theme.white }]}>Copy</Text>
                                 )}
                             </TouchableOpacity>
                         </View>

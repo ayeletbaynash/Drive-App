@@ -3,12 +3,15 @@ import { View, Text, TouchableOpacity, Modal, ActivityIndicator, DeviceEventEmit
 import { Ionicons } from '@expo/vector-icons';
 import authorizedFetch from '../../services/authorizedFetch';
 import { useFileActions } from '../../context/FileContext';
-import { hardDeleteStyles as styles } from '../../styles/hardDeleteStyles';
+import { createHardDeleteStyles } from '../../styles/hardDeleteStyles';
 import { API_URL } from '../../config';
+import { useAppTheme } from '../../context/ThemeContext';
 
 const HardDelete = ({ file, onComplete }) => {
     const [isModalVisible, setModalVisible] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
+    const { theme } = useAppTheme();
+    const styles = createHardDeleteStyles(theme);
     
     // Using these functions to remove the file from local context lists (e.g., trash bin)
     const { 
@@ -58,8 +61,8 @@ const HardDelete = ({ file, onComplete }) => {
                 style={styles.menuButton} 
                 onPress={() => setModalVisible(true)}
             >
-                <Ionicons name="trash-bin" size={22} color="#dc3545" />
-                <Text style={styles.menuText}>Delete Forever</Text>
+                <Ionicons name="trash-bin" size={22} color={theme.error} />
+                <Text style={[styles.menuText, { color: theme.error }]}>Delete Forever</Text>
             </TouchableOpacity>
 
             {/* Confirmation Modal */}
@@ -74,15 +77,15 @@ const HardDelete = ({ file, onComplete }) => {
                         
                         {/* Header */}
                         <View style={styles.headerContainer}>
-                            <Ionicons name="warning" size={40} color="#dc3545" />
-                            <Text style={styles.title}>Delete Forever?</Text>
+                            <Ionicons name="warning" size={40} color={theme.error} />
+                            <Text style={[styles.title, { color: theme.textMain }]}>Delete Forever?</Text>
                         </View>
 
                         {/* Body Text */}
-                        <Text style={styles.bodyText}>
+                        <Text style={[styles.bodyText, { color: theme.textMain }]}>
                             Are you sure you want to permanently delete <Text style={styles.bold}>"{file.name}"</Text>?
                         </Text>
-                        <Text style={styles.warningText}>
+                        <Text style={[styles.warningText, { color: theme.error }]}>
                             This action cannot be undone.
                         </Text>
 

@@ -1,13 +1,16 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { View, Text, Modal, Pressable, ScrollView, ActivityIndicator } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import authorizedFetch from '../services/authorizedFetch';
 import { API_URL } from '../config';
-import { styles } from '../styles/FileDetailsModal.styles';
+import { createFileDetailsModalStyles } from '../styles/FileDetailsModal.styles';
+import { useAppTheme } from '../context/ThemeContext';
 
 const FileDetailsModal = ({ file, visible, onClose }) => {
     const [permissions, setPermissions] = useState([]);
     const [loading, setLoading] = useState(false);
+    const { theme } = useAppTheme();
+    const styles = useMemo(() => createFileDetailsModalStyles(theme), [theme]);
 
     // Helper Functions
     const formatSize = (bytes) => {
@@ -53,6 +56,28 @@ const FileDetailsModal = ({ file, visible, onClose }) => {
     const collaborators = permissions.filter(p => p.permission !== 'owner');
     const isFolder = file?.type === 'folder';
 
+    // Small Helper Components (moved inside to access styles)
+    const InfoRow = ({ label, value }) => (
+        <View style={styles.row}>
+            <Text style={styles.label}>{label}</Text>
+            <Text style={styles.value} numberOfLines={1}>{value}</Text>
+        </View>
+    );
+
+    const UserRow = ({ username, role, isOwner }) => (
+        <View style={styles.userRow}>
+            <View style={[styles.avatar, isOwner ? styles.avatarOwner : styles.avatarCollab]}>
+                <Text style={styles.avatarText}>
+                    {username ? username.charAt(0).toUpperCase() : '?'}
+                </Text>
+            </View>
+            <View>
+                <Text style={styles.username}>{username}</Text>
+                <Text style={styles.role}>{role}</Text>
+            </View>
+        </View>
+    );
+
     return (
         <Modal
             visible={visible}
@@ -74,7 +99,7 @@ const FileDetailsModal = ({ file, visible, onClose }) => {
                         <Ionicons 
                             name={isFolder ? "folder" : "document-text"} 
                             size={48} 
-                            color={isFolder ? "#FFCA28" : "#146841"} 
+                            color={isFolder ? theme.folderIcon : theme.primary} 
                         />
                         <Text style={styles.title} numberOfLines={2}>{file?.name}</Text>
                     </View>
@@ -103,7 +128,7 @@ const FileDetailsModal = ({ file, visible, onClose }) => {
                             )}
 
                             {loading ? (
-                                <ActivityIndicator size="small" color="#000" style={{ marginTop: 10 }} />
+                                <ActivityIndicator size="small" color={theme.textMain} style={{ marginTop: 10 }} />
                             ) : (
                                 collaborators.map((p, index) => (
                                     <UserRow 
@@ -125,28 +150,5 @@ const FileDetailsModal = ({ file, visible, onClose }) => {
         </Modal>
     );
 };
-
-// Small Helper Components
-
-const InfoRow = ({ label, value }) => (
-    <View style={styles.row}>
-        <Text style={styles.label}>{label}</Text>
-        <Text style={styles.value} numberOfLines={1}>{value}</Text>
-    </View>
-);
-
-const UserRow = ({ username, role, isOwner }) => (
-    <View style={styles.userRow}>
-        <View style={[styles.avatar, isOwner ? styles.avatarOwner : styles.avatarCollab]}>
-            <Text style={styles.avatarText}>
-                {username ? username.charAt(0).toUpperCase() : '?'}
-            </Text>
-        </View>
-        <View>
-            <Text style={styles.username}>{username}</Text>
-            <Text style={styles.role}>{role}</Text>
-        </View>
-    </View>
-);
 
 export default FileDetailsModal;

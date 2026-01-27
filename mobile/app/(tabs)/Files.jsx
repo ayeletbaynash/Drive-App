@@ -4,7 +4,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import EmptyState from '../../components/EmptyState';
 import FileViewList from '../../components/FileViewList';
-import { layoutStyles } from '../../styles/layoutStyles'; 
+import { createLayoutStyles } from '../../styles/layoutStyles';
+import { useAppTheme } from '../../context/ThemeContext'; 
 import authorizedFetch from '../../services/authorizedFetch';
 import { API_URL } from '../../config';
 import { Colors } from '../../constants/theme'; 
@@ -12,6 +13,10 @@ import { useFileFilter } from '../../context/useFileFilter';
 
 export default function FilesScreen() {
   const router = useRouter();
+  const { theme } = useAppTheme();
+  const layoutStyles = useMemo(() => createLayoutStyles(theme), [theme]);
+  
+  // 1. Local State
   const { folderId } = useLocalSearchParams();  
   // Local State
   const [allFiles, setAllFiles] = useState([]);

@@ -1,15 +1,18 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { TouchableOpacity, Image } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import authorizedFetch from '../services/authorizedFetch'; 
 import ProfileModal from './ProfileModal';
-import { profileStyles } from '../styles/Profile.styles';
+import { createProfileStyles } from '../styles/Profile.styles';
 import { API_URL } from '../config';
+import { useAppTheme } from '../context/ThemeContext';
 
 export default function ProfileButton() {
   const [modalVisible, setModalVisible] = useState(false);
   const [user, setUser] = useState(null);
+  const { theme } = useAppTheme();
+  const styles = useMemo(() => createProfileStyles(theme), [theme]);
 
   useEffect(() => {
     const loadUserData = async () => {
@@ -63,11 +66,11 @@ export default function ProfileButton() {
 
   return (
     <>
-      <TouchableOpacity style={profileStyles.buttonContainer} onPress={() => setModalVisible(true)}>
+      <TouchableOpacity style={styles.buttonContainer} onPress={() => setModalVisible(true)}>
         {imageUri ? (
-          <Image source={{ uri: imageUri }} style={profileStyles.buttonImage} />
+          <Image source={{ uri: imageUri }} style={styles.buttonImage} />
         ) : (
-          <Ionicons name="person-circle" size={34} color="#5f6368" />
+          <Ionicons name="person-circle" size={34} color={theme.textMuted} />
         )}
       </TouchableOpacity>
 

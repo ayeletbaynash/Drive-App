@@ -1,13 +1,16 @@
 import React from 'react';
 import { TouchableOpacity, Text, Alert } from 'react-native';
 import * as Sharing from 'expo-sharing';
-import { styles } from '../../styles/FileItem.styles'; 
+import { getFileItemStyles } from '../../styles/FileItem.styles'; 
 import { API_URL } from '../../config';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as FileSystem from 'expo-file-system/legacy';
 import { Feather } from '@expo/vector-icons';
+import { useAppTheme } from '../../context/ThemeContext';
 
 const DownloadFile = ({ file, onComplete }) => {
+    const { theme } = useAppTheme();
+    const styles = getFileItemStyles(theme);
 
     // extract file extension from data URI
 const getExtensionFromMime = (dataUri) => {
@@ -84,8 +87,8 @@ const getExtensionFromMime = (dataUri) => {
 
     return (
         <TouchableOpacity style={styles.simpleButton} onPress={handleDownload}>
-            <Feather name="download" size={24} color="black" />
-            <Text style={{ fontSize: 16 }}>Download</Text>
+            <Feather name="download" size={24} color={theme.textMain} />
+            <Text style={{ color: theme.textMain, fontSize: 16 }}>Download</Text>
         </TouchableOpacity>
     );
 };

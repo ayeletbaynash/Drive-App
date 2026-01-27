@@ -1,10 +1,12 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { useRouter } from 'expo-router';
-import { theme } from '../constants/theme';
+import { useAppTheme } from '../context/ThemeContext';
 
 const AppLogo = ({ scale = 1 }) => {
     const router = useRouter();
+    const { theme } = useAppTheme();
+    const styles = createAppLogoStyles(theme);
 
     return (
         <TouchableOpacity onPress={() => router.push('/')} style={[styles.container, { transform: [{ scale }] }]}>
@@ -35,7 +37,7 @@ const AppLogo = ({ scale = 1 }) => {
     );
 };
 
-const styles = StyleSheet.create({
+const createAppLogoStyles = (theme) => StyleSheet.create({
     container: {
         flexDirection: 'row',
         alignItems: 'center',
@@ -49,7 +51,7 @@ const styles = StyleSheet.create({
         position: 'relative',
     },
     cloudCircle: {
-        backgroundColor: '#277d3f',
+        backgroundColor: theme.primary,
         position: 'absolute',
     },
     centerCircle: {
@@ -76,7 +78,7 @@ const styles = StyleSheet.create({
     // the flat base that closes the holes between the circles
     cloudBase: {
         position: 'absolute',
-        backgroundColor: '#277d3f',
+        backgroundColor: theme.primary,
         height: 18,
         width: 26,
         bottom: 5,
@@ -93,7 +95,7 @@ const styles = StyleSheet.create({
         zIndex: 2,
     },
     arrow: {
-        color: 'white',
+        color: theme.white,
         fontSize: 18,
         fontWeight: 'bold',
     },
@@ -102,13 +104,13 @@ const styles = StyleSheet.create({
     },
     brandText: {
         fontSize: 22,
-        color: theme.colors.textMain,
+        color: theme.textMain,
     },
     bold: {
         fontWeight: 'bold',
     },
     muted: {
-        color: '#666',
+        color: theme.textMuted,
     },
 });
 

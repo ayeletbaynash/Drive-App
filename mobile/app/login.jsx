@@ -1,16 +1,19 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { View, Text, TextInput, TouchableOpacity, ScrollView, Alert } from 'react-native';
 //import { AsyncStorage } from 'react-native'; // for storing token and user info
 import { API_URL } from '../config';
 import AppLogo from '../components/AppLogo';
-import { styles } from '../styles/authentication'; // shared styles file
+import { createAuthenticationStyles } from '../styles/authentication'; // shared styles file
 import { router } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useFileActions } from '../context/FileContext';
+import { useAppTheme } from '../context/ThemeContext';
 
 
 const LoginScreen = ({ navigation, onLogin }) => {
-    const { setUserId } = useFileActions()
+    const { setUserId } = useFileActions();
+    const { theme } = useAppTheme();
+    const styles = useMemo(() => createAuthenticationStyles(theme), [theme]);
     // State to manage input fields (Matches Web structure)
     const [formData, setFormData] = useState({
         username: '',
@@ -81,7 +84,7 @@ const LoginScreen = ({ navigation, onLogin }) => {
                 <TextInput 
                     style={styles.input} 
                     placeholder="User Name" 
-                    placeholderTextColor="#999"
+                    placeholderTextColor={theme.placeholder}
                     onChangeText={(val) => setFormData({...formData, username: val})}
                     autoCapitalize="none"
                 />
@@ -89,7 +92,7 @@ const LoginScreen = ({ navigation, onLogin }) => {
                 <TextInput 
                     style={styles.input} 
                     placeholder="Password" 
-                    placeholderTextColor="#999"
+                    placeholderTextColor={theme.placeholder}
                     secureTextEntry={true} 
                     onChangeText={(val) => setFormData({...formData, password: val})}
                 />

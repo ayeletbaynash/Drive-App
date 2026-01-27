@@ -1,9 +1,8 @@
 import { StyleSheet, Dimensions } from 'react-native';
-import { theme } from '../constants/theme'; 
 
 const { width } = Dimensions.get('window');
 
-export const hardDeleteStyles = StyleSheet.create({
+export const createHardDeleteStyles = (theme) => StyleSheet.create({
   menuButton: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -13,7 +12,7 @@ export const hardDeleteStyles = StyleSheet.create({
   },
   menuText: {
     fontSize: 16,
-    color: '#dc3545', 
+    color: theme.error, 
     marginLeft: 10,
     fontWeight: '600',
   },
@@ -26,7 +25,7 @@ export const hardDeleteStyles = StyleSheet.create({
   },
   modalContent: {
     width: width * 0.85,
-    backgroundColor: 'white',
+    backgroundColor: theme.surface,
     borderRadius: 20,
     padding: 24,
     elevation: 5,
@@ -43,20 +42,20 @@ export const hardDeleteStyles = StyleSheet.create({
   title: {
     fontSize: 22,
     fontWeight: 'bold',
-    color: '#dc3545', 
+    color: theme.error, 
     marginTop: 10,
   },
   
   bodyText: {
     fontSize: 16,
-    color: '#333',
+    color: theme.textMain,
     textAlign: 'center',
     marginBottom: 8,
     lineHeight: 22,
   },
   warningText: {
     fontSize: 14,
-    color: '#666',
+    color: theme.textMuted,
     textAlign: 'center',
     marginBottom: 24,
     fontStyle: 'italic',
@@ -72,25 +71,25 @@ export const hardDeleteStyles = StyleSheet.create({
   },
   btnCancel: {
     flex: 1,
-    backgroundColor: '#f1f1f1',
+    backgroundColor: theme.rowHover,
     paddingVertical: 12,
     borderRadius: 10,
     alignItems: 'center',
   },
   btnDelete: {
     flex: 1,
-    backgroundColor: '#dc3545', 
+    backgroundColor: theme.error, 
     paddingVertical: 12,
     borderRadius: 10,
     alignItems: 'center',
   },
   btnTextCancel: {
-    color: '#333',
+    color: theme.textMain,
     fontSize: 16,
     fontWeight: '600',
   },
   btnTextDelete: {
-    color: 'white',
+    color: theme.white,
     fontSize: 16,
     fontWeight: 'bold',
   },

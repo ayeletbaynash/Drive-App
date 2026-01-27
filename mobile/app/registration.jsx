@@ -1,12 +1,15 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useMemo } from 'react';
 import { View, Text, TextInput, TouchableOpacity, Image, ScrollView, KeyboardAvoidingView, Platform } from 'react-native';
 import { API_URL } from '../config';
 import * as ImagePicker from 'expo-image-picker'; // for image upload
 import AppLogo from '../components/AppLogo';
-import { styles } from '../styles/authentication';
+import { createAuthenticationStyles } from '../styles/authentication';
+import { useAppTheme } from '../context/ThemeContext';
 import { router } from 'expo-router';
 
 const RegisterScreen = () => {
+    const { theme } = useAppTheme();
+    const styles = useMemo(() => createAuthenticationStyles(theme), [theme]);
     const [formData, setFormData] = useState({
         firstName: '', username: '', password: '', confirmPassword: '', emailAddress: '', image: ''
     });

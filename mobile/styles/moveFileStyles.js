@@ -1,9 +1,8 @@
 import { StyleSheet, Dimensions } from 'react-native';
-import { Colors } from '../constants/theme';
 
 const { height } = Dimensions.get('window');
 
-export const moveFileStyles = StyleSheet.create({
+export const createMoveFileStyles = (theme) => StyleSheet.create({
   overlay: {
     flex: 1,
     backgroundColor: 'rgba(0, 0, 0, 0.6)',
@@ -12,7 +11,7 @@ export const moveFileStyles = StyleSheet.create({
     padding: 20,
   },
   modalContent: {
-    backgroundColor: 'white',
+    backgroundColor: theme.surface,
     borderRadius: 20,
     width: '100%',
     maxHeight: height * 0.7,
@@ -26,7 +25,7 @@ export const moveFileStyles = StyleSheet.create({
   title: {
     fontSize: 20,
     fontWeight: '700',
-    color: '#1A1A1A',
+    color: theme.textMain,
     marginBottom: 20,
     textAlign: 'center',
   },
@@ -36,13 +35,13 @@ export const moveFileStyles = StyleSheet.create({
   },
   loadingText: {
     marginTop: 12,
-    color: '#666',
+    color: theme.textMuted,
     fontSize: 14,
   },
   folderList: {
     marginBottom: 20,
     borderWidth: 1,
-    borderColor: '#F0F0F0',
+    borderColor: theme.border,
     borderRadius: 12,
   },
   folderItem: {
@@ -50,10 +49,10 @@ export const moveFileStyles = StyleSheet.create({
     alignItems: 'center',
     padding: 16,
     borderBottomWidth: 1,
-    borderBottomColor: '#F5F5F5',
+    borderBottomColor: theme.border,
   },
   selectedFolderItem: {
-    backgroundColor: '#F0F7FF', 
+    backgroundColor: theme.rowBackground, 
   },
   folderIcon: {
     marginRight: 12,
@@ -61,10 +60,10 @@ export const moveFileStyles = StyleSheet.create({
   folderName: {
     flex: 1,
     fontSize: 16,
-    color: '#333',
+    color: theme.textMain,
   },
   selectedFolderName: {
-    color: Colors.light.primary,
+    color: theme.primary,
     fontWeight: '600',
   },
   buttonContainer: {
@@ -79,22 +78,22 @@ export const moveFileStyles = StyleSheet.create({
     alignItems: 'center',
   },
   cancelButton: {
-    backgroundColor: '#F5F5F5',
+    backgroundColor: theme.rowHover,
   },
   cancelButtonText: {
-    color: '#666',
+    color: theme.textMain,
     fontWeight: '600',
     fontSize: 16,
   },
   confirmButton: {
-    backgroundColor: Colors.light.primary,
+    backgroundColor: theme.primary,
   },
   confirmButtonText: {
-    color: 'white',
+    color: theme.white,
     fontWeight: '600',
     fontSize: 16,
   },
   disabledButton: {
-    backgroundColor: '#CCC',
+    backgroundColor: theme.border,
   }
 });

@@ -3,13 +3,15 @@ import { View, Text, TouchableOpacity, Modal, ActivityIndicator, Alert, DeviceEv
 import * as ImagePicker from 'expo-image-picker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { API_URL } from '../../config';
-import { theme } from '../../constants/theme';
 import { FontAwesome } from '@expo/vector-icons';
-import styles from '../../styles/CreateFileStyles'; 
+import createCreateFileStyles from '../../styles/CreateFileStyles'; 
+import { useAppTheme } from '../../context/ThemeContext';
 
 const ChangeImage = forwardRef(({ file, onAction }, ref) => {
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [isUploading, setIsUploading] = useState(false);
+    const { theme } = useAppTheme();
+    const styles = createCreateFileStyles(theme);
 
     useImperativeHandle(ref, () => ({
         open: () => setIsModalVisible(true)
@@ -73,8 +75,8 @@ const ChangeImage = forwardRef(({ file, onAction }, ref) => {
             {/* Modal for image source selection */}
             <Modal visible={isModalVisible} transparent animationType="fade">
                 <View style={styles.modalOverlay}>
-                    <View style={styles.modalContent}>
-                        <Text style={[styles.modalTitle, { color: '#000', marginBottom: 20 }]}>
+                    <View style={[styles.modalContent, { backgroundColor: theme.surface }]}>
+                        <Text style={[styles.modalTitle, { color: theme.textMain, marginBottom: 20 }]}>
                             choose image source
                         </Text>
                         <View style={{ width: '100%', gap: 12, marginBottom: 20 }}>
@@ -84,15 +86,15 @@ const ChangeImage = forwardRef(({ file, onAction }, ref) => {
                                     alignItems: 'center', 
                                     justifyContent: 'center',
                                     paddingVertical: 14,
-                                    backgroundColor: '#F5F5F5', 
+                                    backgroundColor: theme.rowBackground, 
                                     borderRadius: 12,
                                     borderWidth: 1,
-                                    borderColor: '#E0E0E0'
+                                    borderColor: theme.border
                                 }} 
                                 onPress={() => handlePickImage('camera')}
                             >
-                                <FontAwesome name="camera" size={20} color={theme.colors.primary} />
-                                <Text style={{ color: '#444', marginLeft: 10, fontWeight: 'bold' }}>
+                                <FontAwesome name="camera" size={20} color={theme.primary} />
+                                <Text style={{ color: theme.textMain, marginLeft: 10, fontWeight: 'bold' }}>
                                     take a photo
                                 </Text>
                             </TouchableOpacity>
@@ -103,22 +105,22 @@ const ChangeImage = forwardRef(({ file, onAction }, ref) => {
                                     alignItems: 'center', 
                                     justifyContent: 'center',
                                     paddingVertical: 14,
-                                    backgroundColor: '#F5F5F5',
+                                    backgroundColor: theme.rowBackground,
                                     borderRadius: 12,
                                     borderWidth: 1,
-                                    borderColor: '#E0E0E0'
+                                    borderColor: theme.border
                                 }}
                                 onPress={() => handlePickImage('library')}
                             >
-                                <FontAwesome name="photo" size={20} color={theme.colors.primary} />
-                                <Text style={{ color: '#444', marginLeft: 10, fontWeight: 'bold' }}>
+                                <FontAwesome name="photo" size={20} color={theme.primary} />
+                                <Text style={{ color: theme.textMain, marginLeft: 10, fontWeight: 'bold' }}>
                                     choose from gallery
                                 </Text>
                             </TouchableOpacity>
                         </View>
                         <TouchableOpacity 
                             style={{ 
-                                backgroundColor: theme.colors.primary, 
+                                backgroundColor: theme.primary, 
                                 width: '100%', 
                                 padding: 14, 
                                 borderRadius: 12,
@@ -128,7 +130,7 @@ const ChangeImage = forwardRef(({ file, onAction }, ref) => {
                             onPress={() => setIsModalVisible(false)}
                         >
                             <Text style={{ 
-                                color: '#FFFFFF', 
+                                color: theme.white, 
                                 fontSize: 16, 
                                 fontWeight: 'bold', 
                                 textAlign: 'center' 
@@ -144,9 +146,9 @@ const ChangeImage = forwardRef(({ file, onAction }, ref) => {
             {isUploading && (
                 <Modal transparent>
                     <View style={[styles.modalOverlay, { backgroundColor: 'rgba(0,0,0,0.7)' }]}>
-                        <View style={{ backgroundColor: 'white', padding: 30, borderRadius: 15, alignItems: 'center' }}>
-                            <ActivityIndicator size="large" color={theme.colors.primary} />
-                            <Text style={{ marginTop: 15, fontWeight: 'bold' }}>Uploading image...</Text>
+                        <View style={{ backgroundColor: theme.surface, padding: 30, borderRadius: 15, alignItems: 'center' }}>
+                            <ActivityIndicator size="large" color={theme.primary} />
+                            <Text style={{ marginTop: 15, fontWeight: 'bold', color: theme.textMain }}>Uploading image...</Text>
                         </View>
                     </View>
                 </Modal>

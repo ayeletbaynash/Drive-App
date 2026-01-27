@@ -1,15 +1,16 @@
 import { StyleSheet, Dimensions } from 'react-native';
+import { Colors } from '../constants/theme';
 
 const { height } = Dimensions.get('window');
 
-export const styles = StyleSheet.create({
+export const createFileDetailsModalStyles = (theme) => StyleSheet.create({
     overlay: {
         flex: 1,
         backgroundColor: 'rgba(0,0,0,0.5)',
         justifyContent: 'flex-end',
     },
     sheetContainer: {
-        backgroundColor: '#fff',
+        backgroundColor: theme.surface,
         borderTopLeftRadius: 24,
         borderTopRightRadius: 24,
         paddingHorizontal: 24,
@@ -31,7 +32,7 @@ export const styles = StyleSheet.create({
     handle: {
         width: 40,
         height: 5,
-        backgroundColor: '#E0E0E0',
+        backgroundColor: theme.border,
         borderRadius: 3,
     },
     header: {
@@ -39,31 +40,31 @@ export const styles = StyleSheet.create({
         marginBottom: 24,
         paddingBottom: 10,
         borderBottomWidth: 1,
-        borderBottomColor: '#F0F0F0',
+        borderBottomColor: theme.border,
     },
     title: {
         fontSize: 20,
         fontWeight: 'bold',
         marginTop: 12,
         textAlign: 'center',
-        color: '#333',
+        color: theme.textMain,
     },
     sectionTitle: {
         fontSize: 13,
         fontWeight: '700',
-        color: '#888',
+        color: theme.textMuted,
         marginBottom: 10,
         marginTop: 10,
         textTransform: 'uppercase',
         letterSpacing: 0.5,
     },
     infoBox: {
-        backgroundColor: '#F8F9FA',
+        backgroundColor: theme.rowBackground,
         borderRadius: 16,
         padding: 16,
         marginBottom: 16,
         borderWidth: 1,
-        borderColor: '#EDEEF0',
+        borderColor: theme.border,
     },
     row: {
         flexDirection: 'row',
@@ -72,12 +73,12 @@ export const styles = StyleSheet.create({
         marginBottom: 10,
     },
     label: {
-        color: '#6c757d',
+        color: theme.textMuted,
         fontSize: 14,
         fontWeight: '500',
     },
     value: {
-        color: '#212529',
+        color: theme.textMain,
         fontSize: 14,
         fontWeight: '600',
     },
@@ -95,27 +96,27 @@ export const styles = StyleSheet.create({
         marginRight: 14,
     },
     avatarOwner: {
-        backgroundColor: '#198754',
+        backgroundColor: theme.successIcon,
     },
     avatarCollab: {
-        backgroundColor: '#6c757d', 
+        backgroundColor: theme.textMuted, 
     },
     avatarText: {
         fontWeight: 'bold',
         fontSize: 16,
-        color: '#fff',
+        color: theme.white,
     },
     username: {
         fontSize: 16,
         fontWeight: '600',
-        color: '#212529',
+        color: theme.textMain,
     },
     role: {
         fontSize: 13,
-        color: '#6c757d',
+        color: theme.textMuted,
     },
     emptyText: {
-        color: '#adb5bd',
+        color: theme.textMuted,
         fontStyle: 'italic',
         fontSize: 13,
         textAlign: 'center',
@@ -125,3 +126,5 @@ export const styles = StyleSheet.create({
         paddingBottom: 20
     }
 });
+
+export const styles = createFileDetailsModalStyles;

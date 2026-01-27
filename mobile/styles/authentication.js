@@ -1,35 +1,34 @@
 import { StyleSheet } from 'react-native';
-import { theme } from '../constants/theme';
 
-export const styles = StyleSheet.create({
+export const createAuthenticationStyles = (theme) => StyleSheet.create({
     container: { 
-        padding: theme.spacing.xl, 
+        padding: 20, 
         paddingTop: 50,
-        backgroundColor: theme.colors.background 
+        backgroundColor: theme.background 
     },
     title: { 
-        fontSize: theme.fontSize.xl, 
-        color: theme.colors.primary,
+        fontSize: 24, 
+        color: theme.primary,
         textAlign: 'center', 
         marginBottom: 10,
         fontWeight: '700' 
     },
     input: { 
         height: 50, 
-        backgroundColor: theme.colors.surface,
+        backgroundColor: theme.surface,
         borderBottomWidth: 1, 
-        borderBottomColor: theme.colors.border, 
-        marginBottom: theme.spacing.lg, 
-        paddingHorizontal: theme.spacing.sm,
-        borderRadius: theme.radius.sm,
-        color: theme.colors.textMain
+        borderBottomColor: theme.border, 
+        marginBottom: 16, 
+        paddingHorizontal: 8,
+        borderRadius: 4,
+        color: theme.textMain
     },
     button: { 
-        backgroundColor: theme.colors.primary, 
-        padding: theme.spacing.md, 
-        borderRadius: theme.radius.md, 
+        backgroundColor: theme.primary, 
+        padding: 12, 
+        borderRadius: 8, 
         alignItems: 'center',
-        marginTop: theme.spacing.sm,
+        marginTop: 8,
         elevation: 2, 
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 2 },
@@ -37,29 +36,29 @@ export const styles = StyleSheet.create({
         shadowRadius: 4,
     },
     buttonText: { 
-        color: theme.colors.white, 
+        color: theme.white, 
         fontWeight: '700', 
-        fontSize: theme.fontSize.md 
+        fontSize: 16 
     },
     errorText: { 
-        color: theme.colors.error,  
+        color: theme.error,  
         marginBottom: 20,
         textAlign: 'center',
-        fontSize: theme.fontSize.sm,
+        fontSize: 12,
         fontWeight: '500',
         padding: 10,
-        borderRadius: theme.radius.sm,
+        borderRadius: 4,
     },
     imagePreviewContainer: {
         alignItems: 'center',
-        marginBottom: theme.spacing.lg,
+        marginBottom: 16,
     },
     imagePreview: {
         width: 100,
         height: 100,
         borderRadius: 50,
         borderWidth: 2,
-        borderColor: theme.colors.primary,
+        borderColor: theme.primary,
     },
     imageButtonsContainer: {
         flexDirection: 'row',
@@ -70,24 +69,24 @@ export const styles = StyleSheet.create({
     },
     halfButton: {
         flex: 1,
-        backgroundColor: theme.colors.surface, 
+        backgroundColor: theme.surface, 
         borderWidth: 1,
-        borderColor: theme.colors.primary,
+        borderColor: theme.primary,
         paddingVertical: 12,
-        borderRadius: theme.radius.md,
+        borderRadius: 8,
         alignItems: 'center',
         justifyContent: 'center',
         minHeight: 50,
     },
     imageButtonTextInner: {
-        color: theme.colors.primary, 
+        color: theme.primary, 
         fontWeight: '600',
         fontSize: 14,
         textAlign: 'center',
     },
     sectionTitle: {
         fontSize: 16,
-        color: theme.colors.textMain,
+        color: theme.textMain,
         fontWeight: '600',
         marginBottom: 10,
         marginTop: 10,
@@ -95,7 +94,7 @@ export const styles = StyleSheet.create({
     },
     requiredNote: {
         fontSize: 12,
-        color: theme.colors.error, 
+        color: theme.error, 
         marginBottom: 15,
         textAlign: 'left',
         fontStyle: 'italic',
@@ -106,11 +105,11 @@ export const styles = StyleSheet.create({
         alignItems: 'center'
     },
     linkText: {
-        color: theme.colors.textMuted,
-        fontSize: theme.fontSize.sm,
+        color: theme.textMuted,
+        fontSize: 12,
     },
     authLink: {
-        color: theme.colors.primary,
+        color: theme.primary,
         fontWeight: 'bold',
         textDecorationLine: 'underline'
     },

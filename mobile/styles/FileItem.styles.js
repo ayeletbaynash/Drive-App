@@ -1,15 +1,14 @@
 import { StyleSheet } from 'react-native';
-import { Colors } from '../constants/theme'; 
 
-export const styles = StyleSheet.create({
+export const getFileItemStyles = (theme) => StyleSheet.create({ 
   container: {
     flexDirection: 'row',
     paddingVertical: 12,
     paddingHorizontal: 16,
     alignItems: 'center',
-    backgroundColor: Colors.light.surface,
+    backgroundColor: theme.background, 
     borderBottomWidth: 1,
-    borderBottomColor: Colors.light.border,
+    borderBottomColor: theme.border,
   },
   textContainer: {
     flex: 1,
@@ -22,18 +21,17 @@ export const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 12,
-    backgroundColor: Colors.light.background,
+    backgroundColor: theme.surface, 
     borderRadius: 8,
   },
   fileName: {
     fontSize: 16,
     fontWeight: '600',
-    color: Colors.light.textMain,
-    flex: 1,
+    color: theme.textMain,
   },
   dateText: {
     fontSize: 13,
-    color: Colors.light.textMuted,
+    color: theme.textMuted,
     marginTop: 2,
   },
   simpleButton: {
@@ -42,10 +40,11 @@ export const styles = StyleSheet.create({
     paddingVertical: 12,
     paddingHorizontal: 16,
     width: '100%',
-    gap: 12,
-},
+  },
   menuButton: {
     padding: 8,
     marginLeft: 4,
   }
 });
+
+export const styles = getFileItemStyles;

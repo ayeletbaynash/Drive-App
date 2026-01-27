@@ -1,8 +1,9 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { View, DeviceEventEmitter, ActivityIndicator } from 'react-native';
 import EmptyState from '../../components/EmptyState';
 import FileViewList from '../../components/FileViewList';
-import { layoutStyles } from '../../styles/layoutStyles'; 
+import { createLayoutStyles } from '../../styles/layoutStyles';
+import { useAppTheme } from '../../context/ThemeContext'; 
 import { useFileActions } from '../../context/FileContext';
 import { Colors } from '../../constants/theme'; 
 import authorizedFetch from '../../services/authorizedFetch';
@@ -12,6 +13,8 @@ import { useLocalSearchParams, useRouter } from 'expo-router'
 export default function Starred() {
   const router = useRouter();
   const { folderId } = useLocalSearchParams()
+  const { theme } = useAppTheme();
+  const layoutStyles = useMemo(() => createLayoutStyles(theme), [theme]);
   
   // Context & State
   const { starredFiles, deletedFiles, refreshStarredFiles } = useFileActions();

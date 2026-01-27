@@ -1,9 +1,8 @@
 import { StyleSheet, Dimensions } from 'react-native';
-import { theme } from '../constants/theme';
 
 const { width } = Dimensions.get('window');
 
-const styles = StyleSheet.create({
+const createCreateFileStyles = (theme) => StyleSheet.create({
     modalOverlay: {
         flex: 1,
         backgroundColor: 'rgba(0, 0, 0, 0.5)',
@@ -12,7 +11,7 @@ const styles = StyleSheet.create({
     },
     modalContent: {
         width: width * 0.85,
-        backgroundColor: 'white',
+        backgroundColor: theme.surface,
         borderRadius: 20,
         padding: 20,
         elevation: 5,
@@ -22,12 +21,13 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         marginBottom: 20,
         textAlign: 'center',
+        color: theme.textMain,
     },
     inputGroup: {
         flexDirection: 'row',
         alignItems: 'center',
         borderWidth: 1,
-        borderColor: '#ddd',
+        borderColor: theme.border,
         borderRadius: 10,
         paddingHorizontal: 10,
         marginBottom: 15,
@@ -36,21 +36,22 @@ const styles = StyleSheet.create({
         flex: 1,
         paddingVertical: 12,
         fontSize: 16,
+        color: theme.textMain,
     },
     extension: {
         fontSize: 16,
-        color: '#888',
+        color: theme.textMuted,
     },
     textArea: {
         borderWidth: 1,
-        borderColor: '#ddd',
+        borderColor: theme.border,
         borderRadius: 10,
         padding: 12,
         height: 120,           
         minHeight: 100,        
         textAlignVertical: 'top', 
-        color: '#000', 
-        backgroundColor: '#fafafa', 
+        color: theme.textMain, 
+        backgroundColor: theme.rowBackground, 
         marginTop: 5,
         marginBottom: 20,      
     },
@@ -61,25 +62,25 @@ const styles = StyleSheet.create({
     },
     btnPrimary: {
         flex: 1,
-        backgroundColor: theme.colors.primary,
+        backgroundColor: theme.primary,
         padding: 15,
         borderRadius: 10,
         alignItems: 'center',
     },
     btnSecondary: {
         flex: 1,
-        backgroundColor: '#f1f1f1',
+        backgroundColor: theme.rowHover,
         padding: 15,
         borderRadius: 10,
         alignItems: 'center',
     },
     btnTextPrimary: {
-        color: 'white',
+        color: theme.white,
         fontWeight: 'bold',
     },
     btnTextSecondary: {
-        color: '#555',
+        color: theme.textMain,
     },
 });
 
-export default styles;
+export default createCreateFileStyles;
