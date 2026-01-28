@@ -52,12 +52,13 @@ Once the process finishes, scroll up slightly in your terminal to find the **QR 
 
 Once scanned, you will be redirected directly to the **Login page**, and you’re ready to go!
   <img width="1752" height="958" alt="image" src="https://github.com/user-attachments/assets/10524bd3-ff7a-45b3-9446-f85f46221c6b" />  
-
+(**Note:** Public or institutional networks (e.g., University Wi-Fi) often use Client Isolation, which prevents the mobile app from connecting to the server. To fix this, use a Mobile Hotspot and update the new IP address in config.js)
 
 ### Web Application
 The web version will be available via your browser.
 * Open your browser and go to: **`http://localhost:3001`**
 * You will be directed to the **Login page** to access your account.
+
 
 
 
